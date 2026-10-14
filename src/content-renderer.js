@@ -255,7 +255,7 @@ function renderSources(story) {
   reuseNote.textContent =
     "The Victorian Conservation Seed Bank archive (ALA dr21987, CC BY-NC 3.0 AU) and the BGANZ workbook are excluded. Public ALA map cells are aggregated to 100 km and cells below five records are suppressed.";
   const author = element("p", "author-note");
-  author.textContent = `FIT3179 Data Visualisation 2 · Topic 7 · Snapshot ${story.snapshot} · Author: [student name to complete]`;
+  author.textContent = `FIT3179 Data Visualisation 2 · Topic 7 · Snapshot ${story.snapshot} · Published by @kailiangggggg on GitHub`;
 
   footer.append(details, reuseNote, author);
   return footer;
