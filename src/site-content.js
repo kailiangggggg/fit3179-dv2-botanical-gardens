@@ -103,6 +103,7 @@ export const pageStory = {
       paragraphs: [
         "The register shows where known facilities sit and how their reported footprints vary. The collection datasets show which records contributors have published. The origin map shows a generalized subset of collection places.",
         "None of these sources measures every garden, all plants held, public access, or conservation impact. Read them as separate evidence layers: each makes one part of the picture visible and leaves other questions open.",
+        "Education is a further contribution documented by individual gardens, though it cannot be compared nationally with these datasets. The Australian National Botanic Gardens offers guided, inquiry-based school activities and a Plant Science Learning Hub; Royal Botanic Gardens Victoria publishes nature-based learning programs from early childhood through tertiary study. These are examples of educational provision, not measured participation or learning outcomes. See their official education pages in the source list below.",
       ],
       transition:
         "Sources, licences, filters and limitations are listed below so readers can trace what each chart includes.",
@@ -227,6 +228,20 @@ export const pageStory = {
       url: "https://www.bganz.org.au/wp-content/uploads/2025/04/Myrtle-Rust-Survey-Supplemental-Final-Report-Dec-2023-Public-release.pdf",
       license: "Workbook reuse licence not established; published report cited for aggregate context only",
     },
+    {
+      category: "EDUCATION",
+      label: "Schools and Plant Science Learning Hub",
+      publisher: "Australian National Botanic Gardens · Parks Australia",
+      url: "https://visit.anbg.gov.au/schools/",
+      license: "Official institutional description; cited for educational programs, not chart data",
+    },
+    {
+      category: "EDUCATION",
+      label: "Learning with Royal Botanic Gardens Victoria",
+      publisher: "Royal Botanic Gardens Victoria",
+      url: "https://www.rbg.vic.gov.au/learn",
+      license: "Official institutional description; cited for educational programs, not chart data",
+    }
   ],
 };
 
