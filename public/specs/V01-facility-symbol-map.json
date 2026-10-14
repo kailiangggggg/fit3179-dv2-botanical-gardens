@@ -1,12 +1,13 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "Known Geoscience Australia botanical garden and arboretum features. Projected positions show location, circle area is proportional to registered facility hectares, and hue distinguishes the two register types.",
-  "width": "container",
+  "width": 900,
   "height": 430,
   "projection": {
-    "type": "conicEqualArea",
+    "type": "equalEarth",
     "center": [132, -25],
-    "parallels": [-18, -36]
+    "scale": {"signal": "min(615, width * 1.55)"},
+    "translate": {"signal": "[width / 2, 206]"}
   },
   "layer": [
     {
@@ -14,6 +15,7 @@
         "url": "../data/state_rates.geojson",
         "format": {"type": "json", "property": "features"}
       },
+      "transform": [{"filter": "datum.properties.state_code !== '9'"}],
       "mark": {"type": "geoshape", "fill": "#f1efe7", "stroke": "#b8c3bb", "strokeWidth": 0.65},
       "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
     },
@@ -22,6 +24,10 @@
         "url": "../data/facility_points.geojson",
         "format": {"type": "json", "property": "features"}
       },
+      "params": [{
+        "name": "facilityHover",
+        "select": {"type": "point", "fields": ["properties.feature_name"], "on": "pointerover", "clear": "pointerout"}
+      }],
       "mark": {"type": "circle", "filled": true, "opacity": 0.64, "stroke": "#fffdf7", "strokeWidth": 0.7},
       "encoding": {
         "longitude": {"field": "properties.longitude", "type": "quantitative"},
@@ -30,9 +36,10 @@
           "field": "properties.area_hectares",
           "type": "quantitative",
           "title": "Registered area (ha)",
-          "scale": {"domain": [0, 3739.30634602], "range": [0, 820]},
-          "legend": {"values": [10, 100, 1000, 3700], "symbolType": "circle", "orient": "bottom", "direction": "horizontal"}
+          "scale": {"domain": [0, 3739.30634602], "range": [0, 1200]},
+          "legend": null
         },
+        "opacity": {"condition": {"param": "facilityHover", "empty": false, "value": 0.98}, "value": 0.42},
         "color": {
           "field": "properties.feature_subtype",
           "type": "nominal",

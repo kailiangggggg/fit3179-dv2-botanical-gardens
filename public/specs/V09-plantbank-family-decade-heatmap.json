@@ -2,7 +2,7 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "A family-by-decade heatmap for the 9,683 PlantBank living-specimen records that have both a recorded plant family and a usable year. It describes the indexed record sample, not annual acquisition activity.",
   "data": {"url": "../data/plantbank_family_decades.csv", "format": {"type": "csv"}},
-  "width": "container",
+  "width": 700,
   "height": 300,
   "layer": [
     {"mark": {"type": "rect", "stroke": "#f8f6ee", "strokeWidth": 1}, "encoding": {"color": {"field": "record_count", "type": "quantitative", "title": "Records", "scale": {"scheme": "greens"}, "legend": {"orient": "bottom", "direction": "horizontal"}}}},

@@ -9,6 +9,8 @@ __pycache__/
 playwright-report/
 test-results/
 dist/
+/site-dist/
+/dist-prototype/
 tmp/
 /data/raw/
 .vite/

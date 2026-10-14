@@ -67,7 +67,7 @@ GBIF_DATASETS = {
 
 PRODUCTION_SOURCE_PATHS = [
     "ga/botanical_gardens_2026-10-14.geojson",
-    "abs/asgs4_states_generalised_2026_0p005.geojson",
+    "abs/asgs4_states_2026_0p005.geojson",
     "abs/31010do001_202603.xlsx",
     *[f"ala/{resource_id}.zip" for resource_id in ALA_RESOURCES],
     "gbif/plantbank_dr726.zip",
@@ -383,17 +383,66 @@ def summarize_gbif_archive(path: Path) -> dict:
     }
 
 
+def _signed_ring_area(ring: list[list[float]]) -> float:
+    return sum(
+        ring[index][0] * ring[index + 1][1]
+        - ring[index + 1][0] * ring[index][1]
+        for index in range(len(ring) - 1)
+    ) / 2
+
+
+def _normalize_geometry_winding(geometry: dict) -> dict:
+    """Orient polygon rings for D3/Vega's spherical GeoJSON path convention."""
+    geometry_type = geometry.get("type")
+    coordinates = geometry.get("coordinates") or []
+    polygons = [coordinates] if geometry_type == "Polygon" else coordinates
+    normalized_polygons = []
+    for polygon in polygons:
+        if not polygon:
+            continue
+        valid_rings = []
+        for ring in polygon:
+            area = _signed_ring_area(ring)
+            if abs(area) <= 1e-12:
+                continue
+            valid_rings.append((area, ring))
+
+        # The ABS service can place collapsed or smaller rings ahead of the
+        # enclosing shell. Put the largest valid ring first before assigning
+        # D3's exterior/interior winding convention.
+        valid_rings.sort(key=lambda item: abs(item[0]), reverse=True)
+        rings = []
+        for index, (area, ring) in enumerate(valid_rings):
+            # D3's spherical convention is opposite RFC 7946 for sub-hemisphere
+            # polygons: exterior rings clockwise, holes counterclockwise.
+            should_be_negative = index == 0
+            if (should_be_negative and area > 0) or (not should_be_negative and area < 0):
+                ring = list(reversed(ring))
+            rings.append(ring)
+        if rings:
+            normalized_polygons.append(rings)
+
+    normalized = {**geometry, "coordinates": normalized_polygons if geometry_type == "MultiPolygon" else (normalized_polygons[0] if normalized_polygons else [])}
+    return normalized
+
+
 def load_asgs_boundaries(path: Path) -> list[dict]:
     """Load the nine 2026 state/territory geometries and omit null code Z."""
     source = json.loads(path.read_text(encoding="utf-8"))
     expected_codes = {str(code) for code in range(1, 10)}
-    boundaries = [
-        feature
-        for feature in source.get("features", [])
-        if feature.get("geometry") is not None
-        and str((feature.get("properties") or {}).get("STATE_CODE_2026", ""))
-        in expected_codes
-    ]
+    boundaries = []
+    for feature in source.get("features", []):
+        if feature.get("geometry") is None:
+            continue
+        code = str((feature.get("properties") or {}).get("STATE_CODE_2026", ""))
+        if code not in expected_codes:
+            continue
+        boundaries.append(
+            {
+                **feature,
+                "geometry": _normalize_geometry_winding(feature["geometry"]),
+            }
+        )
     codes = {
         str(feature["properties"]["STATE_CODE_2026"]) for feature in boundaries
     }
@@ -667,7 +716,9 @@ def build_ala_origin_hexes(
         features.append(
             {
                 "type": "Feature",
-                "geometry": {"type": "Polygon", "coordinates": [_hex_polygon(q, r, radius_m)]},
+                "geometry": _normalize_geometry_winding(
+                    {"type": "Polygon", "coordinates": [_hex_polygon(q, r, radius_m)]}
+                ),
                 "properties": {"record_count": count},
             }
         )
@@ -866,7 +917,7 @@ def prepare_public_data(raw_root: Path, output_dir: Path) -> dict:
 
     ga_path = raw_root / "ga" / "botanical_gardens_2026-10-14.geojson"
     abs_population_path = raw_root / "abs" / "31010do001_202603.xlsx"
-    abs_boundary_path = raw_root / "abs" / "asgs4_states_generalised_2026_0p005.geojson"
+    abs_boundary_path = raw_root / "abs" / "asgs4_states_2026_0p005.geojson"
     ala_dir = raw_root / "ala"
     plantbank_path = raw_root / "gbif" / "plantbank_dr726.zip"
     kingspark_path = raw_root / "gbif" / "kingspark_dr22285.zip"
@@ -1003,12 +1054,15 @@ def prepare_public_data(raw_root: Path, output_dir: Path) -> dict:
             }
         )
     resource_rows.sort(key=lambda row: (-row["root_accessions"], row["resource_name"]))
+    for resource_order, row in enumerate(resource_rows):
+        row["resource_order"] = resource_order
     _write_csv(
         output_dir / "ala_resource_profile.csv",
         [
             "resource_id",
             "resource_name",
             "resource_short",
+            "resource_order",
             "root_accessions",
             "child_event_rows_excluded",
             "distinct_taxon_ids",
@@ -1023,10 +1077,17 @@ def prepare_public_data(raw_root: Path, output_dir: Path) -> dict:
         ],
         resource_rows,
     )
+    coordinate_rows = sorted(
+        resource_rows,
+        key=lambda row: (-row["map_coordinate_share_pct"], row["resource_name"]),
+    )
+    coordinate_rows = [
+        {**row, "coordinate_order": order} for order, row in enumerate(coordinate_rows)
+    ]
     _write_csv(
         output_dir / "ala_coordinate_coverage.csv",
-        ["resource_id", "resource_name", "resource_short", "root_accessions", "map_eligible_coordinates", "map_coordinate_share_pct"],
-        resource_rows,
+        ["resource_id", "resource_name", "resource_short", "coordinate_order", "root_accessions", "map_eligible_coordinates", "map_coordinate_share_pct"],
+        coordinate_rows,
     )
     _write_csv(
         output_dir / "ala_date_coverage.csv",
@@ -1079,10 +1140,14 @@ def prepare_public_data(raw_root: Path, output_dir: Path) -> dict:
     )
 
     kingspark_families = _top_family_rows(kingspark, limit=12)
+    kingspark_family_rows = [
+        {"family_order": order, **row}
+        for order, row in enumerate(kingspark_families)
+    ]
     _write_csv(
         output_dir / "kingspark_family_records.csv",
-        ["family", "record_count", "share"],
-        kingspark_families,
+        ["family_order", "family", "record_count", "share"],
+        kingspark_family_rows,
     )
 
     largest = max(facilities, key=lambda row: row["area_hectares"])

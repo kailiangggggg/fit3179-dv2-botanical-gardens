@@ -22,6 +22,17 @@ function findDataUrls(value, output = []) {
   return output;
 }
 
+function findColorSchemes(value, output = []) {
+  if (!value || typeof value !== "object") return output;
+  if (Array.isArray(value)) {
+    for (const item of value) findColorSchemes(item, output);
+    return output;
+  }
+  if (typeof value.scale?.scheme === "string") output.push(value.scale.scheme);
+  for (const child of Object.values(value)) findColorSchemes(child, output);
+  return output;
+}
+
 for (const chart of manifest.charts) {
   const specPath = path.join(publicRoot, chart.spec);
   if (!fs.existsSync(specPath)) {
@@ -50,6 +61,10 @@ for (const chart of manifest.charts) {
     if (!resolved.startsWith(publicRoot + path.sep) || !fs.existsSync(resolved)) {
       failures.push(`${chart.id}: data URL does not resolve locally (${url})`);
     }
+  }
+
+  for (const scheme of findColorSchemes(spec)) {
+    if (!vega.scheme(scheme)) failures.push(`${chart.id}: unregistered Vega color scheme (${scheme})`);
   }
 
   for (const relativeDataPath of chart.data_files) {

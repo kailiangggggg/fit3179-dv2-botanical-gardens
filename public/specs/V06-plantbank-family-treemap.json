@@ -2,7 +2,7 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "A treemap of GBIF PlantBank living-specimen records by recorded plant family. Rectangle area represents record count; the largest family is highlighted. This is an indexed record profile, not a count of all plants held.",
   "data": {"url": "../data/plantbank_family_treemap.csv", "format": {"type": "csv"}},
-  "width": "container",
+  "width": 700,
   "height": 360,
   "layer": [
     {

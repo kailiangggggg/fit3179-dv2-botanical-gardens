@@ -13,7 +13,7 @@ from scripts.prepare_data import ALA_RESOURCES
 
 
 ASGS_URL = (
-    "https://geo.abs.gov.au/arcgis/rest/services/ASGS2026/STE/MapServer/1/query"
+    "https://geo.abs.gov.au/arcgis/rest/services/ASGS2026/STE/MapServer/0/query"
     "?where=1%3D1&outFields=STATE_CODE_2026%2CSTATE_NAME_2026%2CAREA_ALBERS_SQKM"
     "&returnGeometry=true&outSR=4326&f=geojson&geometryPrecision=4"
     "&maxAllowableOffset=0.005"
@@ -24,7 +24,7 @@ SOURCE_FILES = {
         "https://services.ga.gov.au/gis/rest/services/Botanical_Gardens_and_Arboretums/"
         "MapServer/0/query?where=1%3D1&outFields=*&outSR=4326&returnGeometry=true&f=geojson"
     ),
-    "abs/asgs4_states_generalised_2026_0p005.geojson": ASGS_URL,
+    "abs/asgs4_states_2026_0p005.geojson": ASGS_URL,
     "abs/31010do001_202603.xlsx": (
         "https://www.abs.gov.au/statistics/people/population/national-state-and-territory-"
         "population/mar-2026/31010do001_202603.xlsx"

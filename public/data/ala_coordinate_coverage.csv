@@ -1,11 +1,11 @@
-resource_id,resource_name,resource_short,root_accessions,map_eligible_coordinates,map_coordinate_share_pct
-dr21985,National Seed Bank,National Seed Bank,16323,14218,87.10408625865344
-dr21991,WA Seed Centre (Kings Park),WA Seed Centre · Kings Park,15110,6984,46.22104566512243
-dr23110,Australian PlantBank,Australian PlantBank,12871,9950,77.30557066273018
-dr21992,WA Seed Centre (Kensington),WA Seed Centre · Kensington,6570,2178,33.15068493150685
-dr23109,South Australian Seed Conservation Centre,SA Seed Conservation Centre,2536,2299,90.65457413249212
-dr21986,Tasmanian Seed Conservation Centre,Tasmania Seed Centre,2481,2424,97.70253929866989
-dr22131,Brisbane Botanic Gardens Seed Bank,Brisbane Botanic Seed Bank,1942,618,31.822863027806385
-dr28420,Alice Springs Desert Park,Alice Springs Desert Park,588,0,0.0
-dr21988,George Brown Darwin Botanic Gardens Seed Bank,Darwin Botanic Seed Bank,101,101,100.0
-dr21993,Greening Australia,Greening Australia,40,1,2.5
+resource_id,resource_name,resource_short,coordinate_order,root_accessions,map_eligible_coordinates,map_coordinate_share_pct
+dr21988,George Brown Darwin Botanic Gardens Seed Bank,Darwin Botanic Seed Bank,0,101,101,100.0
+dr21986,Tasmanian Seed Conservation Centre,Tasmania Seed Centre,1,2481,2424,97.70253929866989
+dr23109,South Australian Seed Conservation Centre,SA Seed Conservation Centre,2,2536,2299,90.65457413249212
+dr21985,National Seed Bank,National Seed Bank,3,16323,14218,87.10408625865344
+dr23110,Australian PlantBank,Australian PlantBank,4,12871,9950,77.30557066273018
+dr21991,WA Seed Centre (Kings Park),WA Seed Centre · Kings Park,5,15110,6984,46.22104566512243
+dr21992,WA Seed Centre (Kensington),WA Seed Centre · Kensington,6,6570,2178,33.15068493150685
+dr22131,Brisbane Botanic Gardens Seed Bank,Brisbane Botanic Seed Bank,7,1942,618,31.822863027806385
+dr21993,Greening Australia,Greening Australia,8,40,1,2.5
+dr28420,Alice Springs Desert Park,Alice Springs Desert Park,9,588,0,0.0

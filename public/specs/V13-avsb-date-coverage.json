@@ -3,9 +3,8 @@
   "description": "Shows the earliest and latest usable top-level accession years in each ALA resource that supplies a parseable year. Resources with no usable year are named in the accompanying caption; ranges describe source coverage, not activity.",
   "data": {"url": "../data/ala_date_coverage.csv", "format": {"type": "csv"}},
   "transform": [{"filter": "datum.dated_accessions > 0"}],
-  "width": "container",
+  "width": 700,
   "height": 220,
-  "autosize": {"type": "fit-x", "contains": "padding"},
   "layer": [
     {
       "mark": {"type": "rule", "stroke": "#a27a2c", "strokeWidth": 4, "strokeCap": "round"},

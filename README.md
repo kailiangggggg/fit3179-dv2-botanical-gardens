@@ -22,11 +22,18 @@ Use Node.js 22 or newer and pnpm 11.25.0 (pinned in `package.json`). The site ve
 ```powershell
 pnpm install
 pnpm run validate:specs
+pnpm run test:site
 pnpm run dev
 pnpm run build
 ```
 
-`pnpm run build` writes the static GitHub Pages site to `docs/`. To preview the built site locally, run `pnpm run preview`.
+`pnpm run build` writes the static site to `site-dist/`. To preview that production build locally, run `pnpm run preview`.
+
+The data-preparation tests use Python 3.11 or newer:
+
+```powershell
+pnpm run test:data
+```
 
 ## Public chart files
 
@@ -41,4 +48,4 @@ The origin map uses 100 km equal-area hexagons and suppresses cells with fewer t
 
 ## GitHub Pages
 
-The production build is the `docs/` directory. Configure GitHub Pages to publish `main` from `/docs` after the repository is pushed. Verify the resulting public URL in a signed-out browser before submitting. The physical hand-drawn sketch, student identity fields and interview remain student actions.
+The production build is the `site-dist/` directory. The GitHub Actions workflow in `.github/workflows/pages.yml` builds and deploys that directory to GitHub Pages when `main` is updated. Verify the resulting public URL in a signed-out browser before submitting. The physical hand-drawn sketch, student identity fields and course interview remain student actions.

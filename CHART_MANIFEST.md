@@ -26,21 +26,21 @@ The complete machine-readable What / Why / How contracts, field types, transform
 
 - **What:** GA’s 182 known-register facilities with coordinates, subtype and registered hectares.
 - **Why:** Locate sites and compare reported facility footprints.
-- **How:** Equal-area map; position encodes location, circle area encodes hectares, hue encodes Botanic Garden versus Arboretum. Small center marks keep small facilities locatable. Tooltip carries the name, jurisdiction, locality and area.
+- **How:** Equal-area map; position encodes location, circle area encodes hectares, hue encodes Botanic Garden versus Arboretum. Small center marks keep small facilities locatable. Hover highlights a facility; its tooltip carries the name, jurisdiction, locality and area.
 - **Limit:** Register inclusion is not proof of national completeness, public access, collection size or conservation performance.
 
 ### V02 — State-level register density
 
 - **What:** GA facility counts joined to ABS ERP for 31 March 2026 and ASGS Edition 4 code 1–8 boundaries.
 - **Why:** Compare known register counts after adjusting for resident population.
-- **How:** State polygons; sequential luminance encodes facilities per million; tooltip reveals numerator and denominator. Other Territories is neutral on the map.
+- **How:** State polygons; sequential luminance encodes facilities per million; a linked jurisdiction selector focuses the same state on V03. The tooltip reveals numerator and denominator. Other Territories is neutral on the map.
 - **Limit:** It is register density, not access. The code-9 denominator groups Norfolk Island, Jervis Bay, Christmas Island and Cocos (Keeling) Islands; its 198.14 per-million value is not in the comparison.
 
 ### V03 — Count-to-rate rank change
 
 - **What:** Raw GA counts and March 2026 ERP-normalized rates for the same eight jurisdictions.
 - **Why:** Show which jurisdictions change order after population adjustment.
-- **How:** Lines join two rank positions; rank 1 is highest. TAS and NT share 7.5 on facility count. Hover gives exact values.
+- **How:** Lines join two rank positions; rank 1 is highest. TAS and NT share 7.5 on facility count. Click a legend item to focus its series, or use the linked jurisdiction selector to highlight the same state on V02; hover gives exact values.
 - **Limit:** Rank is ordinal and hides magnitude; the rate map and labels carry the values.
 
 ### V04 — Footprint distributions

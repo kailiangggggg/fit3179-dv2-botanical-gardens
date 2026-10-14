@@ -1,8 +1,8 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Compares registered facility area distributions between Botanic Gardens and Arboretums. The horizontal axis is logarithmic because areas range from about half a hectare to nearly 3,740 hectares.",
+  "description": "Compares registered facility area distributions between Botanic Gardens and Arboretums. Horizontal tick labels are hectares; the axis is logarithmic because areas range from about half a hectare to nearly 3,740 hectares.",
   "data": {"url": "../data/facility_areas.csv", "format": {"type": "csv"}},
-  "width": "container",
+  "width": 700,
   "height": 185,
   "mark": {"type": "boxplot", "extent": 1.5, "ticks": true, "outliers": {"filled": true, "size": 24}},
   "encoding": {
@@ -10,7 +10,12 @@
       "field": "area_hectares",
       "type": "quantitative",
       "scale": {"type": "log", "domain": [0.4, 5000]},
-      "axis": {"title": "Registered footprint (hectares, log scale)", "grid": true, "format": "~s"}
+      "axis": {
+        "title": null,
+        "grid": true,
+        "values": [0.5, 1, 5, 10, 50, 100, 500, 1000, 5000],
+        "labelExpr": "(datum.value < 1 ? format(datum.value, '.1f') : format(datum.value, ',.0f')) + ' ha'"
+      }
     },
     "y": {
       "field": "feature_subtype",

@@ -9,7 +9,7 @@
 
 **Licence:** CC BY 4.0 as recorded in the source recheck. Attribution is included in the site source notes. State boundaries in the map are from the ABS source below. The register is a known-facility layer, not proof that all facilities are represented, publicly accessible, or equally active in conservation.
 
-**Use:** V01 maps one point per register feature and scales circle area to reported hectares. V02/V03 count facilities by the GA state code. V04 compares registered areas by subtype. V05 counts feature types by state. The public point file omits source polygon detail and retains only chart fields.
+**Use:** V01 maps one point per register feature and scales circle area to reported hectares. V02/V03 count facilities by the GA state code and compare the resulting population-standardized rates. V04 compares registered areas by subtype. The public point file omits source polygon detail and retains only chart fields.
 
 ## Australian Bureau of Statistics
 
@@ -27,9 +27,9 @@
 | Australian Capital Territory | 489,668 |
 | Other Territories | 5,047 |
 
-**Boundary source:** [ASGS Edition 4 digital boundaries](https://www.abs.gov.au/statistics/standards/australian-statistical-geography-asgs/edition-4-july-2026-june-2031/access-and-downloads/digital-boundary-files) and the [ASGS 2026 State/Territory geospatial service](https://geo.abs.gov.au/arcgis/rest/services/ASGS2026/STE/MapServer). Boundaries are CC BY 4.0 unless the product states otherwise. The local display snapshot uses the generalized STE layer with 0.005-degree maximum offset and four-decimal coordinate precision. Code Z has no geometry and is omitted; codes 1–9 are retained.
+**Boundary source:** [ASGS Edition 4 digital boundaries](https://www.abs.gov.au/statistics/standards/australian-statistical-geography-asgs/edition-4-july-2026-june-2031/access-and-downloads/digital-boundary-files) and the [ASGS 2026 State/Territory geospatial service](https://geo.abs.gov.au/arcgis/rest/services/ASGS2026/STE/MapServer). Boundaries are CC BY 4.0 unless the product states otherwise. The local display snapshot queries the full STE layer with 0.005-degree maximum offset and four-decimal coordinate precision; it is then checked to retain the complete New South Wales extent. A faster generalized-layer query was rejected after its NSW geometry omitted the western part of the state. Code Z has no geometry and is omitted; codes 1–9 are retained. Before publication, derived polygons are oriented for [D3's spherical path convention](https://d3js.org/d3-geo): exterior rings clockwise and interior rings counterclockwise. The largest valid ring is placed first as the shell, and rings collapsed by coordinate rounding are dropped; zero-area exterior rings otherwise describe the spherical complement to D3. This convention is opposite RFC 7946’s planar right-hand rule.
 
-**Measure:** V02 uses `known GA facilities ÷ ERP × 1,000,000` for codes 1–8. Other Territories contains one GA facility on Norfolk Island, while its ABS denominator groups Norfolk Island with Jervis Bay, Christmas Island and Cocos (Keeling) Islands. Its calculated 198.14 per-million rate is shown in the method summary but excluded from the choropleth and rank comparison because the four-territory denominator and single-site numerator are not a comparable state-level unit. The Norfolk facility remains in V01 and the subtype-by-state matrix. The rate is register density, not access or service quality.
+**Measure:** V02 uses `known GA facilities ÷ ERP × 1,000,000` for codes 1–8. Other Territories contains one GA facility on Norfolk Island, while its ABS denominator groups Norfolk Island with Jervis Bay, Christmas Island and Cocos (Keeling) Islands. Its calculated 198.14 per-million rate is shown in the method summary but excluded from the choropleth and rank comparison because the four-territory denominator and single-site numerator are not a comparable state-level unit. The Norfolk facility remains in V01. The rate is register density, not access or service quality.
 
 ## ALA / Australian Virtual Seed Bank
 

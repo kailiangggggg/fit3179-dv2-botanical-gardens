@@ -2,8 +2,12 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "Connects each standard Australian state or territory's rank by known registered facility count to its rank by facilities per million residents. Rank 1 is highest; Tasmania and the Northern Territory tie at 7.5 on raw count.",
   "data": {"url": "../data/state_rank_comparison.csv", "format": {"type": "csv"}},
-  "width": "container",
+  "width": 700,
   "height": 300,
+  "params": [
+    {"name": "linkedState", "value": null},
+    {"name": "stateLegend", "select": {"type": "point", "fields": ["state"], "toggle": true}, "bind": "legend"}
+  ],
   "mark": {"type": "line", "point": {"filled": true, "size": 70}, "strokeWidth": 2},
   "encoding": {
     "x": {
@@ -29,6 +33,10 @@
       "legend": {"orient": "bottom", "direction": "horizontal", "columns": 4, "labelLimit": 190}
     },
     "detail": {"field": "state", "type": "nominal"},
+    "opacity": {
+      "condition": {"test": "linkedState === null || datum.state === linkedState", "value": 1},
+      "value": 0.14
+    },
     "tooltip": [
       {"field": "state", "type": "nominal", "title": "State / territory"},
       {"field": "comparison", "type": "nominal", "title": "Ranking by"},
@@ -39,7 +47,8 @@
   },
   "transform": [
     {"fold": ["facility_count_rank", "facility_rate_rank"], "as": ["rank_field", "rank"]},
-    {"calculate": "datum.rank_field === 'facility_count_rank' ? 'Facility count' : 'Facilities per million'", "as": "comparison"}
+    {"calculate": "datum.rank_field === 'facility_count_rank' ? 'Facility count' : 'Facilities per million'", "as": "comparison"},
+    {"filter": {"param": "stateLegend"}}
   ],
   "config": {"view": {"stroke": null}}
 }

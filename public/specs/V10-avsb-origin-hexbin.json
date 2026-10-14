@@ -1,12 +1,14 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "Equal-area hexagons aggregate Australian-coded top-level seed-bank accession origins. Each cell is 100 km across; cells with fewer than five records are suppressed. The polygons show collection origins, not garden or seed-bank locations.",
-  "width": "container",
+  "width": 900,
   "height": 430,
   "projection": {
     "type": "conicEqualArea",
     "center": [132, -25],
-    "parallels": [-18, -36]
+    "parallels": [-18, -36],
+    "scale": {"signal": "min(615, width * 1.55)"},
+    "translate": {"signal": "[width / 2, 206]"}
   },
   "layer": [
     {
@@ -29,7 +31,7 @@
           "field": "properties.record_count",
           "type": "quantitative",
           "title": "Origin records per 100 km cell",
-          "scale": {"scheme": "ylgn", "type": "sqrt"},
+          "scale": {"scheme": "yellowgreen", "type": "sqrt"},
           "legend": {"orient": "bottom", "direction": "horizontal", "format": ",.0f"}
         },
         "tooltip": [

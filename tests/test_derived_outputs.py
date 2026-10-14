@@ -39,7 +39,7 @@ class DerivedOutputContractTests(unittest.TestCase):
             RAW_ROOT / "abs" / "31010do001_202603.xlsx"
         )
         boundaries = load_asgs_boundaries(
-            RAW_ROOT / "abs" / "asgs4_states_generalised_2026_0p005.geojson"
+            RAW_ROOT / "abs" / "asgs4_states_2026_0p005.geojson"
         )
 
         metrics = build_state_metrics(facilities, population, boundaries)
@@ -63,7 +63,7 @@ class DerivedOutputContractTests(unittest.TestCase):
             RAW_ROOT / "abs" / "31010do001_202603.xlsx"
         )
         boundaries = load_asgs_boundaries(
-            RAW_ROOT / "abs" / "asgs4_states_generalised_2026_0p005.geojson"
+            RAW_ROOT / "abs" / "asgs4_states_2026_0p005.geojson"
         )
         metrics = build_state_metrics(facilities, population, boundaries)
 
@@ -91,7 +91,7 @@ class DerivedOutputContractTests(unittest.TestCase):
 
     def test_origin_hex_output_is_aggregated_and_suppresses_small_cells(self):
         boundary = load_asgs_boundaries(
-            RAW_ROOT / "abs" / "asgs4_states_generalised_2026_0p005.geojson"
+            RAW_ROOT / "abs" / "asgs4_states_2026_0p005.geojson"
         )
         hexes, profile = build_ala_origin_hexes(
             RAW_ROOT / "ala", boundary, cell_width_km=100, minimum_records=5
@@ -104,15 +104,56 @@ class DerivedOutputContractTests(unittest.TestCase):
         self.assertTrue(all("decimalLatitude" not in feature["properties"] for feature in hexes["features"]))
         self.assertTrue(all("decimalLongitude" not in feature["properties"] for feature in hexes["features"]))
         self.assertTrue(all(feature["geometry"]["type"] == "Polygon" for feature in hexes["features"]))
+        for feature in hexes["features"]:
+            ring = feature["geometry"]["coordinates"][0]
+            signed_area = sum(
+                ring[index][0] * ring[index + 1][1]
+                - ring[index + 1][0] * ring[index][1]
+                for index in range(len(ring) - 1)
+            ) / 2
+            self.assertLess(signed_area, -1e-12)
 
     def test_asgs_null_outside_australia_feature_is_not_published(self):
         boundaries = load_asgs_boundaries(
-            RAW_ROOT / "abs" / "asgs4_states_generalised_2026_0p005.geojson"
+            RAW_ROOT / "abs" / "asgs4_states_2026_0p005.geojson"
         )
 
         self.assertEqual(len(boundaries), 9)
         self.assertNotIn("Z", {feature["properties"]["STATE_CODE_2026"] for feature in boundaries})
         self.assertTrue(all(feature["geometry"] is not None for feature in boundaries))
+        nsw = next(f for f in boundaries if f["properties"]["STATE_CODE_2026"] == "1")
+        longitudes = []
+
+        def collect_longitudes(value):
+            if isinstance(value, list):
+                if len(value) >= 2 and all(isinstance(item, (int, float)) for item in value[:2]):
+                    longitudes.append(value[0])
+                else:
+                    for child in value:
+                        collect_longitudes(child)
+
+        collect_longitudes(nsw["geometry"]["coordinates"])
+        self.assertLessEqual(min(longitudes), 141.1)
+
+        def signed_area(ring):
+            return sum(
+                ring[index][0] * ring[index + 1][1]
+                - ring[index + 1][0] * ring[index][1]
+                for index in range(len(ring) - 1)
+            ) / 2
+
+        for feature in boundaries:
+            geometry = feature["geometry"]
+            polygons = [geometry["coordinates"]] if geometry["type"] == "Polygon" else geometry["coordinates"]
+            for polygon in polygons:
+                outer_area = signed_area(polygon[0])
+                self.assertGreater(abs(outer_area), 1e-12, feature["properties"]["STATE_NAME_2026"])
+                self.assertLess(outer_area, 0, feature["properties"]["STATE_NAME_2026"])
+                for hole in polygon[1:]:
+                    hole_area = signed_area(hole)
+                    self.assertGreater(abs(hole_area), 1e-12, feature["properties"]["STATE_NAME_2026"])
+                    self.assertGreater(hole_area, 0, feature["properties"]["STATE_NAME_2026"])
+                    self.assertLess(abs(hole_area), abs(outer_area), feature["properties"]["STATE_NAME_2026"])
 
     def test_public_data_build_is_compact_and_contains_only_aggregated_ala_origins(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -140,6 +181,29 @@ class DerivedOutputContractTests(unittest.TestCase):
             self.assertTrue(all("decimalLatitude" not in f["properties"] for f in hex_data["features"]))
             self.assertTrue(all("decimalLongitude" not in f["properties"] for f in hex_data["features"]))
             self.assertLessEqual(sum(path.stat().st_size for path in output_dir.iterdir()), 3_000_000)
+
+            with (output_dir / "ala_resource_profile.csv").open(encoding="utf-8", newline="") as stream:
+                resources = list(csv.DictReader(stream))
+            self.assertEqual([int(row["resource_order"]) for row in resources], list(range(10)))
+            root_counts = [int(row["root_accessions"]) for row in resources]
+            self.assertEqual(root_counts, sorted(root_counts, reverse=True))
+
+            with (output_dir / "ala_coordinate_coverage.csv").open(encoding="utf-8", newline="") as stream:
+                coordinate_rows = list(csv.DictReader(stream))
+            self.assertEqual([int(row["coordinate_order"]) for row in coordinate_rows], list(range(10)))
+            coordinate_shares = [float(row["map_coordinate_share_pct"]) for row in coordinate_rows]
+            self.assertEqual(coordinate_shares, sorted(coordinate_shares, reverse=True))
+
+            with (output_dir / "kingspark_family_records.csv").open(encoding="utf-8", newline="") as stream:
+                family_rows = list(csv.DictReader(stream))
+            self.assertEqual([int(row["family_order"]) for row in family_rows], list(range(len(family_rows))))
+            actual_family_order = [(int(row["record_count"]), row["family"]) for row in family_rows]
+            expected_family_order = sorted(
+                (item for item in actual_family_order if item[1] != "Other families"),
+                key=lambda item: (-item[0], item[1]),
+            )
+            expected_family_order.extend(item for item in actual_family_order if item[1] == "Other families")
+            self.assertEqual(actual_family_order, expected_family_order)
 
             with (output_dir / "plantbank_family_treemap.csv").open(encoding="utf-8") as stream:
                 treemap = list(csv.DictReader(stream))

@@ -1,8 +1,9 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "A state and territory choropleth of known registered botanical gardens and arboreta per million residents. The grouped Other Territories feature is shown neutrally because it combines four non-contiguous territories.",
-  "width": "container",
+  "width": 700,
   "height": 370,
+  "params": [{"name": "linkedState", "value": null}],
   "projection": {
     "type": "conicEqualArea",
     "center": [132, -25],
@@ -34,6 +35,10 @@
       "mark": {"type": "geoshape", "stroke": "#fffdf7", "strokeWidth": 0.9},
       "encoding": {
         "shape": {"field": "geometry", "type": "geojson"},
+        "opacity": {
+          "condition": {"test": "linkedState === null || datum.properties.state === linkedState", "value": 1},
+          "value": 0.18
+        },
         "color": {
           "field": "properties.facilities_per_million",
           "type": "quantitative",
@@ -55,10 +60,14 @@
         "format": {"type": "json", "property": "features"}
       },
       "transform": [{"filter": "datum.properties.comparison_eligible === true"}],
-      "mark": {"type": "text", "fontSize": 11, "fontWeight": 600, "color": "#16372e", "stroke": "#f8f6ef", "strokeWidth": 2, "strokeJoin": "round"},
+      "mark": {"type": "text", "fontSize": 11, "fontWeight": 600, "color": "#16372e", "stroke": "#f8f6ef", "strokeWidth": 0.65, "strokeJoin": "round"},
       "encoding": {
         "longitude": {"field": "properties.label_longitude", "type": "quantitative"},
         "latitude": {"field": "properties.label_latitude", "type": "quantitative"},
+        "opacity": {
+          "condition": {"test": "linkedState === null || datum.properties.state === linkedState", "value": 1},
+          "value": 0.18
+        },
         "text": {"field": "properties.state_abbreviation", "type": "nominal"},
         "tooltip": [
           {"field": "properties.state", "type": "nominal", "title": "Jurisdiction"},

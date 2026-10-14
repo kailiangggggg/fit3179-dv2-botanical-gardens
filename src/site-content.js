@@ -1,0 +1,237 @@
+export const pageStory = {
+  title: "Beyond the Garden Gate",
+  subtitle: "How Australia’s botanical gardens protect plant diversity",
+  snapshot: "14 October 2026",
+  hero: {
+    kicker: "AUSTRALIA · BOTANICAL CONSERVATION",
+    titleLines: ["Beyond the", "Garden Gate"],
+    lede:
+      "A national register maps known gardens and arboreta. Public collection records offer narrower views of the plants and wild seed origins documented beyond their gates.",
+    limitation:
+      "No single source measures conservation success. These records describe different places, specimens and accessions—not a complete census or proof of impact.",
+  },
+  metrics: [
+    { value: "182", label: "known register features", source: "Geoscience Australia · 2026 snapshot" },
+    { value: "120", label: "Botanic Gardens", source: "GA register" },
+    { value: "62", label: "Arboretums", source: "GA register" },
+  ],
+  jurisdictions: [
+    "New South Wales",
+    "Victoria",
+    "Queensland",
+    "Western Australia",
+    "South Australia",
+    "Australian Capital Territory",
+    "Northern Territory",
+    "Tasmania",
+  ],
+  jurisdictions: [
+    "New South Wales",
+    "Victoria",
+    "Queensland",
+    "Western Australia",
+    "South Australia",
+    "Australian Capital Territory",
+    "Northern Territory",
+    "Tasmania",
+  ],
+  sections: [
+    {
+      id: "footprint",
+      index: "01",
+      navLabel: "A national footprint",
+      eyebrow: "MAP & REGISTER",
+      title: "A national footprint",
+      question: "Where are the known gardens and arboreta—and how do their registered sites differ?",
+      intro:
+        "Geoscience Australia’s register records 182 features: 120 Botanic Gardens and 62 Arboretums. Their locations show the reach of a known network; circle area carries the reported site footprint.",
+      paragraphs: [
+        "A register entry is not a guarantee that every facility is represented. Reported hectares describe a registered footprint, not planted area, public access, the size of a collection or conservation capacity.",
+        "Raw counts and population-standardised rates answer different questions. ACT moves from sixth by count to first by facilities per million residents; the Northern Territory moves from a tie at 7.5 to second. These rates describe register density, not how easy a garden is to reach.",
+        "Registered site areas have a long tail: the Arboretum range extends from about half a hectare to 3,739 hectares. The box plot uses a logarithmic axis so the smaller sites remain visible beside the largest outlier.",
+      ],
+      transition:
+        "Locations and land area describe the network’s footprint. Collection records tell a narrower story, and their record types need to stay separate.",
+      chartIds: ["V01", "V02", "V03", "V04"],
+    },
+    {
+      id: "records",
+      index: "02",
+      navLabel: "What records show",
+      eyebrow: "COLLECTION RECORDS",
+      title: "What records show",
+      question: "Which plants and dates appear in the public collection datasets?",
+      intro:
+        "A seed-bank accession, a living specimen and a preserved herbarium voucher are different records. Together they show parts of a documentation system, not a comparable league table of institutions.",
+      paragraphs: [
+        "Ten licensed Atlas of Living Australia seed-bank archives contain 119,278 event rows. Of these, 58,562 are top-level accession events; linked child events are excluded from the accession counts. The paired view compares each resource’s accession and taxon-ID coverage, not total bank holdings or standardised species richness.",
+        "The GBIF PlantBank dataset contains 10,609 records, all classified as living specimens. Of these, 10,599 have a family name and 9,689 have a usable year from 1960 to 2015. Myrtaceae accounts for 3,240 family-identified records. Those are indexed records, not a count of current living plants or annual additions.",
+        "Kings Park contributes a separate GBIF dataset of 20,647 preserved herbarium specimens. Its family counts describe voucher records—not living plants or seed accessions—and its occurrence rows have no usable collection years.",
+        "The BGANZ and CHABG published 2023 report supplies context only: its survey covered 26 mixed respondent organisations and reported 45 of 49 Myrtle Rust National Action Plan priority species represented. This is a respondent-survey baseline, not a census of Australian gardens or a measure of conservation outcomes.",
+      ],
+      transition:
+        "The seed-bank archive also records where some accessions began. Its coordinate and date coverage varies by resource, so the mapped sample needs its own context.",
+      chartIds: ["V05", "V06", "V07", "V08", "V09"],
+    },
+    {
+      id: "origins",
+      index: "03",
+      navLabel: "Beyond the gate",
+      eyebrow: "WILD COLLECTION ORIGINS",
+      title: "Beyond the garden gate",
+      question: "Where were the geocoded seed-bank accessions collected?",
+      intro:
+        "The origin map shows collection places recorded in ten licensed ALA resources. It is deliberately different from the facility maps: these shapes mark broad wild collection origins, not gardens or receiving seed banks.",
+      paragraphs: [
+        "The map filter retains 38,773 top-level accessions with an Australian country code and coordinates inside the national map extent. Their locations are grouped into 100-kilometre equal-area hexagons. Published cells contain 38,099 records; 674 records in cells below five are suppressed.",
+        "Coordinate completeness ranges from 100% in the George Brown Darwin Botanic Gardens Seed Bank archive to 0% in the Alice Springs Desert Park archive. The percentage measures metadata available in this snapshot, not how representative each resource is geographically.",
+        "The decade histogram covers 33,765 top-level accessions with a usable year across six resources. Four resources have no usable top-level year. Its bars show the dates in the files, not annual collecting activity or a continuous history.",
+      ],
+      transition:
+        "The map and date charts describe the part of the archive that can be located and dated. They do not show where that material was stored or what conservation results followed.",
+      chartIds: ["V10", "V11", "V12", "V13"],
+    },
+    {
+      id: "evidence",
+      index: "04",
+      navLabel: "Evidence & sources",
+      eyebrow: "CONCLUSION & SOURCES",
+      title: "What the evidence supports",
+      question: "What can these records tell us—and where does their evidence stop?",
+      intro:
+        "A known register, living-specimen records, herbarium vouchers and seed-bank accessions each illuminate a different part of botanical conservation.",
+      paragraphs: [
+        "The register shows where known facilities sit and how their reported footprints vary. The collection datasets show which records contributors have published. The origin map shows a generalized subset of collection places.",
+        "None of these sources measures every garden, all plants held, public access, or conservation impact. Read them as separate evidence layers: each makes one part of the picture visible and leaves other questions open.",
+      ],
+      transition:
+        "Sources, licences, filters and limitations are listed below so readers can trace what each chart includes.",
+      chartIds: [],
+    },
+  ],
+  takeaways: [
+    "The national register contains 182 known facilities, but it is not a complete census.",
+    "Living specimens, preserved herbarium vouchers and seed accessions describe different record types.",
+    "The seed-origin map and date charts show only the portions of the ALA archives with usable coordinates and years.",
+  ],
+  sources: [
+    {
+      category: "GA",
+      label: "Botanical Gardens and Arboretums register",
+      publisher: "Geoscience Australia",
+      url: "https://services.ga.gov.au/gis/rest/services/Botanical_Gardens_and_Arboretums/MapServer/0?f=pjson",
+      license: "CC BY 4.0; fields filtered for the charts",
+    },
+    {
+      category: "ABS",
+      label: "National, state and territory population, March 2026",
+      publisher: "Australian Bureau of Statistics",
+      url: "https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/mar-2026",
+      license: "CC BY 4.0; ERP used as the population denominator",
+    },
+    {
+      category: "ABS",
+      label: "ASGS Edition 4 digital boundaries",
+      publisher: "Australian Bureau of Statistics",
+      url: "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-asgs/edition-4-july-2026-june-2031/access-and-downloads/digital-boundary-files",
+      license: "CC BY 4.0; geometries simplified and reoriented for D3",
+    },
+    {
+      category: "ALA",
+      label: "National Seed Bank (dr21985)",
+      publisher: "Atlas of Living Australia",
+      url: "https://collections.ala.org.au/public/show/dr21985",
+      license: "CC BY 3.0 AU; top-level accession events only",
+    },
+    {
+      category: "ALA",
+      label: "Tasmanian Seed Conservation Centre (dr21986)",
+      publisher: "Atlas of Living Australia",
+      url: "https://collections.ala.org.au/public/show/dr21986",
+      license: "CC BY 3.0 AU; top-level accession events only",
+    },
+    {
+      category: "ALA",
+      label: "George Brown Darwin Botanic Gardens Seed Bank (dr21988)",
+      publisher: "Atlas of Living Australia",
+      url: "https://collections.ala.org.au/public/show/dr21988",
+      license: "CC BY 3.0 AU; top-level accession events only",
+    },
+    {
+      category: "ALA",
+      label: "WA Seed Centre, Kings Park (dr21991)",
+      publisher: "Atlas of Living Australia",
+      url: "https://collections.ala.org.au/public/show/dr21991",
+      license: "CC BY 3.0 AU; top-level accession events only",
+    },
+    {
+      category: "ALA",
+      label: "WA Seed Centre, Kensington (dr21992)",
+      publisher: "Atlas of Living Australia",
+      url: "https://collections.ala.org.au/public/show/dr21992",
+      license: "CC BY 3.0 AU; top-level accession events only",
+    },
+    {
+      category: "ALA",
+      label: "Greening Australia (dr21993)",
+      publisher: "Atlas of Living Australia",
+      url: "https://collections.ala.org.au/public/show/dr21993",
+      license: "CC BY 3.0 AU; top-level accession events only",
+    },
+    {
+      category: "ALA",
+      label: "Brisbane Botanic Gardens Seed Bank (dr22131)",
+      publisher: "Atlas of Living Australia",
+      url: "https://collections.ala.org.au/public/show/dr22131",
+      license: "CC BY 3.0 AU; top-level accession events only",
+    },
+    {
+      category: "ALA",
+      label: "South Australian Seed Conservation Centre (dr23109)",
+      publisher: "Atlas of Living Australia",
+      url: "https://collections.ala.org.au/public/show/dr23109",
+      license: "CC BY 3.0 AU; top-level accession events only",
+    },
+    {
+      category: "ALA",
+      label: "Australian PlantBank (dr23110)",
+      publisher: "Atlas of Living Australia",
+      url: "https://collections.ala.org.au/public/show/dr23110",
+      license: "CC BY 3.0 AU; top-level accession events only",
+    },
+    {
+      category: "ALA",
+      label: "Alice Springs Desert Park (dr28420)",
+      publisher: "Atlas of Living Australia",
+      url: "https://collections.ala.org.au/public/show/dr28420",
+      license: "CC BY 3.0 AU; top-level accession events only",
+    },
+    {
+      category: "GBIF",
+      label: "PlantBank Records dataset",
+      publisher: "GBIF · Royal Botanic Gardens & Domain Trust",
+      url: "https://www.gbif.org/dataset/8805b51e-d8e8-41d0-8976-d653d39c7a91",
+      license: "CC BY 4.0; LIVING_SPECIMEN records only",
+    },
+    {
+      category: "GBIF",
+      label: "Kings Park Botanical Gardens dataset",
+      publisher: "GBIF · WA Botanic Gardens and Parks Authority",
+      url: "https://www.gbif.org/dataset/e80ff7bd-2c75-4ecb-bb5c-fde9d1bd1cd8",
+      license: "CC BY 4.0; PRESERVED_SPECIMEN records only",
+    },
+    {
+      category: "BGANZ",
+      label: "Myrtle Rust survey of Australian ex situ collections · 2023 report",
+      publisher: "BGANZ / CHABG",
+      url: "https://www.bganz.org.au/wp-content/uploads/2025/04/Myrtle-Rust-Survey-Supplemental-Final-Report-Dec-2023-Public-release.pdf",
+      license: "Workbook reuse licence not established; published report cited for aggregate context only",
+    },
+  ],
+};
+
+pageStory.navigation = pageStory.sections.map(({ id, index, navLabel }) => ({
+  href: `#${id}`,
+  index,
+  label: navLabel,
+}));

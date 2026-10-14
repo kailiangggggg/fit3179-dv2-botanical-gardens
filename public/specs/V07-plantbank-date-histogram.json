@@ -2,7 +2,7 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "Counts PlantBank living-specimen records with a usable recorded year by decade. The dates describe this dataset's records, not annual acquisitions or the current living collection.",
   "data": {"url": "../data/plantbank_year_histogram.csv", "format": {"type": "csv"}},
-  "width": "container",
+  "width": 700,
   "height": 250,
   "mark": {"type": "bar", "color": "#3c735a", "cornerRadiusTopLeft": 2, "cornerRadiusTopRight": 2},
   "encoding": {
