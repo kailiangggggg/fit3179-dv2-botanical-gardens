@@ -1,0 +1,35 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Compares registered facility area distributions between Botanic Gardens and Arboretums. The horizontal axis is logarithmic because areas range from about half a hectare to nearly 3,740 hectares.",
+  "data": {"url": "../data/facility_areas.csv", "format": {"type": "csv"}},
+  "width": "container",
+  "height": 185,
+  "mark": {"type": "boxplot", "extent": 1.5, "ticks": true, "outliers": {"filled": true, "size": 24}},
+  "encoding": {
+    "x": {
+      "field": "area_hectares",
+      "type": "quantitative",
+      "scale": {"type": "log", "domain": [0.4, 5000]},
+      "axis": {"title": "Registered footprint (hectares, log scale)", "grid": true, "format": "~s"}
+    },
+    "y": {
+      "field": "feature_subtype",
+      "type": "nominal",
+      "sort": ["Botanic Garden", "Arboretum"],
+      "axis": {"title": null, "labelFontSize": 13}
+    },
+    "color": {
+      "field": "feature_subtype",
+      "type": "nominal",
+      "scale": {"domain": ["Botanic Garden", "Arboretum"], "range": ["#176247", "#b56637"]},
+      "legend": null
+    },
+    "tooltip": [
+      {"field": "feature_name", "type": "nominal", "title": "Facility"},
+      {"field": "feature_subtype", "type": "nominal", "title": "Register type"},
+      {"field": "area_hectares", "type": "quantitative", "title": "Registered area (ha)", "format": ",.1f"},
+      {"field": "state", "type": "nominal", "title": "State / territory"}
+    ]
+  },
+  "config": {"view": {"stroke": null}, "boxplot": {"median": {"color": "#17372e", "strokeWidth": 2}}}
+}

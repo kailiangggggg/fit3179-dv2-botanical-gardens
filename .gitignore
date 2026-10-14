@@ -1,0 +1,16 @@
+node_modules/
+.pnpm-store/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.playwright/
+playwright-report/
+test-results/
+dist/
+tmp/
+/data/raw/
+.vite/
+.DS_Store
+Thumbs.db

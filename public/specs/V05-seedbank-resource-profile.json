@@ -1,0 +1,45 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Paired dot panels summarize the indexed top-level accessions and distinct taxon identifiers in ten licensed Australian Virtual Seed Bank resources. Different resource sizes describe indexed coverage, not total collections or bank performance.",
+  "vconcat": [
+    {
+      "data": {"url": "../data/ala_resource_profile.csv", "format": {"type": "csv"}},
+      "width": "container",
+      "height": {"step": 19},
+      "layer": [
+        {"mark": {"type": "point", "filled": true, "size": 54, "color": "#8b6c27"}},
+        {"mark": {"type": "text", "align": "left", "baseline": "middle", "dx": 7, "fontSize": 11, "color": "#34443a"}, "encoding": {"text": {"field": "root_accessions", "type": "quantitative", "format": ",.0f"}}}
+      ],
+      "encoding": {
+        "x": {"field": "root_accessions", "type": "quantitative", "scale": {"type": "log", "domain": [10, 40000]}, "axis": {"title": "Top-level accession records · log scale", "values": [10, 100, 1000, 10000], "labelExpr": "datum.value >= 1000 ? datum.value/1000 + 'k' : datum.value"}},
+        "y": {"field": "resource_short", "type": "ordinal", "sort": {"field": "root_accessions", "order": "descending"}, "axis": {"title": null, "labelLimit": 210, "labelFontSize": 11}},
+        "tooltip": [
+          {"field": "resource_name", "type": "nominal", "title": "ALA resource"},
+          {"field": "root_accessions", "type": "quantitative", "title": "Top-level accessions", "format": ",.0f"},
+          {"field": "child_event_rows_excluded", "type": "quantitative", "title": "Linked child-event rows excluded", "format": ",.0f"}
+        ]
+      }
+    },
+    {
+      "data": {"url": "../data/ala_resource_profile.csv", "format": {"type": "csv"}},
+      "width": "container",
+      "height": {"step": 19},
+      "layer": [
+        {"mark": {"type": "point", "filled": true, "size": 54, "color": "#496b62"}},
+        {"mark": {"type": "text", "align": "left", "baseline": "middle", "dx": 7, "fontSize": 11, "color": "#34443a"}, "encoding": {"text": {"field": "distinct_taxon_ids", "type": "quantitative", "format": ",.0f"}}}
+      ],
+      "encoding": {
+        "x": {"field": "distinct_taxon_ids", "type": "quantitative", "scale": {"type": "log", "domain": [1, 10000]}, "axis": {"title": "Distinct taxon identifiers · log scale", "values": [1, 10, 100, 1000, 10000], "labelExpr": "datum.value >= 1000 ? datum.value/1000 + 'k' : datum.value"}},
+        "y": {"field": "resource_short", "type": "ordinal", "sort": {"field": "root_accessions", "order": "descending"}, "axis": {"title": null, "labelLimit": 210, "labelFontSize": 11}},
+        "tooltip": [
+          {"field": "resource_name", "type": "nominal", "title": "ALA resource"},
+          {"field": "distinct_taxon_ids", "type": "quantitative", "title": "Distinct taxon IDs", "format": ",.0f"},
+          {"field": "root_accessions", "type": "quantitative", "title": "Top-level accessions", "format": ",.0f"}
+        ]
+      }
+    }
+  ],
+  "resolve": {"scale": {"x": "independent", "y": "shared"}},
+  "spacing": 28,
+  "config": {"view": {"stroke": null}}
+}

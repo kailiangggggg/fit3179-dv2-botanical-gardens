@@ -1,0 +1,45 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Connects each standard Australian state or territory's rank by known registered facility count to its rank by facilities per million residents. Rank 1 is highest; Tasmania and the Northern Territory tie at 7.5 on raw count.",
+  "data": {"url": "../data/state_rank_comparison.csv", "format": {"type": "csv"}},
+  "width": "container",
+  "height": 300,
+  "mark": {"type": "line", "point": {"filled": true, "size": 70}, "strokeWidth": 2},
+  "encoding": {
+    "x": {
+      "field": "comparison",
+      "type": "ordinal",
+      "sort": ["Facility count", "Facilities per million"],
+      "axis": {"title": null, "labelAngle": 0, "labelFontSize": 12, "tickSize": 0, "domain": false}
+    },
+    "y": {
+      "field": "rank",
+      "type": "quantitative",
+      "scale": {"domain": [1, 8], "reverse": true},
+      "axis": {"title": "Rank (1 = highest)", "values": [1, 2, 3, 4, 5, 6, 7, 8], "grid": true}
+    },
+    "color": {
+      "field": "state",
+      "type": "nominal",
+      "title": "State / territory",
+      "scale": {
+        "domain": ["New South Wales", "Victoria", "Queensland", "Western Australia", "South Australia", "Australian Capital Territory", "Northern Territory", "Tasmania"],
+        "range": ["#176247", "#bc6c25", "#3b6e8f", "#75507b", "#a27a2c", "#417c78", "#c34f43", "#557339"]
+      },
+      "legend": {"orient": "bottom", "direction": "horizontal", "columns": 4, "labelLimit": 190}
+    },
+    "detail": {"field": "state", "type": "nominal"},
+    "tooltip": [
+      {"field": "state", "type": "nominal", "title": "State / territory"},
+      {"field": "comparison", "type": "nominal", "title": "Ranking by"},
+      {"field": "rank", "type": "quantitative", "title": "Rank", "format": ".1f"},
+      {"field": "facility_count", "type": "quantitative", "title": "Known facilities", "format": ",.0f"},
+      {"field": "facilities_per_million", "type": "quantitative", "title": "Facilities per million", "format": ".2f"}
+    ]
+  },
+  "transform": [
+    {"fold": ["facility_count_rank", "facility_rate_rank"], "as": ["rank_field", "rank"]},
+    {"calculate": "datum.rank_field === 'facility_count_rank' ? 'Facility count' : 'Facilities per million'", "as": "comparison"}
+  ],
+  "config": {"view": {"stroke": null}}
+}

@@ -1,0 +1,10 @@
+state_code,state,facility_count,population,facilities_per_million,comparison_eligible
+1,New South Wales,50,8670105,5.766942845559541,True
+2,Victoria,48,7154221,6.709325865108164,True
+3,Queensland,37,5739461,6.4465983826704285,True
+4,South Australia,10,1916836,5.216930399888149,True
+5,Western Australia,24,3096222,7.751382168332891,True
+6,Tasmania,3,580691,5.166258819234327,True
+7,Northern Territory,3,268899,11.156605268149008,True
+8,Australian Capital Territory,6,489668,12.253200127433281,True
+9,Other Territories,1,5047,,False

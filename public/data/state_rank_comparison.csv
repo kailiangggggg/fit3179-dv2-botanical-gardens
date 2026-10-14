@@ -1,0 +1,9 @@
+state_code,state,facility_count,population,facilities_per_million,facility_count_rank,facility_rate_rank,rank_change_after_rate
+1,New South Wales,50,8670105,5.766942845559541,1.0,6.0,-5.0
+2,Victoria,48,7154221,6.709325865108164,2.0,4.0,-2.0
+3,Queensland,37,5739461,6.4465983826704285,3.0,5.0,-2.0
+5,Western Australia,24,3096222,7.751382168332891,4.0,3.0,1.0
+4,South Australia,10,1916836,5.216930399888149,5.0,7.0,-2.0
+8,Australian Capital Territory,6,489668,12.253200127433281,6.0,1.0,5.0
+7,Northern Territory,3,268899,11.156605268149008,7.5,2.0,5.5
+6,Tasmania,3,580691,5.166258819234327,7.5,8.0,-0.5

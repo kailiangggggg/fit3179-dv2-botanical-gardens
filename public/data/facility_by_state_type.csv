@@ -1,0 +1,19 @@
+state_code,state,feature_subtype,facility_count
+1,New South Wales,Botanic Garden,30
+1,New South Wales,Arboretum,20
+2,Victoria,Botanic Garden,35
+2,Victoria,Arboretum,13
+3,Queensland,Botanic Garden,31
+3,Queensland,Arboretum,6
+4,South Australia,Botanic Garden,6
+4,South Australia,Arboretum,4
+5,Western Australia,Botanic Garden,11
+5,Western Australia,Arboretum,13
+6,Tasmania,Botanic Garden,1
+6,Tasmania,Arboretum,2
+7,Northern Territory,Botanic Garden,3
+7,Northern Territory,Arboretum,0
+8,Australian Capital Territory,Botanic Garden,2
+8,Australian Capital Territory,Arboretum,4
+9,Other Territories,Botanic Garden,1
+9,Other Territories,Arboretum,0

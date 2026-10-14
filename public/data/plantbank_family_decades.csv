@@ -1,0 +1,67 @@
+family,family_order,decade,decade_label,record_count
+Myrtaceae,0,1960,1960s,8
+Myrtaceae,0,1970,1970s,108
+Myrtaceae,0,1980,1980s,1843
+Myrtaceae,0,1990,1990s,443
+Myrtaceae,0,2000,2000s,490
+Myrtaceae,0,2010,2010s,145
+Fabaceae,1,1960,1960s,5
+Fabaceae,1,1970,1970s,83
+Fabaceae,1,1980,1980s,635
+Fabaceae,1,1990,1990s,390
+Fabaceae,1,2000,2000s,462
+Fabaceae,1,2010,2010s,103
+Proteaceae,2,1960,1960s,2
+Proteaceae,2,1970,1970s,39
+Proteaceae,2,1980,1980s,361
+Proteaceae,2,1990,1990s,150
+Proteaceae,2,2000,2000s,121
+Proteaceae,2,2010,2010s,56
+Asteraceae,3,1960,1960s,0
+Asteraceae,3,1970,1970s,3
+Asteraceae,3,1980,1980s,177
+Asteraceae,3,1990,1990s,122
+Asteraceae,3,2000,2000s,218
+Asteraceae,3,2010,2010s,100
+Poaceae,4,1960,1960s,0
+Poaceae,4,1970,1970s,0
+Poaceae,4,1980,1980s,56
+Poaceae,4,1990,1990s,29
+Poaceae,4,2000,2000s,100
+Poaceae,4,2010,2010s,36
+Casuarinaceae,5,1960,1960s,0
+Casuarinaceae,5,1970,1970s,5
+Casuarinaceae,5,1980,1980s,124
+Casuarinaceae,5,1990,1990s,51
+Casuarinaceae,5,2000,2000s,41
+Casuarinaceae,5,2010,2010s,1
+Malvaceae,6,1960,1960s,0
+Malvaceae,6,1970,1970s,20
+Malvaceae,6,1980,1980s,104
+Malvaceae,6,1990,1990s,15
+Malvaceae,6,2000,2000s,36
+Malvaceae,6,2010,2010s,24
+Rutaceae,7,1960,1960s,0
+Rutaceae,7,1970,1970s,4
+Rutaceae,7,1980,1980s,27
+Rutaceae,7,1990,1990s,5
+Rutaceae,7,2000,2000s,109
+Rutaceae,7,2010,2010s,33
+Orchidaceae,8,1960,1960s,0
+Orchidaceae,8,1970,1970s,0
+Orchidaceae,8,1980,1980s,2
+Orchidaceae,8,1990,1990s,4
+Orchidaceae,8,2000,2000s,95
+Orchidaceae,8,2010,2010s,64
+Solanaceae,9,1960,1960s,0
+Solanaceae,9,1970,1970s,8
+Solanaceae,9,1980,1980s,41
+Solanaceae,9,1990,1990s,9
+Solanaceae,9,2000,2000s,63
+Solanaceae,9,2010,2010s,20
+Other families,10,1960,1960s,0
+Other families,10,1970,1970s,65
+Other families,10,1980,1980s,950
+Other families,10,1990,1990s,435
+Other families,10,2000,2000s,521
+Other families,10,2010,2010s,522

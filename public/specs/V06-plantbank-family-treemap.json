@@ -1,0 +1,38 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "A treemap of GBIF PlantBank living-specimen records by recorded plant family. Rectangle area represents record count; the largest family is highlighted. This is an indexed record profile, not a count of all plants held.",
+  "data": {"url": "../data/plantbank_family_treemap.csv", "format": {"type": "csv"}},
+  "width": "container",
+  "height": 360,
+  "layer": [
+    {
+      "mark": {"type": "rect", "stroke": "#f8f6ee", "strokeWidth": 2},
+      "encoding": {
+        "x": {"field": "x0", "type": "quantitative", "scale": {"domain": [0, 1000], "nice": false}, "axis": null},
+        "x2": {"field": "x1"},
+        "y": {"field": "y0", "type": "quantitative", "scale": {"domain": [0, 600], "nice": false}, "axis": null},
+        "y2": {"field": "y1"},
+        "color": {"condition": {"test": "datum.family === 'Myrtaceae'", "value": "#b56637"}, "value": "#66866f"},
+        "tooltip": [
+          {"field": "family", "type": "nominal", "title": "Plant family"},
+          {"field": "record_count", "type": "quantitative", "title": "Living-specimen records", "format": ",.0f"},
+          {"field": "share", "type": "quantitative", "title": "Share of records with a family", "format": ".1%"}
+        ]
+      }
+    },
+    {
+      "transform": [{"filter": "datum.x1 - datum.x0 > 85 && datum.y1 - datum.y0 > 34"}],
+      "mark": {"type": "text", "fontSize": 12, "fontWeight": 600, "color": "#fffdf7", "lineBreak": "\n"},
+      "encoding": {
+        "x": {"field": "label_x", "type": "quantitative", "scale": {"domain": [0, 1000], "nice": false}, "axis": null},
+        "y": {"field": "label_y", "type": "quantitative", "scale": {"domain": [0, 600], "nice": false}, "axis": null},
+        "text": {"field": "family", "type": "nominal"},
+        "tooltip": [
+          {"field": "family", "type": "nominal", "title": "Plant family"},
+          {"field": "record_count", "type": "quantitative", "title": "Living-specimen records", "format": ",.0f"}
+        ]
+      }
+    }
+  ],
+  "config": {"view": {"stroke": null}}
+}

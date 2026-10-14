@@ -1,0 +1,43 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Shows the share of top-level accession records from each licensed ALA resource with a valid Australia-coded coordinate pair inside the national map extent. This qualifies the partial sample shown in the origin hexbin map.",
+  "data": {"url": "../data/ala_coordinate_coverage.csv", "format": {"type": "csv"}},
+  "width": "container",
+  "height": 260,
+  "autosize": {"type": "fit-x", "contains": "padding"},
+  "layer": [
+    {
+      "mark": {"type": "bar", "color": "#83936b", "height": 13},
+      "encoding": {
+        "x": {"field": "map_coordinate_share_pct", "type": "quantitative", "scale": {"domain": [0, 100]}},
+        "x2": {"datum": 0},
+        "y": {"field": "resource_short", "type": "ordinal", "sort": {"field": "map_coordinate_share_pct", "order": "descending"}, "axis": {"title": null, "labelLimit": 210, "labelFontSize": 11}}
+      }
+    },
+    {
+      "mark": {"type": "point", "filled": true, "size": 58, "color": "#314b39"},
+      "encoding": {
+        "x": {"field": "map_coordinate_share_pct", "type": "quantitative", "scale": {"domain": [0, 100]}},
+        "y": {"field": "resource_short", "type": "ordinal", "sort": {"field": "map_coordinate_share_pct", "order": "descending"}, "axis": {"title": null, "labelLimit": 210, "labelFontSize": 11}}
+      }
+    },
+    {
+      "mark": {"type": "text", "align": "left", "baseline": "middle", "dx": 8, "fontSize": 11, "color": "#34443a"},
+      "encoding": {
+        "x": {"field": "map_coordinate_share_pct", "type": "quantitative", "scale": {"domain": [0, 100]}},
+        "y": {"field": "resource_short", "type": "ordinal", "sort": {"field": "map_coordinate_share_pct", "order": "descending"}, "axis": {"title": null, "labelLimit": 210, "labelFontSize": 11}},
+        "text": {"field": "map_coordinate_share_pct", "type": "quantitative", "format": ".1f"}
+      }
+    }
+  ],
+  "encoding": {
+    "x": {"axis": {"title": "Records with map-ready coordinates (%)", "values": [0, 25, 50, 75, 100], "grid": true}},
+    "tooltip": [
+      {"field": "resource_name", "type": "nominal", "title": "ALA resource"},
+      {"field": "map_eligible_coordinates", "type": "quantitative", "title": "Map-ready records", "format": ",.0f"},
+      {"field": "root_accessions", "type": "quantitative", "title": "Top-level accessions", "format": ",.0f"},
+      {"field": "map_coordinate_share_pct", "type": "quantitative", "title": "Map-ready share (%)", "format": ".1f"}
+    ]
+  },
+  "config": {"view": {"stroke": null}}
+}

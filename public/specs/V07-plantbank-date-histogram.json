@@ -1,0 +1,17 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Counts PlantBank living-specimen records with a usable recorded year by decade. The dates describe this dataset's records, not annual acquisitions or the current living collection.",
+  "data": {"url": "../data/plantbank_year_histogram.csv", "format": {"type": "csv"}},
+  "width": "container",
+  "height": 250,
+  "mark": {"type": "bar", "color": "#3c735a", "cornerRadiusTopLeft": 2, "cornerRadiusTopRight": 2},
+  "encoding": {
+    "x": {"field": "decade_label", "type": "ordinal", "sort": {"field": "decade", "order": "ascending"}, "axis": {"title": "Recorded year, grouped by decade", "labelAngle": 0, "labelFontSize": 12}},
+    "y": {"field": "record_count", "type": "quantitative", "axis": {"title": "Living-specimen records", "format": "~s", "grid": true}},
+    "tooltip": [
+      {"field": "decade_label", "type": "ordinal", "title": "Decade"},
+      {"field": "record_count", "type": "quantitative", "title": "Records with a usable year", "format": ",.0f"}
+    ]
+  },
+  "config": {"view": {"stroke": null}}
+}

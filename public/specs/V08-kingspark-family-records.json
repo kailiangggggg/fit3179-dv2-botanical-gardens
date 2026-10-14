@@ -1,0 +1,22 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Ranks plant families by preserved herbarium specimen records in the Kings Park GBIF dataset. These voucher records are distinct from living specimens and seed accessions.",
+  "data": {"url": "../data/kingspark_family_records.csv", "format": {"type": "csv"}},
+  "width": "container",
+  "height": 286,
+  "autosize": {"type": "fit-x", "contains": "padding"},
+  "layer": [
+    {"mark": {"type": "point", "filled": true, "size": 62}, "encoding": {"color": {"condition": {"test": "datum.family === 'Myrtaceae'", "value": "#b56637"}, "value": "#496b62"}}},
+    {"mark": {"type": "text", "align": "left", "baseline": "middle", "dx": 8, "fontSize": 11, "color": "#34443a"}, "encoding": {"text": {"field": "record_count", "type": "quantitative", "format": ",.0f"}}}
+  ],
+  "encoding": {
+    "x": {"field": "record_count", "type": "quantitative", "scale": {"domain": [0, 6000]}, "axis": {"title": "Preserved specimen records", "format": "~s", "grid": true}},
+    "y": {"field": "family", "type": "ordinal", "sort": {"field": "record_count", "order": "descending"}, "axis": {"title": null, "labelLimit": 170}},
+    "tooltip": [
+      {"field": "family", "type": "nominal", "title": "Plant family"},
+      {"field": "record_count", "type": "quantitative", "title": "Herbarium specimen records", "format": ",.0f"},
+      {"field": "share", "type": "quantitative", "title": "Share of records with a family", "format": ".1%"}
+    ]
+  },
+  "config": {"view": {"stroke": null}}
+}

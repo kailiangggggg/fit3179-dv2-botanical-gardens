@@ -1,0 +1,17 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Distribution by decade of top-level Australian Virtual Seed Bank accession records with a usable year. Dates are incomplete and uneven across resources; the chart does not show annual seed-bank activity.",
+  "data": {"url": "../data/ala_year_histogram.csv", "format": {"type": "csv"}},
+  "width": "container",
+  "height": 250,
+  "mark": {"type": "bar", "color": "#a27a2c", "cornerRadiusTopLeft": 2, "cornerRadiusTopRight": 2},
+  "encoding": {
+    "x": {"field": "decade_label", "type": "ordinal", "sort": {"field": "decade", "order": "ascending"}, "axis": {"title": "Recorded collection year, grouped by decade", "labelAngle": 0, "labelFontSize": 12}},
+    "y": {"field": "record_count", "type": "quantitative", "axis": {"title": "Dated top-level accessions", "format": "~s", "grid": true}},
+    "tooltip": [
+      {"field": "decade_label", "type": "ordinal", "title": "Decade"},
+      {"field": "record_count", "type": "quantitative", "title": "Dated top-level accessions", "format": ",.0f"}
+    ]
+  },
+  "config": {"view": {"stroke": null}}
+}

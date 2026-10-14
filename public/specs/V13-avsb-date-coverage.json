@@ -1,0 +1,35 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Shows the earliest and latest usable top-level accession years in each ALA resource that supplies a parseable year. Resources with no usable year are named in the accompanying caption; ranges describe source coverage, not activity.",
+  "data": {"url": "../data/ala_date_coverage.csv", "format": {"type": "csv"}},
+  "transform": [{"filter": "datum.dated_accessions > 0"}],
+  "width": "container",
+  "height": 220,
+  "autosize": {"type": "fit-x", "contains": "padding"},
+  "layer": [
+    {
+      "mark": {"type": "rule", "stroke": "#a27a2c", "strokeWidth": 4, "strokeCap": "round"},
+      "encoding": {"x": {"field": "earliest_recorded_year", "type": "quantitative"}, "x2": {"field": "latest_recorded_year"}}
+    },
+    {
+      "mark": {"type": "point", "filled": true, "size": 48, "color": "#463a20"},
+      "encoding": {"x": {"field": "earliest_recorded_year", "type": "quantitative"}}
+    },
+    {
+      "mark": {"type": "point", "filled": true, "size": 48, "color": "#463a20"},
+      "encoding": {"x": {"field": "latest_recorded_year", "type": "quantitative"}}
+    }
+  ],
+  "encoding": {
+    "x": {"field": "earliest_recorded_year", "type": "quantitative", "scale": {"domain": [1960, 2026]}, "axis": {"title": "Earliest to latest usable collection year", "values": [1960, 1980, 2000, 2020], "format": "d", "grid": true}},
+    "y": {"field": "resource_short", "type": "ordinal", "sort": {"field": "earliest_recorded_year", "order": "ascending"}, "axis": {"title": null, "labelLimit": 210, "labelFontSize": 11}},
+    "tooltip": [
+      {"field": "resource_name", "type": "nominal", "title": "ALA resource"},
+      {"field": "earliest_recorded_year", "type": "quantitative", "title": "Earliest usable year", "format": "d"},
+      {"field": "latest_recorded_year", "type": "quantitative", "title": "Latest usable year", "format": "d"},
+      {"field": "dated_accessions", "type": "quantitative", "title": "Top-level accessions with a year", "format": ",.0f"},
+      {"field": "root_accessions", "type": "quantitative", "title": "Top-level accessions", "format": ",.0f"}
+    ]
+  },
+  "config": {"view": {"stroke": null}}
+}

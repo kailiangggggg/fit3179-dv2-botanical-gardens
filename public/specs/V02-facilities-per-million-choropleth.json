@@ -1,0 +1,70 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "A state and territory choropleth of known registered botanical gardens and arboreta per million residents. The grouped Other Territories feature is shown neutrally because it combines four non-contiguous territories.",
+  "width": "container",
+  "height": 370,
+  "projection": {
+    "type": "conicEqualArea",
+    "center": [132, -25],
+    "parallels": [-18, -36]
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "../data/state_rates.geojson",
+        "format": {"type": "json", "property": "features"}
+      },
+      "mark": {"type": "geoshape", "fill": "#e9e7df", "stroke": "#fffdf7", "strokeWidth": 0.9},
+      "encoding": {
+        "shape": {"field": "geometry", "type": "geojson"},
+        "tooltip": [
+          {"field": "properties.state", "type": "nominal", "title": "Jurisdiction"},
+          {"field": "properties.facility_count", "type": "quantitative", "title": "Known register facilities", "format": ",.0f"},
+          {"field": "properties.population", "type": "quantitative", "title": "ERP at 31 March 2026", "format": ",.0f"},
+          {"field": "properties.facilities_per_million", "type": "quantitative", "title": "Facilities per million", "format": ".2f"}
+        ]
+      }
+    },
+    {
+      "data": {
+        "url": "../data/state_rates.geojson",
+        "format": {"type": "json", "property": "features"}
+      },
+      "transform": [{"filter": "datum.properties.comparison_eligible === true"}],
+      "mark": {"type": "geoshape", "stroke": "#fffdf7", "strokeWidth": 0.9},
+      "encoding": {
+        "shape": {"field": "geometry", "type": "geojson"},
+        "color": {
+          "field": "properties.facilities_per_million",
+          "type": "quantitative",
+          "title": "Facilities per million residents",
+          "scale": {"domain": [5, 13], "scheme": "greens"},
+          "legend": {"orient": "bottom", "direction": "horizontal", "format": ".0f"}
+        },
+        "tooltip": [
+          {"field": "properties.state", "type": "nominal", "title": "Jurisdiction"},
+          {"field": "properties.facility_count", "type": "quantitative", "title": "Known register facilities", "format": ",.0f"},
+          {"field": "properties.population", "type": "quantitative", "title": "ERP at 31 March 2026", "format": ",.0f"},
+          {"field": "properties.facilities_per_million", "type": "quantitative", "title": "Facilities per million", "format": ".2f"}
+        ]
+      }
+    },
+    {
+      "data": {
+        "url": "../data/state_rates.geojson",
+        "format": {"type": "json", "property": "features"}
+      },
+      "transform": [{"filter": "datum.properties.comparison_eligible === true"}],
+      "mark": {"type": "text", "fontSize": 11, "fontWeight": 600, "color": "#16372e", "stroke": "#f8f6ef", "strokeWidth": 2, "strokeJoin": "round"},
+      "encoding": {
+        "longitude": {"field": "properties.label_longitude", "type": "quantitative"},
+        "latitude": {"field": "properties.label_latitude", "type": "quantitative"},
+        "text": {"field": "properties.state_abbreviation", "type": "nominal"},
+        "tooltip": [
+          {"field": "properties.state", "type": "nominal", "title": "Jurisdiction"},
+          {"field": "properties.facilities_per_million", "type": "quantitative", "title": "Facilities per million", "format": ".2f"}
+        ]
+      }
+    }
+  ]
+}
