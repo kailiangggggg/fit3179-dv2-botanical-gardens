@@ -50,6 +50,6 @@ The origin map uses 100 km equal-area hexagons and suppresses cells with fewer t
 
 The production build is the `site-dist/` directory. The GitHub Actions workflow in `.github/workflows/pages.yml` builds and deploys that directory to GitHub Pages when `main` is updated.
 
-Public site: <https://kailiangggggg.github.io/fit3179-dv2-botanical-gardens/>. The deployment was verified in a fresh, unauthenticated browser context. Desktop and mobile first-screen and full-page screenshots are in [`docs/`](docs/).
+Public site: <https://kailiangggggg.github.io/fit3179-dv2-botanical-gardens/>. The deployment was verified in a fresh, unauthenticated browser context. Desktop and mobile first-screen and full-page screenshots are in [`docs/`](docs/). The V03 legend can be filtered with the mouse or keyboard (Tab, Enter/Space); selecting All jurisdictions clears the filter.
 
 The physical hand-drawn sketch, student name/ID/studio details, course interview and final review of the AI-use acknowledgement against the Moodle task instructions remain student actions.
