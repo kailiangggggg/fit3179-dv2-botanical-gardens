@@ -163,7 +163,7 @@ function renderJurisdictionControl() {
     select.append(option);
   }
 
-  const help = element("p", "linked-state-help", "Choose a jurisdiction to highlight both views. The legend filters rank lines; click blank chart space to clear that filter.");
+  const help = element("p", "linked-state-help", "Choose a jurisdiction to highlight both views. Press Enter or Space on a legend label to filter rank lines; choose All jurisdictions to clear the filter.");
   help.id = "jurisdiction-focus-help";
   const status = element("span", "linked-state-status", "Showing all jurisdictions.");
   status.id = "jurisdiction-focus-status";

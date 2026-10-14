@@ -40,7 +40,7 @@ The complete machine-readable What / Why / How contracts, field types, transform
 
 - **What:** Raw GA counts and March 2026 ERP-normalized rates for the same eight jurisdictions.
 - **Why:** Show which jurisdictions change order after population adjustment.
-- **How:** Lines join two rank positions; rank 1 is highest. TAS and NT share 7.5 on facility count. Click a legend item to focus its series, or use the linked jurisdiction selector to highlight the same state on V02; hover gives exact values.
+- **How:** Lines join two rank positions; rank 1 is highest. TAS and NT share 7.5 on facility count. Click or keyboard-activate a legend label (Enter/Space) to filter its series; choose All jurisdictions to clear the filter. The linked selector highlights the same state on V02; hover gives exact values.
 - **Limit:** Rank is ordinal and hides magnitude; the rate map and labels carry the values.
 
 ### V04 — Footprint distributions

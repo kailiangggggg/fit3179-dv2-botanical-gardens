@@ -45,4 +45,6 @@ test("the chart manifest explains hover and linked-jurisdiction interactions", (
   assert.match(chartById.get("V02").how.interaction, /linked.*V03/i);
   assert.match(chartById.get("V03").how.interaction, /linked.*V02/i);
   assert.match(chartById.get("V03").how.interaction, /click legend.*focus/i);
+  assert.match(chartById.get("V03").how.interaction, /Enter or Space/i);
+  assert.match(chartById.get("V03").how.interaction, /All jurisdictions to clear/i);
 });

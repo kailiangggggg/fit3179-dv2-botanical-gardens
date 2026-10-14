@@ -6,6 +6,7 @@ import "./site.css";
 
 import { renderPage } from "./content-renderer.js";
 import { adaptChartSpec, localizeDataUrls, resolveChartSpecUrl } from "./chart-runtime.js";
+import { formatLegendActionName, isLegendActivationKey } from "./legend-accessibility.js";
 import { getActiveSectionId } from "./navigation-runtime.js";
 
 const storyRoot = document.querySelector("#story-root");
@@ -46,6 +47,26 @@ async function renderChart(figure, chart, registerChartView) {
   let activeWidth = 0;
   let requestedWidth;
   let rendering = false;
+  let activeLegendLabel = null;
+
+  function updateLegendAccessibility() {
+    if (chart.id !== "V03") return;
+    for (const label of mount.querySelectorAll("svg .role-legend-label")) {
+      const name = label.textContent.trim();
+      if (!name) continue;
+      label.setAttribute("tabindex", "0");
+      label.setAttribute("role", "button");
+      label.setAttribute("aria-label", formatLegendActionName(name));
+      label.setAttribute("aria-pressed", String(name === activeLegendLabel));
+    }
+  }
+
+  function legendLabelForTarget(target) {
+    const label = target.closest(".role-legend-label");
+    if (label) return label.textContent.trim() || null;
+    const symbol = target.closest(".role-legend-symbol");
+    return symbol?.parentElement?.querySelector(".role-legend-label")?.textContent.trim() ?? null;
+  }
 
   async function renderAtWidth(availableWidth, force = false) {
     requestedWidth = { width: Math.max(240, Math.floor(availableWidth)), force };
@@ -57,6 +78,7 @@ async function renderChart(figure, chart, registerChartView) {
       requestedWidth = undefined;
       if (activeView && !forceRender && Math.abs(width - activeWidth) < 32) continue;
       if (activeView) registerChartView(chart.id, undefined);
+      if (activeView && chart.id === "V03") activeLegendLabel = null;
       activeView?.finalize();
       activeView = undefined;
       mount.replaceChildren();
@@ -91,6 +113,7 @@ async function renderChart(figure, chart, registerChartView) {
         activeView = result.view;
         activeWidth = width;
         await registerChartView(chart.id, activeView);
+        updateLegendAccessibility();
         mount.setAttribute("aria-busy", "false");
         mount.classList.add("chart-ready");
       } catch (error) {
@@ -102,22 +125,37 @@ async function renderChart(figure, chart, registerChartView) {
     rendering = false;
   }
 
-  registerChartResetter(chart.id, () => renderAtWidth(mount.clientWidth, true));
+  registerChartResetter(chart.id, () => {
+    activeLegendLabel = null;
+    return renderAtWidth(mount.clientWidth, true);
+  });
   if (chart.id === "V03") {
+    mount.addEventListener("keydown", (event) => {
+      if (!isLegendActivationKey(event.key)) return;
+      const label = event.target instanceof Element ? event.target.closest(".role-legend-label") : null;
+      if (!label || !mount.contains(label)) return;
+      event.preventDefault();
+      const clickTarget = label.querySelector("text") ?? label;
+      clickTarget.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+    });
     mount.addEventListener("click", (event) => {
       if (!(event.target instanceof Element) || !event.target.closest("svg")) return;
       const inLegend = Boolean(event.target.closest(".role-legend-entry"));
       const onMark = Boolean(event.target.closest(".role-mark"));
       if (inLegend) {
+        activeLegendLabel = legendLabelForTarget(event.target);
         setLinkedJurisdiction(null, {
           preserveLegend: true,
           statusText: "The ranking chart is filtered by its legend; the rate map shows all jurisdictions.",
         });
+        updateLegendAccessibility();
       } else if (!onMark) {
+        activeLegendLabel = null;
         setLinkedJurisdiction(null, {
           preserveLegend: true,
           statusText: "The legend filter is cleared; all jurisdictions are shown.",
         });
+        updateLegendAccessibility();
       }
     });
   }
