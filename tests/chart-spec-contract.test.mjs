@@ -26,9 +26,15 @@ const accessionHistogram = JSON.parse(
 const plantbankTreemap = JSON.parse(
   readFileSync(new URL("../public/specs/V06-plantbank-family-treemap.json", import.meta.url), "utf8"),
 );
+const originHexbin = JSON.parse(
+  readFileSync(new URL("../public/specs/V10-avsb-origin-hexbin.json", import.meta.url), "utf8"),
+);
 const manifest = JSON.parse(
   readFileSync(new URL("../public/specs/chart-manifest.json", import.meta.url), "utf8"),
 );
+const siteStyles = readFileSync(new URL("../src/site.css", import.meta.url), "utf8");
+const rankLine = rankChart.layer.find((layer) => layer.mark?.type === "line");
+const rankEndpointLabels = rankChart.layer.find((layer) => layer.encoding?.text?.field === "state_abbreviation");
 
 const cvdMatrices = [
   [[0.152286, 1.052583, -0.204868], [0.114503, 0.786281, 0.099216], [-0.003882, -0.048116, 1.051998]],
@@ -68,6 +74,17 @@ function relativeLuminance(hex) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
+function contrastRatio(first, second) {
+  const [lighter, darker] = [relativeLuminance(first), relativeLuminance(second)].sort((a, b) => b - a);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+function cssColorToken(name) {
+  const match = siteStyles.match(new RegExp(`${name}\\s*:\\s*(#[0-9a-f]{6})`, "i"));
+  assert.ok(match, `Missing CSS color token ${name}`);
+  return match[1];
+}
+
 function minimumCvdSeparation(palette) {
   return Math.min(...cvdMatrices.map((matrix) => {
     const colors = palette.map((color) => rgbToLab(simulateColorVision(color, matrix)));
@@ -91,7 +108,8 @@ test("V02 and V03 share a state-focus signal and V01 highlights hovered faciliti
   assert.equal(facilitiesMap.params?.[0]?.name, "linkedState");
   assert.equal(rankChart.params?.[0]?.name, "linkedState");
   assert.match(facilitiesMap.layer[1].encoding.opacity.condition.test, /linkedState/);
-  assert.match(rankChart.encoding.opacity.condition.test, /linkedState/);
+  assert.match(rankLine.encoding.opacity.condition.test, /linkedState/);
+  assert.match(rankEndpointLabels.encoding.opacity.condition.test, /linkedState/);
   assert.equal(symbolMap.layer[1].params?.[0]?.select?.on, "pointerover");
   assert.ok(symbolMap.layer[1].encoding.opacity.condition);
 });
@@ -110,24 +128,47 @@ test("V01 labels proportional-symbol area and V02 separates rate colour from cou
   assert.equal(facilitiesMap.layer[1].encoding.color.scale.scheme, "blues");
 });
 
-test("V03 binds its state legend to a filter selection", () => {
-  const legendSelection = rankChart.params?.find((param) => param.name === "stateLegend");
-  assert.equal(legendSelection?.bind, "legend");
-  assert.equal(legendSelection?.select?.toggle, true);
-  assert.ok(rankChart.transform.some((transform) => transform.filter?.param === "stateLegend"));
+test("V02 state labels switch polarity to preserve text contrast on dark rate fills", () => {
+  const labels = facilitiesMap.layer[2];
+  assert.equal(labels.mark.fontSize, 12);
+  assert.equal(labels.encoding.color.condition.test, "datum.properties.facilities_per_million >= 10");
+  assert.equal(labels.encoding.color.condition.value.toLowerCase(), "#fffdf7");
+  assert.equal(labels.encoding.color.value.toLowerCase(), "#16372e");
+  assert.equal(labels.encoding.stroke.condition.value.toLowerCase(), "#16372e");
+});
+
+test("small interface text colors meet AA contrast on paper and chart surfaces", () => {
+  for (const token of ["--quiet", "--ochre"]) {
+    const color = cssColorToken(token);
+    for (const background of [cssColorToken("--paper"), cssColorToken("--surface")]) {
+      assert.ok(contrastRatio(color, background) >= 4.5, `${token} fails on ${background}`);
+    }
+  }
+});
+
+test("V03 legend filters share an explicit selection state across lines and endpoint labels", () => {
+  const selectedStates = rankChart.params?.find((param) => param.name === "selectedStates");
+  const filter = rankChart.transform.find((transform) => typeof transform.filter === "string")?.filter;
+  assert.deepEqual(selectedStates?.value, []);
+  assert.match(filter, /length\(selectedStates\) === 0/);
+  assert.match(filter, /indexof\(selectedStates, datum\.state\) >= 0/);
+  assert.equal(rankEndpointLabels.transform[0].filter, "datum.comparison === 'Facilities per million'");
 });
 
 test("V03 repeats jurisdiction identity with endpoint shape for grayscale reading", () => {
-  const shape = rankChart.encoding.shape;
+  const shape = rankLine.encoding.shape;
   assert.equal(shape.field, "state");
   assert.equal(shape.legend.title, "State / territory");
   assert.equal(shape.scale.domain.length, 8);
   assert.equal(shape.scale.range.length, 8);
-  assert.equal(rankChart.encoding.color.legend.title, "State / territory");
+  assert.equal(rankLine.encoding.color.legend.title, "State / territory");
+  assert.equal(rankEndpointLabels.transform[0].filter, "datum.comparison === 'Facilities per million'");
+  assert.equal(rankEndpointLabels.encoding.text.field, "state_abbreviation");
+  assert.equal(rankEndpointLabels.mark.align, "left");
 });
 
 test("V03 jurisdiction colors stay distinct under CVD simulation and visible on paper", () => {
-  const palette = rankChart.encoding.color.scale.range;
+  const palette = rankLine.encoding.color.scale.range;
   assert.equal(palette.length, 8);
   for (const color of palette) {
     const luminance = relativeLuminance(color);
@@ -159,6 +200,17 @@ test("V09 shows the full heatmap range and reserves white labels for dark cells"
   assert.deepEqual(countEncoding.legend.values, [0, 500, 1000, 1500, 2000]);
   assert.equal(labelColor.condition.test, "datum.record_count >= 1400");
   assert.equal(labelColor.condition.value.toLowerCase(), "#fffdf7");
+});
+
+test("V10 exposes sparse bins with a monotonic sequential range and matching legend ticks", () => {
+  const color = originHexbin.layer[1].encoding.color;
+  const [low, high] = color.scale.range;
+  assert.deepEqual(color.scale.domain, [5, 2629]);
+  assert.equal(color.scale.type, "log");
+  assert.equal(color.scale.clamp, true);
+  assert.deepEqual(color.legend.values, [5, 20, 100, 500, 2629]);
+  assert.ok(relativeLuminance(low) > relativeLuminance(high));
+  assert.ok(contrastRatio(low, "#f1efe7") >= 3, `${low} is too close to the land background`);
 });
 
 test("the chart manifest explains hover and linked-jurisdiction interactions", () => {

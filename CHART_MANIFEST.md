@@ -33,14 +33,14 @@ The complete machine-readable What / Why / How contracts, field types, transform
 
 - **What:** GA facility counts joined to ABS ERP for 31 March 2026 and ASGS Edition 4 code 1–8 boundaries.
 - **Why:** Compare known register counts after adjusting for resident population.
-- **How:** State polygons; sequential luminance encodes facilities per million; a linked jurisdiction selector focuses the same state on V03. The tooltip reveals numerator and denominator. Other Territories is neutral on the map.
+- **How:** State polygons; sequential blue luminance encodes facilities per million. State labels use dark text on light fills and white text with a dark outline on the two darkest fills. A linked jurisdiction selector focuses the same state on V03. The tooltip reveals numerator and denominator. Other Territories is neutral on the map.
 - **Limit:** It is register density, not access. The code-9 denominator groups Norfolk Island, Jervis Bay, Christmas Island and Cocos (Keeling) Islands; its 198.14 per-million value is not in the comparison.
 
 ### V03 — Count-to-rate rank change
 
 - **What:** Raw GA counts and March 2026 ERP-normalized rates for the same eight jurisdictions.
 - **Why:** Show which jurisdictions change order after population adjustment.
-- **How:** Lines join two rank positions; rank 1 is highest. TAS and NT share 7.5 on facility count. Contrast-tested color and distinct endpoint shapes redundantly identify each jurisdiction; the full-name keyboard-operable legend filters series with click or Enter/Space. Choose All jurisdictions to clear the filter. The linked selector highlights the same state on V02; hover gives exact values.
+- **How:** Lines join two rank positions; rank 1 is highest. TAS and NT share 7.5 on facility count. Short state abbreviations label the rate-rank endpoints; contrast-tested color and distinct endpoint shapes provide redundant cues. The full-name keyboard-operable legend filters series with click or Enter/Space. Choose All jurisdictions to clear the filter. The linked selector highlights the same state on V02; hover gives exact values.
 - **Limit:** Rank is ordinal and hides magnitude; the rate map and labels carry the values.
 
 ### V04 — Footprint distributions
@@ -90,7 +90,7 @@ The complete machine-readable What / Why / How contracts, field types, transform
 
 - **What:** 38,773 root accessions with AU country code and valid coordinates inside the national map extent from ten CC BY resources.
 - **Why:** Show the broad geography of wild material represented in participating seed-bank records.
-- **How:** Spherical Australian Albers equal-area projection and 100 km-wide hex bins. Cells below five records are suppressed; 38,099 records appear in published bins.
+- **How:** Spherical Australian Albers equal-area projection and 100 km-wide hex bins. A logarithmic scale maps the published 5–2,629 record range to a monotonic teal-to-blue luminance ramp; legend ticks are 5, 20, 100, 500 and 2,629. The lightest cells remain distinct from neutral land. Cells below five records are suppressed; 38,099 records appear in published bins.
 - **Limit:** Origins are not garden or receiving-bank locations. Coordinate coverage varies by resource.
 
 ### V11 — ALA accession years

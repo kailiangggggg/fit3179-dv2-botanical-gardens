@@ -252,7 +252,7 @@
 
         "projection": "Australian conic equal-area using ASGS Edition 4 boundaries.",
 
-        "color": "Light-to-dark blue for population-normalized register rates; neutral grey marks Other Territories with no comparative rate. Green elsewhere is reserved for record-frequency scales.",
+        "color": "Light-to-dark blue for population-normalized register rates; state labels use dark ink on light fills and white ink with a dark outline on the two darkest fills. Neutral grey marks Other Territories with no comparative rate.",
 
         "ordering": "Continuous scale, state abbreviations and full-name tooltips.",
 
@@ -338,9 +338,9 @@
 
         "projection": "Not applicable.",
 
-        "color": "Eight contrast-tested categorical colors; distinct endpoint shapes reinforce grayscale reading, and the full-name legend supports keyboard filtering.",
+        "color": "Eight contrast-tested categorical colors and distinct endpoint shapes identify jurisdictions; short state abbreviations label every rate-rank endpoint, and the full-name legend supports keyboard filtering.",
 
-        "ordering": "1 is highest; the raw-count TAS/NT tie is shown at midrank 7.5.",
+        "ordering": "1 is highest; the raw-count TAS/NT tie is shown at midrank 7.5. Short abbreviations sit beside the rate-rank endpoints.",
 
         "aggregation": "No aggregation beyond the two jurisdiction-level rankings.",
 
@@ -948,7 +948,9 @@
 
         "projection": "Australian conic equal-area; bins are created in the same projection.",
 
-        "color": "Single-hue olive-to-green sequential ramp; darker cells mean more records.",
+        "color": "Teal-to-blue sequential luminance ramp over the published 5–2,629 count range; the lightest cell contrasts at least 3:1 with the neutral land background. Darker cells mean more records.",
+
+        "scale": "Logarithmic transform for strongly right-skewed positive cell counts; legend ticks show 5, 20, 100, 500 and 2,629 records. Counts below five are suppressed, so no zero value is shown.",
 
         "ordering": "No ranking; map position carries geographic pattern.",
 
@@ -956,7 +958,7 @@
 
         "interaction": "Tooltip gives the aggregate count; no origin point or event identifier is exposed.",
 
-        "annotation": "Origins are not garden or receiving-bank locations; coordinate completeness varies by resource."
+        "annotation": "The colour scale compresses larger counts so sparse cells remain visible. Origins are not garden or receiving-bank locations; coordinate completeness varies by resource."
 
       }
 

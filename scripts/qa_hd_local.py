@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 URL = "http://127.0.0.1:4173/"
 OUT = ROOT / "tmp" / "hd-review"
 OUT.mkdir(parents=True, exist_ok=True)
-VIEWPORTS = ((320, 700), (390, 844), (768, 900), (1024, 768), (1280, 800), (1600, 1000))
+VIEWPORTS = ((320, 700), (390, 844), (768, 900), (1024, 768), (1280, 800), (1366, 768), (1600, 900))
 CHART_IDS = tuple(f"V{i:02}" for i in range(1, 14))
 
 
@@ -49,12 +49,11 @@ def wait_for_charts(page):
         if not mark_counts[chart_id]:
             raise AssertionError(f"{chart_id} rendered no marks")
         if chart_id == "V03":
-            symbols = frame.locator("svg .layer_1_marks path")
-            distinct_shapes = symbols.evaluate_all(
-                "paths => new Set(paths.map((path) => path.getAttribute('d'))).size"
+            abbreviations = frame.locator("svg text").evaluate_all(
+                "nodes => nodes.map((node) => node.textContent.trim()).filter((text) => /^(NSW|VIC|QLD|WA|SA|ACT|NT|TAS)$/.test(text))"
             )
-            if distinct_shapes < 8:
-                raise AssertionError(f"V03 does not show eight distinct endpoint shapes: {distinct_shapes}")
+            if len(set(abbreviations)) != 8:
+                raise AssertionError(f"V03 is missing direct rate-rank endpoint labels: {abbreviations}")
     return mark_counts
 
 
@@ -136,6 +135,63 @@ def check_treemap_label_contrast(page):
     return result
 
 
+def check_choropleth_label_contrast(page):
+    result = page.locator("#chart-mount-V02 svg").evaluate(
+        """svg => {
+          const names = {NSW:"New South Wales",VIC:"Victoria",QLD:"Queensland",SA:"South Australia",WA:"Western Australia",TAS:"Tasmania",NT:"Northern Territory",ACT:"Australian Capital Territory"};
+          const luminance = (color) => {
+            const rgb = color.match(/[\\d.]+/g)?.slice(0,3).map(Number);
+            if (!rgb || rgb.length !== 3) return null;
+            const linear = rgb.map((value) => { const channel=value/255; return channel<=0.04045?channel/12.92:((channel+0.055)/1.055)**2.4; });
+            return 0.2126*linear[0]+0.7152*linear[1]+0.0722*linear[2];
+          };
+          const ratio = (a,b) => { const x=luminance(a),y=luminance(b); return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05); };
+          const shapes=[...svg.querySelectorAll(".layer_1_marks path")];
+          const labels=[...svg.querySelectorAll(".layer_2_marks text")];
+          const measured=labels.map(label=>{
+            const abbreviation=label.textContent.trim(), state=names[abbreviation];
+            const shape=shapes.find(path=>(path.getAttribute("aria-label")||"").includes(`Jurisdiction: ${state};`));
+            if (!shape) return {abbreviation,contrast:null,missingShape:true};
+            const foreground=getComputedStyle(label).fill, background=getComputedStyle(shape).fill;
+            return {abbreviation,foreground,background,stroke:getComputedStyle(label).stroke,contrast:ratio(foreground,background)};
+          });
+          return {count:measured.length,minimum:Math.min(...measured.map(item=>item.contrast??0)),failures:measured.filter(item=>!item.contrast||item.contrast<4.5),labels:measured};
+        }"""
+    )
+    if result["count"] != 8 or result["failures"]:
+        raise AssertionError(f"V02 state-label contrast failed: {json.dumps(result)}")
+    return result
+
+
+def check_hexbin_visibility(page):
+    result = page.locator("#chart-mount-V10 svg").evaluate(
+        """svg => {
+          const luminance = (color) => {
+            const rgb = color.match(/[\\d.]+/g)?.slice(0,3).map(Number);
+            if (!rgb || rgb.length !== 3) return null;
+            const linear = rgb.map((value) => { const channel=value/255; return channel<=0.04045?channel/12.92:((channel+0.055)/1.055)**2.4; });
+            return 0.2126*linear[0]+0.7152*linear[1]+0.0722*linear[2];
+          };
+          const ratio = (a,b) => { const x=luminance(a),y=luminance(b); return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05); };
+          const background="rgb(241, 239, 231)";
+          const cells=[...svg.querySelectorAll(".layer_1_marks path")].map(path=>{
+            const label=path.getAttribute("aria-label")||"";
+            const count=Number(label.match(/Origin records per 100 km cell:\\s*([\\d,]+)/)?.[1]?.replaceAll(",",""));
+            const fill=getComputedStyle(path).fill;
+            return {count,fill,luminance:luminance(fill),contrast:ratio(fill,background)};
+          }).filter(cell=>Number.isFinite(cell.count));
+          const ordered=cells.slice().sort((a,b)=>a.count-b.count);
+          const reversals=ordered.slice(1).filter((cell,index)=>cell.luminance>ordered[index].luminance+0.00001);
+          const lightest=cells.reduce((best,cell)=>cell.luminance>best.luminance?cell:best,cells[0]);
+          const darkest=cells.reduce((best,cell)=>cell.luminance<best.luminance?cell:best,cells[0]);
+          return {count:cells.length,uniqueColors:new Set(cells.map(cell=>cell.fill)).size,lightest,darkest,minimumBackgroundContrast:Math.min(...cells.map(cell=>cell.contrast)),luminanceReversals:reversals.length};
+        }"""
+    )
+    if result["count"] < 500 or result["minimumBackgroundContrast"] < 3 or result["luminanceReversals"]:
+        raise AssertionError(f"V10 sequential visibility check failed: {json.dumps(result)}")
+    return result
+
+
 def check_interactions(browser):
     page = browser.new_page(viewport={"width": 1280, "height": 800})
     console_messages = []
@@ -167,11 +223,20 @@ def check_interactions(browser):
       return {
         mapSelected: opacity('#chart-mount-V02 .layer_1_marks path[aria-label*="Australian Capital Territory"]'),
         mapOther: opacity('#chart-mount-V02 .layer_1_marks path[aria-label*="Victoria"]'),
-        rankSelected: opacity('#chart-mount-V03 .layer_0_marks path[aria-label*="Australian Capital Territory"]'),
-        rankOther: opacity('#chart-mount-V03 .layer_0_marks path[aria-label*="Victoria"]')
+        rankSelected: opacity('#chart-mount-V03 svg .mark-symbol path[aria-label*="state: Australian Capital Territory"]'),
+        rankOther: opacity('#chart-mount-V03 svg .mark-symbol path[aria-label*="state: Victoria"]'),
+        rankLabelSelected: opacity('#chart-mount-V03 svg .mark-text text[aria-label*="state_abbreviation: ACT"]'),
+        rankLabelOther: opacity('#chart-mount-V03 svg .mark-text text[aria-label*="state_abbreviation: VIC"]')
       };
     }""")
-    if focus_opacity["mapSelected"] != 1 or focus_opacity["rankSelected"] != 1 or focus_opacity["mapOther"] >= 0.2 or focus_opacity["rankOther"] >= 0.2:
+    if (
+        focus_opacity["mapSelected"] != 1
+        or focus_opacity["rankSelected"] != 1
+        or focus_opacity["rankLabelSelected"] != 1
+        or focus_opacity["mapOther"] >= 0.2
+        or focus_opacity["rankOther"] >= 0.2
+        or focus_opacity["rankLabelOther"] >= 0.2
+    ):
         raise AssertionError(f"V02/V03 linked jurisdiction focus failed: {focus_opacity}")
     selector.select_option(label="All jurisdictions")
     page.wait_for_function('document.querySelector("#jurisdiction-focus-status")?.textContent.includes("All jurisdictions")')
@@ -180,9 +245,20 @@ def check_interactions(browser):
     legend.focus()
     page.keyboard.press("Space")
     page.wait_for_function('(el) => el.getAttribute("aria-pressed") === "true"', arg=legend.element_handle())
+    page.wait_for_function(
+        '(() => [...document.querySelectorAll("#chart-mount-V03 svg .mark-text text")].filter((node) => /^(NSW|VIC|QLD|WA|SA|ACT|NT|TAS)$/.test(node.textContent.trim())).length === 1)()'
+    )
     space_label = legend.get_attribute("aria-label")
+    page.evaluate("document.activeElement?.blur()")
+    selected_legend_style = legend.evaluate("el => { const text = el.querySelector('text'); return { fontWeight: getComputedStyle(text).fontWeight, textDecoration: getComputedStyle(text).textDecorationLine }; }")
+    if selected_legend_style["fontWeight"] != "700" or "underline" not in selected_legend_style["textDecoration"]:
+        raise AssertionError(f"Selected V03 legend item lacks a visible state: {selected_legend_style}")
+    legend.focus()
     legend.press("Enter")
     page.wait_for_function('(el) => el.getAttribute("aria-pressed") === "false"', arg=legend.element_handle())
+    page.wait_for_function(
+        '(() => [...document.querySelectorAll("#chart-mount-V03 svg .mark-text text")].filter((node) => /^(NSW|VIC|QLD|WA|SA|ACT|NT|TAS)$/.test(node.textContent.trim())).length === 8)()'
+    )
 
     page.evaluate("document.activeElement.blur(); window.scrollTo(0, 0)")
     page.keyboard.press("Tab")
@@ -206,7 +282,7 @@ def check_interactions(browser):
     if not fonts["sourceSans"] or not fonts["fraunces"]:
         raise AssertionError(f"A local typeface did not load: {fonts}")
 
-    result = {"marks": mark_counts, "tooltip": tooltip_text.replace("\n", " | "), "linkedFocus": focus_opacity, "keyboardFilter": space_label, "focus": focus, "fonts": fonts}
+    result = {"marks": mark_counts, "tooltip": tooltip_text.replace("\n", " | "), "linkedFocus": focus_opacity, "keyboardFilter": space_label, "selectedLegendStyle": selected_legend_style, "focus": focus, "fonts": fonts}
     page.close()
     if console_messages or failed_responses:
         raise AssertionError(f"Browser warnings/errors or failed requests: {console_messages}, {failed_responses}")
@@ -254,17 +330,23 @@ try:
             if console_messages or failed_responses:
                 raise AssertionError(f"Viewport {width}×{height} browser output: {console_messages}, {failed_responses}")
 
-            if width == 390:
+            if width in (390, 1024, 1280):
                 heatmap_contrast = check_heatmap_label_contrast(page)
             else:
                 heatmap_contrast = None
-            if width in (390, 1280):
+            if width in (390, 1024, 1280):
                 treemap_contrast = check_treemap_label_contrast(page)
             else:
                 treemap_contrast = None
+            if width in (1024, 1280):
+                choropleth_contrast = check_choropleth_label_contrast(page)
+                hexbin_visibility = check_hexbin_visibility(page)
+            else:
+                choropleth_contrast = None
+                hexbin_visibility = None
             page.evaluate("window.scrollTo(0, 0)")
             page.screenshot(path=str(OUT / f"screen-{width}x{height}.png"), animations="disabled")
-            if width in (390, 1280):
+            if width in (390, 1024, 1280, 1366, 1600):
                 page.screenshot(path=str(OUT / f"full-{width}.png"), full_page=True, animations="disabled")
                 for chart_id in CHART_IDS:
                     page.locator(f'.chart-entry[data-chart-id="{chart_id}"]').screenshot(
@@ -280,7 +362,7 @@ try:
                 )
                 v03.evaluate('(svg) => { svg.style.filter = ""; }')
                 grayscale_style.evaluate("style => style.remove()")
-            viewport_results.append({"viewport": f"{width}x{height}", **metrics, "marks": mark_counts, "heatmapContrast": heatmap_contrast, "treemapContrast": treemap_contrast})
+            viewport_results.append({"viewport": f"{width}x{height}", **metrics, "marks": mark_counts, "heatmapContrast": heatmap_contrast, "treemapContrast": treemap_contrast, "choroplethLabelContrast": choropleth_contrast, "hexbinVisibility": hexbin_visibility})
             page.close()
 
         reduced = browser.new_page(viewport={"width": 390, "height": 844}, reduced_motion="reduce")

@@ -144,7 +144,10 @@ async function renderChart(figure, chart, registerChartView) {
       const onMark = Boolean(event.target.closest(".role-mark"));
       if (inLegend) {
         const label = legendLabelForTarget(event.target);
-        if (label) activeLegendLabels = toggleLegendSelection(activeLegendLabels, label);
+        if (label) {
+          activeLegendLabels = toggleLegendSelection(activeLegendLabels, label);
+          activeView?.signal("selectedStates", [...activeLegendLabels]);
+        }
         setLinkedJurisdiction(null, {
           preserveLegend: true,
           statusText: "The ranking chart is filtered by its legend; the rate map shows all jurisdictions.",
@@ -152,6 +155,7 @@ async function renderChart(figure, chart, registerChartView) {
         updateLegendAccessibility();
       } else if (!onMark) {
         activeLegendLabels.clear();
+        activeView?.signal("selectedStates", []);
         setLinkedJurisdiction(null, {
           preserveLegend: true,
           statusText: "The legend filter is cleared; all jurisdictions are shown.",

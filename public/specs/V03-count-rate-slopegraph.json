@@ -6,58 +6,88 @@
   "height": 300,
   "params": [
     {"name": "linkedState", "value": null},
-    {"name": "stateLegend", "select": {"type": "point", "fields": ["state"], "toggle": true}, "bind": "legend"}
+    {"name": "selectedStates", "value": []}
   ],
-  "mark": {"type": "line", "point": {"filled": true, "size": 70}, "strokeWidth": 2},
-  "encoding": {
-    "x": {
-      "field": "comparison",
-      "type": "ordinal",
-      "sort": ["Facility count", "Facilities per million"],
-      "axis": {"title": null, "labelAngle": 0, "labelFontSize": 12, "tickSize": 0, "domain": false}
+  "layer": [
+    {
+      "mark": {"type": "line", "point": {"filled": true, "size": 70}, "strokeWidth": 2},
+      "encoding": {
+        "x": {
+          "field": "comparison",
+          "type": "ordinal",
+          "sort": ["Facility count", "Facilities per million"],
+          "axis": {"title": null, "labelAngle": 0, "labelFontSize": 12, "tickSize": 0, "domain": false}
+        },
+        "y": {
+          "field": "rank",
+          "type": "quantitative",
+          "scale": {"domain": [1, 8], "reverse": true},
+          "axis": {"title": "Rank (1 = highest)", "values": [1, 2, 3, 4, 5, 6, 7, 8], "grid": true}
+        },
+        "color": {
+          "field": "state",
+          "type": "nominal",
+          "title": "State / territory",
+          "scale": {
+            "domain": ["New South Wales", "Victoria", "Queensland", "Western Australia", "South Australia", "Australian Capital Territory", "Northern Territory", "Tasmania"],
+            "range": ["#005A8C", "#B77700", "#00734F", "#A34F79", "#8F6C00", "#2D759A", "#A53D1A", "#333333"]
+          },
+          "legend": {"title": "State / territory", "orient": "bottom", "direction": "horizontal", "columns": 4, "labelLimit": 190}
+        },
+        "detail": {"field": "state", "type": "nominal"},
+        "shape": {
+          "field": "state",
+          "type": "nominal",
+          "scale": {
+            "domain": ["New South Wales", "Victoria", "Queensland", "Western Australia", "South Australia", "Australian Capital Territory", "Northern Territory", "Tasmania"],
+            "range": ["circle", "square", "diamond", "triangle-up", "triangle-down", "cross", "triangle-right", "triangle-left"]
+          },
+          "legend": {"title": "State / territory", "orient": "bottom", "direction": "horizontal", "columns": 4, "labelLimit": 190}
+        },
+        "opacity": {
+          "condition": {"test": "linkedState === null || datum.state === linkedState", "value": 1},
+          "value": 0.14
+        },
+        "tooltip": [
+          {"field": "state", "type": "nominal", "title": "State / territory"},
+          {"field": "comparison", "type": "nominal", "title": "Ranking by"},
+          {"field": "rank", "type": "quantitative", "title": "Rank", "format": ".1f"},
+          {"field": "facility_count", "type": "quantitative", "title": "Known facilities", "format": ",.0f"},
+          {"field": "facilities_per_million", "type": "quantitative", "title": "Facilities per million", "format": ".2f"}
+        ]
+      }
     },
-    "y": {
-      "field": "rank",
-      "type": "quantitative",
-      "scale": {"domain": [1, 8], "reverse": true},
-      "axis": {"title": "Rank (1 = highest)", "values": [1, 2, 3, 4, 5, 6, 7, 8], "grid": true}
-    },
-    "color": {
-      "field": "state",
-      "type": "nominal",
-      "title": "State / territory",
-      "scale": {
-        "domain": ["New South Wales", "Victoria", "Queensland", "Western Australia", "South Australia", "Australian Capital Territory", "Northern Territory", "Tasmania"],
-        "range": ["#005A8C", "#B77700", "#00734F", "#A34F79", "#8F6C00", "#2D759A", "#A53D1A", "#333333"]
-      },
-      "legend": {"title": "State / territory", "orient": "bottom", "direction": "horizontal", "columns": 4, "labelLimit": 190}
-    },
-    "detail": {"field": "state", "type": "nominal"},
-    "shape": {
-      "field": "state",
-      "type": "nominal",
-      "scale": {
-        "domain": ["New South Wales", "Victoria", "Queensland", "Western Australia", "South Australia", "Australian Capital Territory", "Northern Territory", "Tasmania"],
-        "range": ["circle", "square", "diamond", "triangle-up", "triangle-down", "cross", "triangle-right", "triangle-left"]
-      },
-      "legend": {"title": "State / territory", "orient": "bottom", "direction": "horizontal", "columns": 4, "labelLimit": 190}
-    },
-    "opacity": {
-      "condition": {"test": "linkedState === null || datum.state === linkedState", "value": 1},
-      "value": 0.14
-    },
-    "tooltip": [
-      {"field": "state", "type": "nominal", "title": "State / territory"},
-      {"field": "comparison", "type": "nominal", "title": "Ranking by"},
-      {"field": "rank", "type": "quantitative", "title": "Rank", "format": ".1f"},
-      {"field": "facility_count", "type": "quantitative", "title": "Known facilities", "format": ",.0f"},
-      {"field": "facilities_per_million", "type": "quantitative", "title": "Facilities per million", "format": ".2f"}
-    ]
-  },
+    {
+      "transform": [
+        {"filter": "datum.comparison === 'Facilities per million'"}
+      ],
+      "mark": {"type": "text", "align": "left", "baseline": "middle", "dx": 8, "fontSize": 11, "fontWeight": 600, "color": "#173d31"},
+      "encoding": {
+        "x": {
+          "field": "comparison",
+          "type": "ordinal",
+          "sort": ["Facility count", "Facilities per million"],
+          "axis": null
+        },
+        "y": {
+          "field": "rank",
+          "type": "quantitative",
+          "scale": {"domain": [1, 8], "reverse": true},
+          "axis": null
+        },
+        "text": {"field": "state_abbreviation", "type": "nominal"},
+        "opacity": {
+          "condition": {"test": "linkedState === null || datum.state === linkedState", "value": 1},
+          "value": 0.14
+        }
+      }
+    }
+  ],
   "transform": [
     {"fold": ["facility_count_rank", "facility_rate_rank"], "as": ["rank_field", "rank"]},
     {"calculate": "datum.rank_field === 'facility_count_rank' ? 'Facility count' : 'Facilities per million'", "as": "comparison"},
-    {"filter": {"param": "stateLegend"}}
+    {"calculate": "datum.state === 'New South Wales' ? 'NSW' : datum.state === 'Victoria' ? 'VIC' : datum.state === 'Queensland' ? 'QLD' : datum.state === 'Western Australia' ? 'WA' : datum.state === 'South Australia' ? 'SA' : datum.state === 'Australian Capital Territory' ? 'ACT' : datum.state === 'Northern Territory' ? 'NT' : 'TAS'", "as": "state_abbreviation"},
+    {"filter": "length(selectedStates) === 0 || indexof(selectedStates, datum.state) >= 0"}
   ],
   "config": {"view": {"stroke": null}}
 }

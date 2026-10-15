@@ -31,7 +31,8 @@ test("the linked state control uses the jurisdictions in V03", () => {
   const rankChart = JSON.parse(
     readFileSync(new URL("../public/specs/V03-count-rate-slopegraph.json", import.meta.url), "utf8"),
   );
-  assert.deepEqual(pageStory.jurisdictions, rankChart.encoding.color.scale.domain);
+  const rankLine = rankChart.layer.find((layer) => layer.mark?.type === "line");
+  assert.deepEqual(pageStory.jurisdictions, rankLine.encoding.color.scale.domain);
   const renderer = readFileSync(new URL("../src/content-renderer.js", import.meta.url), "utf8");
   assert.match(renderer, /Press Enter or Space on a legend label/);
   assert.match(renderer, /All jurisdictions to clear the filter/);
