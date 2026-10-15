@@ -37,7 +37,11 @@ summary:focus-visible {
   outline-offset: 3px;
 }
 
-.chart-frame svg .role-legend-label[tabindex="0"] { cursor: pointer; }
+.chart-frame svg .role-legend-label[tabindex="0"],
+.chart-frame svg .role-legend-symbol {
+  cursor: pointer;
+  pointer-events: all !important;
+}
 .chart-frame svg .role-legend-label[tabindex="0"]:focus-visible text {
   fill: var(--green-dark) !important;
   font-weight: 700;

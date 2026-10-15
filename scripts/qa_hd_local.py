@@ -242,6 +242,18 @@ def check_interactions(browser):
     page.wait_for_function('document.querySelector("#jurisdiction-focus-status")?.textContent.includes("All jurisdictions")')
 
     legend = page.locator("#chart-mount-V03 .role-legend-label[role=button]").first
+    pointer_legend = page.locator("#chart-mount-V03 .role-legend-label[role=button]").first
+    pointer_legend.click(timeout=10000)
+    page.wait_for_function('(el) => el.getAttribute("aria-pressed") === "true"', arg=legend.element_handle())
+    page.wait_for_function(
+        '(() => [...document.querySelectorAll("#chart-mount-V03 svg .mark-text text")].filter((node) => /^(NSW|VIC|QLD|WA|SA|ACT|NT|TAS)$/.test(node.textContent.trim())).length === 1)()'
+    )
+    pointer_legend.click(timeout=10000)
+    page.wait_for_function('(el) => el.getAttribute("aria-pressed") === "false"', arg=legend.element_handle())
+    page.wait_for_function(
+        '(() => [...document.querySelectorAll("#chart-mount-V03 svg .mark-text text")].filter((node) => /^(NSW|VIC|QLD|WA|SA|ACT|NT|TAS)$/.test(node.textContent.trim())).length === 8)()'
+    )
+    pointer_filter = legend.get_attribute("aria-label")
     legend.focus()
     page.keyboard.press("Space")
     page.wait_for_function('(el) => el.getAttribute("aria-pressed") === "true"', arg=legend.element_handle())
@@ -282,7 +294,7 @@ def check_interactions(browser):
     if not fonts["sourceSans"] or not fonts["fraunces"]:
         raise AssertionError(f"A local typeface did not load: {fonts}")
 
-    result = {"marks": mark_counts, "tooltip": tooltip_text.replace("\n", " | "), "linkedFocus": focus_opacity, "keyboardFilter": space_label, "selectedLegendStyle": selected_legend_style, "focus": focus, "fonts": fonts}
+    result = {"marks": mark_counts, "tooltip": tooltip_text.replace("\n", " | "), "linkedFocus": focus_opacity, "pointerFilter": pointer_filter, "keyboardFilter": space_label, "selectedLegendStyle": selected_legend_style, "focus": focus, "fonts": fonts}
     page.close()
     if console_messages or failed_responses:
         raise AssertionError(f"Browser warnings/errors or failed requests: {console_messages}, {failed_responses}")
