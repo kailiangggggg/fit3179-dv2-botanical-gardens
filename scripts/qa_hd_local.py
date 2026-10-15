@@ -17,6 +17,7 @@ CHART_IDS = tuple(f"V{i:02}" for i in range(1, 14))
 
 
 def wait_for_charts(page):
+    page.wait_for_function("document.querySelectorAll('.chart-entry').length === 13", timeout=60000)
     figures = page.locator(".chart-entry")
     if figures.count() != 13:
         raise AssertionError(f"expected 13 chart groups, got {figures.count()}")
@@ -211,6 +212,7 @@ def check_interactions(browser):
     tooltip_text = page.locator(".vg-tooltip").inner_text()
     if "Facility" not in tooltip_text:
         raise AssertionError(f"V01 tooltip did not identify the facility: {tooltip_text}")
+    page.screenshot(path=str(OUT / "V01-hover-tooltip-1280.png"), animations="disabled")
 
     selector = page.locator("#jurisdiction-focus")
     selector.select_option(label="Australian Capital Territory")
@@ -238,6 +240,12 @@ def check_interactions(browser):
         or focus_opacity["rankLabelOther"] >= 0.2
     ):
         raise AssertionError(f"V02/V03 linked jurisdiction focus failed: {focus_opacity}")
+    page.locator('.chart-entry[data-chart-id="V02"]').screenshot(
+        path=str(OUT / "V02-linked-ACT-1280.png"), animations="disabled"
+    )
+    page.locator('.chart-entry[data-chart-id="V03"]').screenshot(
+        path=str(OUT / "V03-linked-ACT-1280.png"), animations="disabled"
+    )
     selector.select_option(label="All jurisdictions")
     page.wait_for_function('document.querySelector("#jurisdiction-focus-status")?.textContent.includes("All jurisdictions")')
 
@@ -248,12 +256,18 @@ def check_interactions(browser):
     page.wait_for_function(
         '(() => [...document.querySelectorAll("#chart-mount-V03 svg .mark-text text")].filter((node) => /^(NSW|VIC|QLD|WA|SA|ACT|NT|TAS)$/.test(node.textContent.trim())).length === 1)()'
     )
+    page.locator('.chart-entry[data-chart-id="V03"]').screenshot(
+        path=str(OUT / "V03-pointer-filter-NSW-1280.png"), animations="disabled"
+    )
     pointer_legend.click(timeout=10000)
     page.wait_for_function('(el) => el.getAttribute("aria-pressed") === "false"', arg=legend.element_handle())
     page.wait_for_function(
         '(() => [...document.querySelectorAll("#chart-mount-V03 svg .mark-text text")].filter((node) => /^(NSW|VIC|QLD|WA|SA|ACT|NT|TAS)$/.test(node.textContent.trim())).length === 8)()'
     )
     pointer_filter = legend.get_attribute("aria-label")
+    page.locator('.chart-entry[data-chart-id="V03"]').screenshot(
+        path=str(OUT / "V03-pointer-reset-1280.png"), animations="disabled"
+    )
     legend.focus()
     page.keyboard.press("Space")
     page.wait_for_function('(el) => el.getAttribute("aria-pressed") === "true"', arg=legend.element_handle())
@@ -261,6 +275,9 @@ def check_interactions(browser):
         '(() => [...document.querySelectorAll("#chart-mount-V03 svg .mark-text text")].filter((node) => /^(NSW|VIC|QLD|WA|SA|ACT|NT|TAS)$/.test(node.textContent.trim())).length === 1)()'
     )
     space_label = legend.get_attribute("aria-label")
+    page.locator('.chart-entry[data-chart-id="V03"]').screenshot(
+        path=str(OUT / "V03-keyboard-filter-NSW-1280.png"), animations="disabled"
+    )
     page.evaluate("document.activeElement?.blur()")
     selected_legend_style = legend.evaluate("el => { const text = el.querySelector('text'); return { fontWeight: getComputedStyle(text).fontWeight, textDecoration: getComputedStyle(text).textDecorationLine }; }")
     if selected_legend_style["fontWeight"] != "700" or "underline" not in selected_legend_style["textDecoration"]:
@@ -270,6 +287,9 @@ def check_interactions(browser):
     page.wait_for_function('(el) => el.getAttribute("aria-pressed") === "false"', arg=legend.element_handle())
     page.wait_for_function(
         '(() => [...document.querySelectorAll("#chart-mount-V03 svg .mark-text text")].filter((node) => /^(NSW|VIC|QLD|WA|SA|ACT|NT|TAS)$/.test(node.textContent.trim())).length === 8)()'
+    )
+    page.locator('.chart-entry[data-chart-id="V03"]').screenshot(
+        path=str(OUT / "V03-keyboard-reset-1280.png"), animations="disabled"
     )
 
     page.evaluate("document.activeElement.blur(); window.scrollTo(0, 0)")
