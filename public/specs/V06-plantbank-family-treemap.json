@@ -1,38 +1,227 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "A treemap of GBIF PlantBank living-specimen records by recorded plant family. Rectangle area represents record count; the largest family is highlighted. This is an indexed record profile, not a count of all plants held.",
-  "data": {"url": "../data/plantbank_family_treemap.csv", "format": {"type": "csv"}},
+  "description": "Real family-to-genus hierarchy in the PlantBank indexed living-specimen dataset. Family and nested genus rectangle areas encode record count; pooled remainders are labelled as groups, not taxa, and an indexed record does not equal a currently held plant. Family parent categories are named in the legend rather than overprinting small nested rectangles.",
+  "data": {
+    "url": "../data/plantbank_family_treemap.csv",
+    "format": {
+      "type": "csv"
+    }
+  },
   "width": 700,
   "height": 360,
   "layer": [
     {
-      "mark": {"type": "rect", "stroke": "#f8f6ee", "strokeWidth": 2},
+      "transform": [
+        {
+          "filter": "datum.level === 'genus'"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "stroke": "#f8f6ee",
+        "strokeWidth": 2
+      },
       "encoding": {
-        "x": {"field": "x0", "type": "quantitative", "scale": {"domain": [0, 1000], "nice": false}, "axis": null},
-        "x2": {"field": "x1"},
-        "y": {"field": "y0", "type": "quantitative", "scale": {"domain": [0, 600], "nice": false}, "axis": null},
-        "y2": {"field": "y1"},
-        "color": {"condition": {"test": "datum.family === 'Myrtaceae'", "value": "#b56637"}, "value": "#66866f"},
+        "x": {
+          "field": "x0",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              1000
+            ],
+            "nice": false
+          },
+          "axis": null
+        },
+        "x2": {
+          "field": "x1"
+        },
+        "y": {
+          "field": "y0",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              600
+            ],
+            "nice": false
+          },
+          "axis": null
+        },
+        "y2": {
+          "field": "y1"
+        },
+        "color": {
+          "field": "colour_group",
+          "type": "nominal",
+          "title": "Family",
+          "scale": {
+            "domain": [
+              "Myrtaceae",
+              "Fabaceae",
+              "Proteaceae",
+              "Asteraceae",
+              "Poaceae",
+              "Other families"
+            ],
+            "range": [
+              "#75507b",
+              "#4d7861",
+              "#356f90",
+              "#c19a62",
+              "#8ba199",
+              "#b8beb9"
+            ]
+          },
+          "legend": {
+            "orient": "bottom",
+            "direction": "horizontal",
+            "columns": 3,
+            "labelLimit": 165
+          }
+        },
         "tooltip": [
-          {"field": "family", "type": "nominal", "title": "Plant family"},
-          {"field": "record_count", "type": "quantitative", "title": "Living-specimen records", "format": ",.0f"},
-          {"field": "share", "type": "quantitative", "title": "Share of records with a family", "format": ".1%"}
+          {
+            "field": "family",
+            "type": "nominal",
+            "title": "Plant family"
+          },
+          {
+            "field": "genus",
+            "type": "nominal",
+            "title": "Genus or pooled category"
+          },
+          {
+            "field": "record_count",
+            "type": "quantitative",
+            "title": "Living-specimen records",
+            "format": ",.0f"
+          },
+          {
+            "field": "share",
+            "type": "quantitative",
+            "title": "Share of records with a family",
+            "format": ".1%"
+          }
         ]
       }
     },
     {
-      "transform": [{"filter": "datum.x1 - datum.x0 > 85 && datum.y1 - datum.y0 > 34"}],
-      "mark": {"type": "text", "fontSize": 12, "fontWeight": 600, "color": "#fffdf7", "lineBreak": "\n"},
+      "transform": [
+        {
+          "filter": "datum.level === 'genus' && datum.x1 - datum.x0 > 125 && datum.y1 - datum.y0 > 45"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "fontSize": 13,
+        "fontWeight": 700,
+        "lineBreak": "\n"
+      },
       "encoding": {
-        "x": {"field": "label_x", "type": "quantitative", "scale": {"domain": [0, 1000], "nice": false}, "axis": null},
-        "y": {"field": "label_y", "type": "quantitative", "scale": {"domain": [0, 600], "nice": false}, "axis": null},
-        "text": {"field": "family", "type": "nominal"},
+        "x": {
+          "field": "label_x",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              1000
+            ],
+            "nice": false
+          },
+          "axis": null
+        },
+        "y": {
+          "field": "label_y",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              600
+            ],
+            "nice": false
+          },
+          "axis": null
+        },
+        "text": {
+          "field": "genus",
+          "type": "nominal"
+        },
         "tooltip": [
-          {"field": "family", "type": "nominal", "title": "Plant family"},
-          {"field": "record_count", "type": "quantitative", "title": "Living-specimen records", "format": ",.0f"}
-        ]
+          {
+            "field": "family",
+            "type": "nominal",
+            "title": "Plant family"
+          },
+          {
+            "field": "genus",
+            "type": "nominal",
+            "title": "Genus or pooled category"
+          },
+          {
+            "field": "record_count",
+            "type": "quantitative",
+            "title": "Living-specimen records",
+            "format": ",.0f"
+          }
+        ],
+        "color": {
+          "condition": {
+            "test": "datum.family === 'Other families' || datum.family === 'Asteraceae' || datum.family === 'Poaceae'",
+            "value": "#17372e"
+          },
+          "value": "#fffdf7"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.level === 'family'"
+        }
+      ],
+      "mark": {
+        "type": "rect",
+        "fillOpacity": 0,
+        "stroke": "#fcfbf7",
+        "strokeWidth": 3
+      },
+      "encoding": {
+        "x": {
+          "field": "x0",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              1000
+            ]
+          },
+          "axis": null
+        },
+        "x2": {
+          "field": "x1"
+        },
+        "y": {
+          "field": "y0",
+          "type": "quantitative",
+          "scale": {
+            "domain": [
+              0,
+              600
+            ]
+          },
+          "axis": null
+        },
+        "y2": {
+          "field": "y1"
+        }
       }
     }
   ],
-  "config": {"view": {"stroke": null}}
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  }
 }

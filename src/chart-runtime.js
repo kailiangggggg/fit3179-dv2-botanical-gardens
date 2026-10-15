@@ -32,17 +32,27 @@ export function adaptChartSpec(spec, chartId, availableWidth) {
 
   setPlotWidths(adapted);
 
-  if (chartId === "V04" && width < 560 && adapted.encoding?.x?.axis) {
-    adapted.encoding.x.axis.values = [0.5, 5, 50, 500, 5000];
+  if (chartId === "V04") {
+    adapted.width = width - 20;
+    adapted.padding = { left: 20, right: 0, top: 0, bottom: 0 };
+    if (width < 560) {
+      if (adapted.encoding?.x?.axis) adapted.encoding.x.axis.values = [0.5, 5, 50, 500, 5000];
+      if (adapted.encoding?.y?.axis) adapted.encoding.y.axis.labelFontSize = 11;
+    }
   }
 
   if (chartId === "V06") {
-    const labelLayer = adapted.layer?.find((layer) => layer.mark?.type === "text");
-    const filter = labelLayer?.transform?.find((transform) => transform.filter)?.filter;
-    if (filter) {
-      const minTileWidth = Math.max(85, Math.ceil((60 / width) * 1000));
-      labelLayer.transform.find((transform) => transform.filter).filter =
-        `datum.x1 - datum.x0 > ${minTileWidth} && datum.y1 - datum.y0 > 34`;
+    const genusLayer = adapted.layer?.find((layer) => layer.encoding?.text?.field === "genus");
+    const familyLayer = adapted.layer?.find((layer) => layer.encoding?.text?.field === "family_header");
+    if (genusLayer) {
+      const minWidth = Math.max(125, Math.ceil((74 / width) * 1000));
+      genusLayer.transform.find((item) => item.filter).filter =
+        `datum.level === 'genus' && datum.x1 - datum.x0 > ${minWidth} && datum.y1 - datum.y0 > 45`;
+    }
+    if (familyLayer) {
+      const minWidth = Math.max(210, Math.ceil((145 / width) * 1000));
+      familyLayer.transform.find((item) => item.filter).filter =
+        `datum.level === 'family' && datum.x1 - datum.x0 > ${minWidth} && datum.y1 - datum.y0 > 75`;
     }
   }
 

@@ -1,286 +1,1219 @@
 {
+
   "assignment": "FIT3179 Data Visualisation 2",
+
   "topic": "Botanical Gardens",
+
   "audience": "General Malaysian reader",
+
   "chart_count_rule": "V05a and V05b are paired panels and count as one rubric chart group.",
+
   "rubric_chart_count": 13,
+
   "visible_panels": 14,
+
   "map_count": 3,
-  "map_chart_ids": ["V01", "V02", "V10"],
-  "advanced_chart_count": 9,
-  "advanced_chart_ids": ["V01", "V02", "V03", "V04", "V06", "V07", "V09", "V10", "V11"],
-  "advanced_idiom_types": [
-    "Proportional-symbol map",
-    "Choropleth",
-    "Slopegraph",
-    "Box plot",
-    "Treemap",
-    "Histogram",
-    "Quantitative matrix / heatmap",
-    "Equal-area hexbin map"
+
+  "map_chart_ids": [
+
+    "V01",
+
+    "V02",
+
+    "V10"
+
   ],
-  "legacy_chart_ids": {"V05": ["V05a", "V05b"]},
+
+  "advanced_chart_count": 9,
+
+  "advanced_chart_ids": [
+
+    "V01",
+
+    "V02",
+
+    "V03",
+
+    "V04",
+
+    "V06",
+
+    "V07",
+
+    "V09",
+
+    "V10",
+
+    "V11"
+
+  ],
+
+  "advanced_idiom_types": [
+
+    "Proportional-symbol map",
+
+    "Choropleth",
+
+    "Slopegraph",
+
+    "Box plot",
+
+    "Treemap",
+
+    "Histogram",
+
+    "Quantitative matrix / heatmap",
+
+    "Equal-area hexbin map"
+
+  ],
+
+  "legacy_chart_ids": {
+
+    "V05": [
+
+      "V05a",
+
+      "V05b"
+
+    ]
+
+  },
+
   "charts": [
+
     {
+
       "id": "V01",
+
       "legacy_ids": [],
-      "title": "Where are the known gardens and arboreta?",
+
+      "title": "NSW, Victoria and Queensland hold 135 of 182 known sites",
+
       "section": "01 · A national footprint",
+
       "idiom": "Proportional-symbol map",
+
       "is_map": true,
+
       "advanced": true,
+
       "spec": "specs/V01-facility-symbol-map.json",
-      "data_files": ["data/state_rates.geojson", "data/facility_points.geojson"],
+
+      "data_files": [
+
+        "data/state_rates.geojson",
+
+        "data/facility_points.geojson"
+
+      ],
+
       "what": {
-        "source": ["Geoscience Australia, Botanical Gardens and Arboretums register; snapshot 14 October 2026"],
+
+        "source": [
+
+          "Geoscience Australia, Botanical Gardens and Arboretums register; snapshot 14 October 2026"
+
+        ],
+
         "grain": "One known-register facility feature; 182 records.",
-        "fields": ["feature_name (categorical)", "feature_subtype (categorical)", "state (categorical)", "latitude/longitude (spatial)", "area_hectares (quantitative)"],
-        "transformations": ["Retain all 182 register features; publish point coordinates and reduced state outlines."],
+
+        "fields": [
+
+          "feature_name (categorical)",
+
+          "feature_subtype (categorical)",
+
+          "state (categorical)",
+
+          "latitude/longitude (spatial)",
+
+          "area_hectares (quantitative)"
+
+        ],
+
+        "transformations": [
+
+          "Retain all 182 register features; publish point coordinates and reduced state outlines."
+
+        ],
+
         "measure": "Registered facility footprint in hectares; not planted area, public access, collection size or conservation performance."
+
       },
-      "why": {"question": "Where are Australia’s known botanical gardens and arboreta, and how do their registered footprints vary?", "reader_task": "Locate the known facilities and compare their register classifications and reported land areas."},
-      "how": {"marks": "State polygons, area-proportional circles and small center markers so every site remains locatable.", "channels": "Projected longitude/latitude for position; circle area for hectares; categorical hue for Botanic Garden or Arboretum.", "projection": "Australian conic equal-area, standard parallels −18° and −36°.", "color": "Deep green for Botanic Garden; muted ochre for Arboretum.", "ordering": "Draw state outlines first, proportional symbols second, and site markers last.", "aggregation": "None; one mark per GA register feature.", "interaction": "Hover highlights the facility symbol; its tooltip identifies facility, type, locality, jurisdiction and hectares.", "annotation": "182 known-register features: 120 Botanic Gardens and 62 Arboretums. Norfolk Island is included."}
+
+      "why": {
+
+        "question": "Where are Australia’s known botanical gardens and arboreta, and how do their registered footprints vary?",
+
+        "reader_task": "Locate the known facilities and compare their register classifications and reported land areas."
+
+      },
+
+      "how": {
+
+        "marks": "State polygons, area-proportional circles and small center markers so every site remains locatable.",
+
+        "channels": "Projected longitude/latitude for position; circle area for hectares; categorical hue for Botanic Garden or Arboretum. Quantitative circle-size legend shows reference hectares.",
+
+        "projection": "Equal Earth equal-area projection centred on Australia.",
+
+        "color": "Deep green for Botanic Garden; muted ochre for Arboretum.",
+
+        "ordering": "Draw state outlines first, proportional symbols second, and site markers last.",
+
+        "aggregation": "None; one mark per GA register feature.",
+
+        "interaction": "Hover highlights the facility symbol; its tooltip identifies facility, type, locality, jurisdiction and hectares.",
+
+        "annotation": "182 known-register features: 120 Botanic Gardens and 62 Arboretums. Norfolk Island is included."
+
+      }
+
     },
+
     {
+
       "id": "V02",
+
       "legacy_ids": [],
-      "title": "How many known facilities are registered per million residents?",
+
+      "title": "ACT leads on known facilities per million residents",
+
       "section": "01 · A national footprint",
+
       "idiom": "Choropleth",
+
       "is_map": true,
+
       "advanced": true,
+
       "spec": "specs/V02-facilities-per-million-choropleth.json",
-      "data_files": ["data/state_rates.geojson", "data/state_summary.csv"],
+
+      "data_files": [
+
+        "data/state_rates.geojson",
+
+        "data/state_summary.csv"
+
+      ],
+
       "what": {
-        "source": ["Geoscience Australia register", "ABS ERP, March 2026", "ABS ASGS Edition 4 State/Territory boundaries"],
+
+        "source": [
+
+          "Geoscience Australia register",
+
+          "ABS ERP, March 2026",
+
+          "ABS ASGS Edition 4 State/Territory boundaries"
+
+        ],
+
         "grain": "One standard Australian state or territory; eight comparison jurisdictions.",
-        "fields": ["facility_count (quantitative count)", "estimated resident population (quantitative denominator)", "state/territory geometry (spatial)"],
-        "transformations": ["Join GA count to ABS jurisdiction code.", "Rate = facility count ÷ ERP × 1,000,000.", "Keep Other Territories neutral because its one facility is on Norfolk Island and its denominator combines four non-contiguous territories."],
+
+        "fields": [
+
+          "facility_count (quantitative count)",
+
+          "estimated resident population (quantitative denominator)",
+
+          "state/territory geometry (spatial)"
+
+        ],
+
+        "transformations": [
+
+          "Join GA count to ABS jurisdiction code.",
+
+          "Rate = facility count ÷ ERP × 1,000,000.",
+
+          "Keep Other Territories neutral because its one facility is on Norfolk Island and its denominator combines four non-contiguous territories."
+
+        ],
+
         "measure": "Known-register facilities per million residents at 31 March 2026; not access, travel distance or service quality."
+
       },
-      "why": {"question": "How does the number of known registered facilities compare with resident population across standard jurisdictions?", "reader_task": "Compare register density without treating raw counts as equivalent across differently sized populations."},
-      "how": {"marks": "State and territory polygons.", "channels": "Geographic position; sequential luminance for facilities per million residents.", "projection": "Australian conic equal-area using ASGS Edition 4 boundaries.", "color": "Light-to-dark green; neutral grey marks Other Territories with no comparative rate.", "ordering": "Continuous scale, state abbreviations and full-name tooltips.", "aggregation": "One register count and one ERP denominator per code 1–8; code 9 remains separate.", "interaction": "The linked jurisdiction selector focuses the same state on V02 and V03; hover shows count, ERP and calculated rate.", "annotation": "Other Territories includes Norfolk Island, Jervis Bay, Christmas Island and Cocos (Keeling) Islands; its grouped rate is not mapped."}
+
+      "why": {
+
+        "question": "How does the number of known registered facilities compare with resident population across standard jurisdictions?",
+
+        "reader_task": "Compare register density without treating raw counts as equivalent across differently sized populations."
+
+      },
+
+      "how": {
+
+        "marks": "State and territory polygons.",
+
+        "channels": "Geographic position; sequential luminance for facilities per million residents.",
+
+        "projection": "Australian conic equal-area using ASGS Edition 4 boundaries.",
+
+        "color": "Light-to-dark blue for population-normalized register rates; neutral grey marks Other Territories with no comparative rate. Green elsewhere is reserved for record-frequency scales.",
+
+        "ordering": "Continuous scale, state abbreviations and full-name tooltips.",
+
+        "aggregation": "One register count and one ERP denominator per code 1–8; code 9 remains separate.",
+
+        "interaction": "The linked jurisdiction selector focuses the same state on V02 and V03; hover shows count, ERP and calculated rate.",
+
+        "annotation": "Other Territories includes Norfolk Island, Jervis Bay, Christmas Island and Cocos (Keeling) Islands; its grouped rate is not mapped."
+
+      }
+
     },
+
     {
+
       "id": "V03",
+
       "legacy_ids": [],
-      "title": "Which state rankings shift after population adjustment?",
+
+      "title": "ACT rises from sixth to first after population adjustment",
+
       "section": "01 · A national footprint",
+
       "idiom": "Slopegraph",
+
       "is_map": false,
+
       "advanced": true,
+
       "spec": "specs/V03-count-rate-slopegraph.json",
-      "data_files": ["data/state_rank_comparison.csv"],
+
+      "data_files": [
+
+        "data/state_rank_comparison.csv"
+
+      ],
+
       "what": {
-        "source": ["Geoscience Australia register", "ABS ERP, March 2026"],
+
+        "source": [
+
+          "Geoscience Australia register",
+
+          "ABS ERP, March 2026"
+
+        ],
+
         "grain": "Eight standard states and territories.",
-        "fields": ["facility_count (quantitative)", "facilities_per_million (quantitative)", "rank (ordinal)"],
-        "transformations": ["Rank both measures in descending order; use midrank 7.5 for the TAS/NT raw-count tie."],
+
+        "fields": [
+
+          "facility_count (quantitative)",
+
+          "facilities_per_million (quantitative)",
+
+          "rank (ordinal)"
+
+        ],
+
+        "transformations": [
+
+          "Rank both measures in descending order; use midrank 7.5 for the TAS/NT raw-count tie."
+
+        ],
+
         "measure": "Ordinal rank (1 = highest); endpoint values remain available in the tooltip."
+
       },
-      "why": {"question": "Which jurisdictions change order when facility counts are divided by population?", "reader_task": "Follow each state between raw count rank and population-standardized rank."},
-      "how": {"marks": "Line and endpoint circles, one line per state or territory.", "channels": "Horizontal position for comparison measure; vertical position for rank; color and line detail for jurisdiction.", "projection": "Not applicable.", "color": "Eight distinct colorblind-conscious line colors with a full-name legend.", "ordering": "1 is highest; the raw-count TAS/NT tie is shown at midrank 7.5.", "aggregation": "No aggregation beyond the two jurisdiction-level rankings.", "interaction": "Click legend items or focus a legend label and press Enter or Space to filter series; choose All jurisdictions to clear the filter. The linked jurisdiction selector highlights the same state on V02 and V03; hover reveals state, rank, raw count and rate.", "annotation": "ACT moves from rank 6 to 1; NT from 7.5 to 2; WA from 4 to 3."}
+
+      "why": {
+
+        "question": "Which jurisdictions change order when facility counts are divided by population?",
+
+        "reader_task": "Follow each state between raw count rank and population-standardized rank."
+
+      },
+
+      "how": {
+
+        "marks": "One line per jurisdiction with distinct endpoint symbols for grayscale identification.",
+
+        "channels": "Horizontal position for comparison measure; vertical position for rank; color and endpoint shape redundantly identify jurisdiction.",
+
+        "projection": "Not applicable.",
+
+        "color": "Eight contrast-tested categorical colors; distinct endpoint shapes reinforce grayscale reading, and the full-name legend supports keyboard filtering.",
+
+        "ordering": "1 is highest; the raw-count TAS/NT tie is shown at midrank 7.5.",
+
+        "aggregation": "No aggregation beyond the two jurisdiction-level rankings.",
+
+        "interaction": "Click legend items or focus a legend label and press Enter or Space to filter series; choose All jurisdictions to clear the filter. The linked jurisdiction selector highlights the same state on V02 and V03; hover reveals state, rank, raw count and rate.",
+
+        "annotation": "ACT moves from rank 6 to 1; NT from 7.5 to 2; WA from 4 to 3."
+
+      }
+
     },
+
     {
+
       "id": "V04",
+
       "legacy_ids": [],
-      "title": "How do registered facility footprints vary by type?",
+
+      "title": "A 3,739-hectare arboretum sits far outside the typical range",
+
       "section": "01 · A national footprint",
+
       "idiom": "Box plot",
+
       "is_map": false,
+
       "advanced": true,
+
       "spec": "specs/V04-registered-footprint-boxplot.json",
-      "data_files": ["data/facility_areas.csv", "data/facility_area_stats.json"],
+
+      "data_files": [
+
+        "data/facility_areas.csv",
+
+        "data/facility_area_stats.json"
+
+      ],
+
       "what": {
-        "source": ["Geoscience Australia register"],
+
+        "source": [
+
+          "Geoscience Australia register"
+
+        ],
+
         "grain": "One registered facility; 182 area values.",
-        "fields": ["area_hectares (quantitative)", "feature_subtype (categorical)"],
-        "transformations": ["Group by GA subtype; compute quartiles and 1.5-IQR whiskers."],
+
+        "fields": [
+
+          "area_hectares (quantitative)",
+
+          "feature_subtype (categorical)"
+
+        ],
+
+        "transformations": [
+
+          "Group by GA subtype; compute quartiles and 1.5-IQR whiskers."
+
+        ],
+
         "measure": "Registered hectares on a logarithmic scale; the box spans the middle half of values."
+
       },
-      "why": {"question": "Do Botanic Gardens and Arboretums have different registered footprint distributions?", "reader_task": "Compare typical size and spread while noticing the very large facilities."},
-      "how": {"marks": "Horizontal box-and-whisker marks with individual outliers.", "channels": "Subtype on the categorical axis; logarithmic x-position for hectares; hue repeats the map’s type colors.", "projection": "Not applicable.", "color": "Green for Botanic Garden; ochre for Arboretum.", "ordering": "Botanic Garden above Arboretum; area increases left to right.", "aggregation": "Median, quartiles and 1.5-IQR whiskers computed within each type.", "interaction": "Tooltip identifies an outlier facility and its area.", "annotation": "Explain the log scale and middle half; the maximum is Helms Arboretum at 3,739.3 ha."}
+
+      "why": {
+
+        "question": "Do Botanic Gardens and Arboretums have different registered footprint distributions?",
+
+        "reader_task": "Compare typical size and spread while noticing the very large facilities."
+
+      },
+
+      "how": {
+
+        "marks": "Horizontal box-and-whisker marks; the center line is the median, the box is the middle half, whiskers show the usual spread, and dots identify individual sites beyond them.",
+
+        "channels": "Subtype on the categorical axis; logarithmic x-position for hectares; hue repeats the map’s type colors.",
+
+        "projection": "Not applicable.",
+
+        "color": "Green for Botanic Garden; ochre for Arboretum.",
+
+        "ordering": "Botanic Garden above Arboretum; area increases left to right.",
+
+        "aggregation": "Median, quartiles and 1.5-IQR whiskers computed within each type.",
+
+        "interaction": "Tooltip identifies an outlier facility and its area.",
+
+        "annotation": "The line marks the median; the box covers the middle half of sites. Log spacing keeps small and very large areas visible together; dots name facilities beyond the usual range."
+
+      }
+
     },
+
     {
+
       "id": "V05",
-      "legacy_ids": ["V05a", "V05b"],
-      "title": "What do the licensed seed-bank resources expose?",
+
+      "legacy_ids": [
+
+        "V05a",
+
+        "V05b"
+
+      ],
+
+      "title": "Seed-bank archives differ sharply in published record coverage",
+
       "section": "02 · Records describe different kinds of care",
+
       "idiom": "Paired dot plot",
+
       "is_map": false,
+
       "advanced": false,
+
       "rubric_chart_group": 1,
+
       "spec": "specs/V05-seedbank-resource-profile.json",
-      "data_files": ["data/ala_resource_profile.csv"],
+
+      "data_files": [
+
+        "data/ala_resource_profile.csv"
+
+      ],
+
       "what": {
-        "source": ["Ten ALA / Australian Virtual Seed Bank resources with CC BY 3.0 AU metadata"],
+
+        "source": [
+
+          "Ten ALA / Australian Virtual Seed Bank resources with CC BY 3.0 AU metadata"
+
+        ],
+
         "grain": "Top-level accession event and distinct GBIF taxon identifier, summarized separately by resource.",
-        "fields": ["root_accessions (quantitative count)", "distinct_taxon_ids (quantitative distinct count)", "resource_name (categorical)"],
-        "transformations": ["Filter parentEventID blank for top-level accessions.", "Count distinct taxonKey values within each resource.", "Exclude dr21987, which is CC BY-NC."],
+
+        "fields": [
+
+          "root_accessions (quantitative count)",
+
+          "distinct_taxon_ids (quantitative distinct count)",
+
+          "resource_name (categorical)"
+
+        ],
+
+        "transformations": [
+
+          "Filter parentEventID blank for top-level accessions.",
+
+          "Count distinct taxonKey values within each resource.",
+
+          "Exclude dr21987, which is CC BY-NC."
+
+        ],
+
         "measure": "Indexed event and taxon-ID coverage by resource; neither measure is a total inventory or standardized species richness."
+
       },
-      "why": {"question": "How much seed-bank accession and taxonomic metadata is exposed by each participating resource?", "reader_task": "Understand data coverage and why the mapped sample varies between contributors."},
-      "how": {"marks": "Two vertically aligned horizontal dot panels, counted as one paired chart group.", "channels": "Resource on y; count on logarithmic x; separate x scales for accessions and taxon identifiers.", "projection": "Not applicable.", "color": "Muted ochre for accession rows; desaturated green-blue for taxon identifiers.", "ordering": "Resources share the same order, sorted by top-level accession count.", "aggregation": "One count and one distinct identifier count per resource; linked child events excluded.", "interaction": "Tooltip shows the full resource name, root count, distinct IDs and excluded child rows.", "annotation": "Equal axis spacing is tenfold. Resource coverage is not collection size or conservation quality."}
+
+      "why": {
+
+        "question": "How much seed-bank accession and taxonomic metadata is exposed by each participating resource?",
+
+        "reader_task": "Understand data coverage and why the mapped sample varies between contributors."
+
+      },
+
+      "how": {
+
+        "marks": "Two vertically aligned horizontal dot panels, counted as one paired chart group.",
+
+        "channels": "Resource on y; count on logarithmic x; separate x scales for accessions and taxon identifiers.",
+
+        "projection": "Not applicable.",
+
+        "color": "Muted ochre for accession rows; desaturated green-blue for taxon identifiers.",
+
+        "ordering": "Resources share the same order, sorted by top-level accession count.",
+
+        "aggregation": "One count and one distinct identifier count per resource; linked child events excluded.",
+
+        "interaction": "Tooltip shows the full resource name, root count, distinct IDs and excluded child rows.",
+
+        "annotation": "Each step on these axes is tenfold. Taxon IDs are database labels, not verified species counts; indexed records do not measure whole-bank holdings or quality."
+
+      }
+
     },
+
     {
+
       "id": "V06",
+
       "legacy_ids": [],
-      "title": "Which families dominate PlantBank’s living-specimen records?",
+
+      "title": "1,897 PlantBank records in Myrtaceae are labelled Eucalyptus",
+
       "section": "02 · Records describe different kinds of care",
+
       "idiom": "Treemap",
+
       "is_map": false,
+
       "advanced": true,
+
       "spec": "specs/V06-plantbank-family-treemap.json",
-      "data_files": ["data/plantbank_family_treemap.csv"],
+
+      "data_files": [
+
+        "data/plantbank_family_treemap.csv"
+
+      ],
+
       "what": {
-        "source": ["GBIF PlantBank Records dataset, CC BY 4.0"],
+
+        "source": [
+
+          "GBIF PlantBank Records dataset, CC BY 4.0"
+
+        ],
+
         "grain": "One of 10,609 occurrence rows, all marked LIVING_SPECIMEN; 10,599 have a family value.",
-        "fields": ["family (categorical taxonomy)", "record_count (quantitative count)"],
-        "transformations": ["Count records by family; show the 12 largest groups and aggregate the remainder."],
-        "measure": "Share of indexed living-specimen records with a family value; not all current holdings."
+
+        "fields": [
+
+          "family (taxonomic parent)",
+
+          "genus (taxonomic child or pooled group)",
+
+          "record_count (indexed living-specimen rows)"
+
+        ],
+
+        "transformations": [
+
+          "Count original occurrence records by both family and genus.",
+
+          "Show five largest families with a pooled Other families parent.",
+
+          "Within each named family, show top four genera and an explicit Other genera remainder."
+
+        ],
+
+        "measure": "Rectangle areas partition 10,599 indexed family-identified living-specimen records; not living plants currently held."
+
       },
-      "why": {"question": "Which plant families are most represented in the PlantBank living-specimen record set?", "reader_task": "Compare the composition of one openly licensed institutional record set."},
-      "how": {"marks": "Rectangular treemap tiles with area proportional to record count.", "channels": "Rectangle area for records; a restrained accent highlights Myrtaceae; text names larger tiles.", "projection": "Not applicable.", "color": "Muted green tiles; rust accent for Myrtaceae only.", "ordering": "Families sorted by record count before deterministic binary treemap tiling; remaining families grouped as Other.", "aggregation": "Record counts by family; 10,599 family-identified rows form the denominator.", "interaction": "Tooltip gives family, count and share.", "annotation": "Myrtaceae accounts for 3,240 of 10,599 family-identified living-specimen records."}
+
+      "why": {
+
+        "question": "Which genera appear in PlantBank’s most-recorded families?",
+
+        "reader_task": "Inspect genuine family-to-genus nesting and composition, not an arbitrary flat ranking."
+
+      },
+
+      "how": {
+
+        "marks": "Parent family rectangles frame nested genus rectangles, with quantitative area, labels and thin grouping outlines.",
+
+        "channels": "Nested area carries record count; a categorical family colour key distinguishes groups; names identify larger tiles.",
+
+        "projection": "Not applicable.",
+
+        "color": "A CVD-screened qualitative palette highlights each family group; purple consistently marks Myrtaceae (also V08), and light grey marks pooled families.",
+
+        "ordering": "Families sorted by record count before deterministic binary treemap tiling; remaining families grouped as Other.",
+
+        "aggregation": "Source family–genus counts reconcile exactly to 10,599 family-identified records; Other genera/families are explicit aggregates.",
+
+        "interaction": "Tooltip shows family, genus/group, record count and share of family-identified records.",
+
+        "annotation": "Of 3,240 PlantBank records labelled Myrtaceae, 1,897 are labelled Eucalyptus; pooled remainder tiles are groups, not taxa."
+
+      }
+
     },
+
     {
+
       "id": "V07",
+
       "legacy_ids": [],
-      "title": "When were PlantBank living-specimen records dated?",
+
+      "title": "The 1980s contain the most dated PlantBank records",
+
       "section": "02 · Records describe different kinds of care",
+
       "idiom": "Histogram by decade",
+
       "is_map": false,
+
       "advanced": true,
+
       "spec": "specs/V07-plantbank-date-histogram.json",
-      "data_files": ["data/plantbank_year_histogram.csv"],
+
+      "data_files": [
+
+        "data/plantbank_year_histogram.csv"
+
+      ],
+
       "what": {
-        "source": ["GBIF PlantBank Records dataset, CC BY 4.0"],
+
+        "source": [
+
+          "GBIF PlantBank Records dataset, CC BY 4.0"
+
+        ],
+
         "grain": "Individual LIVING_SPECIMEN occurrence row with a parseable year.",
-        "fields": ["year/eventDate (temporal)", "basisOfRecord (categorical)"],
-        "transformations": ["Parse year from year or eventDate; aggregate into decade bins."],
+
+        "fields": [
+
+          "year/eventDate (temporal)",
+
+          "basisOfRecord (categorical)"
+
+        ],
+
+        "transformations": [
+
+          "Parse year from year or eventDate; aggregate into decade bins.",
+
+          "Publish numeric decade start/end bounds (ten-year, half-open intervals)."
+
+        ],
+
         "measure": "Records with a usable year; 9,689 rows dated 1960–2015, from 10,609 total."
+
       },
-      "why": {"question": "Across which decades do the dated PlantBank living-specimen records fall?", "reader_task": "See the documented span and concentration of dated records without treating them as annual additions."},
-      "how": {"marks": "Adjacent bars, one per decade.", "channels": "Decade on x; record count on y; bar height encodes frequency.", "projection": "Not applicable.", "color": "Deep green, matching PlantBank’s living-specimen evidence.", "ordering": "Chronological decades from left to right.", "aggregation": "Count only rows with a usable four-digit year.", "interaction": "Tooltip gives exact count per decade.", "annotation": "920 rows lack a usable year; this is not annual acquisition activity or present holdings."}
+
+      "why": {
+
+        "question": "Across which decades do the dated PlantBank living-specimen records fall?",
+
+        "reader_task": "See the documented span and concentration of dated records without treating them as annual additions."
+
+      },
+
+      "how": {
+
+        "marks": "Contiguous histogram bars spanning numeric ten-year intervals.",
+
+        "channels": "Quantitative decade start/end bound each bin horizontally; aligned bar height shows the count.",
+
+        "projection": "Not applicable.",
+
+        "color": "Deep green, matching PlantBank’s living-specimen evidence.",
+
+        "ordering": "Chronological decades from left to right.",
+
+        "aggregation": "Count only rows with a usable four-digit year.",
+
+        "interaction": "Tooltip gives exact count per decade.",
+
+        "annotation": "The 1980s bin contains 4,321 records; 920 source rows lack usable years, and the 2010s end in 2015."
+
+      }
+
     },
+
     {
+
       "id": "V08",
+
       "legacy_ids": [],
-      "title": "Which families appear in the Kings Park herbarium records?",
+
+      "title": "Myrtaceae is the largest named Kings Park family",
+
       "section": "02 · Records describe different kinds of care",
+
       "idiom": "Ranked dot plot",
+
       "is_map": false,
+
       "advanced": false,
+
       "spec": "specs/V08-kingspark-family-records.json",
-      "data_files": ["data/kingspark_family_records.csv"],
+
+      "data_files": [
+
+        "data/kingspark_family_records.csv"
+
+      ],
+
       "what": {
-        "source": ["GBIF Kings Park Botanical Gardens dataset, CC BY 4.0"],
+
+        "source": [
+
+          "GBIF Kings Park Botanical Gardens dataset, CC BY 4.0"
+
+        ],
+
         "grain": "One of 20,647 PRESERVED_SPECIMEN occurrence rows; 20,646 have a family value.",
-        "fields": ["family (categorical taxonomy)", "record_count (quantitative count)", "basisOfRecord (categorical)"],
-        "transformations": ["Count preserved specimen records by family; retain the 12 largest families and pool the rest."],
+
+        "fields": [
+
+          "family (categorical taxonomy)",
+
+          "record_count (quantitative count)",
+
+          "basisOfRecord (categorical)"
+
+        ],
+
+        "transformations": [
+
+          "Count preserved specimen records by family; retain the 12 largest families and pool the rest."
+
+        ],
+
         "measure": "Indexed herbarium voucher records, not living garden holdings."
+
       },
-      "why": {"question": "Which plant families are most frequent in the Kings Park herbarium record set?", "reader_task": "See a separate research-record layer without combining it with seed accessions or living specimens."},
-      "how": {"marks": "Horizontal points with direct count labels.", "channels": "Count on x; family on y; Myrtaceae is highlighted.", "projection": "Not applicable.", "color": "Desaturated green-blue with a rust Myrtaceae accent.", "ordering": "Descending specimen-record count; Other families is the final pooled row.", "aggregation": "Records grouped by family; one row equals one preserved specimen record.", "interaction": "Tooltip gives family, count and share of family-identified rows.", "annotation": "Every source row is marked PRESERVED_SPECIMEN; this is not a living-collection census."}
+
+      "why": {
+
+        "question": "Which plant families are most frequent in the Kings Park herbarium record set?",
+
+        "reader_task": "See a separate research-record layer without combining it with seed accessions or living specimens."
+
+      },
+
+      "how": {
+
+        "marks": "Horizontal points with direct count labels.",
+
+        "channels": "Count on x; family on y; Myrtaceae is highlighted.",
+
+        "projection": "Not applicable.",
+
+        "color": "Muted green-blue dots with the same purple Myrtaceae accent used in V06.",
+
+        "ordering": "Descending specimen-record count; Other families is the final pooled row.",
+
+        "aggregation": "Records grouped by family; one row equals one preserved specimen record.",
+
+        "interaction": "Tooltip gives family, count and share of family-identified rows.",
+
+        "annotation": "Other families pools smaller groups; Myrtaceae is the largest single family. Every row is PRESERVED_SPECIMEN, not a living-collection census."
+
+      }
+
     },
+
     {
+
       "id": "V09",
+
       "legacy_ids": [],
-      "title": "How do PlantBank family records span recorded decades?",
+
+      "title": "1,843 dated Myrtaceae records fall in the 1980s",
+
       "section": "02 · Records describe different kinds of care",
+
       "idiom": "Quantitative matrix / heatmap",
+
       "is_map": false,
+
       "advanced": true,
+
       "spec": "specs/V09-plantbank-family-decade-heatmap.json",
-      "data_files": ["data/plantbank_family_decades.csv"],
+
+      "data_files": [
+
+        "data/plantbank_family_decades.csv"
+
+      ],
+
       "what": {
-        "source": ["GBIF PlantBank Records dataset, CC BY 4.0"],
+
+        "source": [
+
+          "GBIF PlantBank Records dataset, CC BY 4.0"
+
+        ],
+
         "grain": "Plant family × decade among 9,683 living-specimen rows with both a usable year and family.",
-        "fields": ["family (categorical taxonomy)", "decade (ordered temporal category)", "record_count (quantitative count)"],
-        "transformations": ["Count rows by family and decade; retain the ten largest families and pool the remaining families."],
+
+        "fields": [
+
+          "family (categorical taxonomy)",
+
+          "decade (ordered temporal category)",
+
+          "record_count (quantitative count)"
+
+        ],
+
+        "transformations": [
+
+          "Count rows by family and decade; retain the ten largest families and pool the remaining families."
+
+        ],
+
         "measure": "Living-specimen records with both fields; dates do not measure yearly additions."
+
       },
-      "why": {"question": "Do the main PlantBank family groups have the same recorded time span?", "reader_task": "Compare family composition across decades without mixing herbarium or seed-bank records."},
-      "how": {"marks": "Rectangular heatmap tiles with direct positive counts.", "channels": "Family rows, chronological decade columns, sequential fill for count.", "projection": "Not applicable.", "color": "Sequential green luminance; zero cells remain unfilled and unlabelled.", "ordering": "Families follow overall record count; decades follow time.", "aggregation": "Family × decade counts; 9,683 records with both fields are included.", "interaction": "Tooltip gives family, decade and record count.", "annotation": "The 1980s contain 1,843 Myrtaceae records in this dated sample; this is not a trend in conservation effort."}
+
+      "why": {
+
+        "question": "Do the main PlantBank family groups have the same recorded time span?",
+
+        "reader_task": "Compare family composition across decades without mixing herbarium or seed-bank records."
+
+      },
+
+      "how": {
+
+        "marks": "Rectangular heatmap tiles with direct positive counts.",
+
+        "channels": "Family rows, chronological decade columns, sequential fill for count.",
+
+        "projection": "Not applicable.",
+
+        "color": "Sequential green luminance over a fixed 0–2,000-record range, with 500-record legend steps; white labels appear only on dark cells.",
+
+        "ordering": "Families follow overall record count; decades follow time.",
+
+        "aggregation": "Family × decade counts; 9,683 records with both fields are included.",
+
+        "interaction": "Tooltip gives family, decade and record count.",
+
+        "annotation": "The 1980s contain 1,843 Myrtaceae records in this dated sample; this is not a trend in conservation effort."
+
+      }
+
     },
+
     {
+
       "id": "V10",
+
       "legacy_ids": [],
-      "title": "Where were licensed seed-bank accessions collected?",
+
+      "title": "38,099 seed-origin records appear in generalized map cells",
+
       "section": "03 · Beyond the garden gate",
+
       "idiom": "Equal-area hexbin map",
+
       "is_map": true,
+
       "advanced": true,
+
       "spec": "specs/V10-avsb-origin-hexbin.json",
-      "data_files": ["data/state_rates.geojson", "data/ala_origin_hexes.geojson"],
+
+      "data_files": [
+
+        "data/state_rates.geojson",
+
+        "data/ala_origin_hexes.geojson"
+
+      ],
+
       "what": {
-        "source": ["Ten ALA / Australian Virtual Seed Bank resources with CC BY 3.0 AU metadata"],
+
+        "source": [
+
+          "Ten ALA / Australian Virtual Seed Bank resources with CC BY 3.0 AU metadata"
+
+        ],
+
         "grain": "One top-level accession event with an AU-coded usable coordinate; linked child events excluded.",
-        "fields": ["decimalLatitude/decimalLongitude (spatial, aggregated before publication)", "eventID (identifier, not published)"],
-        "transformations": ["Filter parentEventID blank, countryCode AU and coordinates within the Australian extent.", "Project to spherical Australian Albers equal-area.", "Bin to hexagons 100 km across.", "Suppress cells containing fewer than five records."],
+
+        "fields": [
+
+          "decimalLatitude/decimalLongitude (spatial, aggregated before publication)",
+
+          "eventID (identifier, not published)"
+
+        ],
+
+        "transformations": [
+
+          "Filter parentEventID blank, countryCode AU and coordinates within the Australian extent.",
+
+          "Project to spherical Australian Albers equal-area.",
+
+          "Bin to hexagons 100 km across.",
+
+          "Suppress cells containing fewer than five records."
+
+        ],
+
         "measure": "Top-level accession-origin records per public hexagon; 38,773 coordinates passed the map filter before cell suppression, 38,099 are in published cells."
+
       },
-      "why": {"question": "Where across Australia do the licensed seed-bank resources record wild collection origins?", "reader_task": "Recognize broad source landscapes while protecting precise collection locations."},
-      "how": {"marks": "Equal-area hexagon polygons and quiet state boundaries.", "channels": "Projected position; sequential luminance for accession-origin count per cell.", "projection": "Australian conic equal-area; bins are created in the same projection.", "color": "Single-hue olive-to-green sequential ramp; darker cells mean more records.", "ordering": "No ranking; map position carries geographic pattern.", "aggregation": "One 100 km-wide hex cell; records in cells below five are suppressed.", "interaction": "Tooltip gives the aggregate count; no origin point or event identifier is exposed.", "annotation": "Origins are not garden or receiving-bank locations; coordinate completeness varies by resource."}
+
+      "why": {
+
+        "question": "Where across Australia do the licensed seed-bank resources record wild collection origins?",
+
+        "reader_task": "Recognize broad source landscapes while protecting precise collection locations."
+
+      },
+
+      "how": {
+
+        "marks": "Equal-area hexagon polygons and quiet state boundaries.",
+
+        "channels": "Projected position; sequential luminance for accession-origin count per cell.",
+
+        "projection": "Australian conic equal-area; bins are created in the same projection.",
+
+        "color": "Single-hue olive-to-green sequential ramp; darker cells mean more records.",
+
+        "ordering": "No ranking; map position carries geographic pattern.",
+
+        "aggregation": "One 100 km-wide hex cell; records in cells below five are suppressed.",
+
+        "interaction": "Tooltip gives the aggregate count; no origin point or event identifier is exposed.",
+
+        "annotation": "Origins are not garden or receiving-bank locations; coordinate completeness varies by resource."
+
+      }
+
     },
+
     {
+
       "id": "V11",
+
       "legacy_ids": [],
-      "title": "What years do the dated ALA accessions record?",
+
+      "title": "The 2000s contain the largest dated ALA accession group",
+
       "section": "03 · Beyond the garden gate",
+
       "idiom": "Histogram by decade",
+
       "is_map": false,
+
       "advanced": true,
+
       "spec": "specs/V11-avsb-accession-years.json",
-      "data_files": ["data/ala_year_histogram.csv", "data/ala_date_coverage.csv"],
+
+      "data_files": [
+
+        "data/ala_year_histogram.csv",
+
+        "data/ala_date_coverage.csv"
+
+      ],
+
       "what": {
-        "source": ["Ten ALA / Australian Virtual Seed Bank resources with CC BY 3.0 AU metadata"],
+
+        "source": [
+
+          "Ten ALA / Australian Virtual Seed Bank resources with CC BY 3.0 AU metadata"
+
+        ],
+
         "grain": "Top-level accession event with a parseable year.",
-        "fields": ["year/eventDate (temporal)", "parentEventID (hierarchical identifier used to exclude child events)"],
-        "transformations": ["Filter to top-level accessions; parse a usable year; aggregate by decade."],
+
+        "fields": [
+
+          "year/eventDate (temporal)",
+
+          "parentEventID (hierarchical identifier used to exclude child events)"
+
+        ],
+
+        "transformations": [
+
+          "Filter to top-level accessions; parse a usable year; aggregate by decade.",
+
+          "Publish numeric decade start/end bounds (ten-year, half-open intervals)."
+
+        ],
+
         "measure": "Dated accessions only; 33,765 of 58,562 top-level records currently have a usable year."
+
       },
-      "why": {"question": "Across which decades do the dated seed-bank accession records fall?", "reader_task": "See the span of the dated sample without treating it as a time series of conservation activity."},
-      "how": {"marks": "Adjacent bars by decade.", "channels": "Chronological decade on x; dated accession count on y.", "projection": "Not applicable.", "color": "Muted ochre, reserved for the seed-bank evidence layer.", "ordering": "Decades in chronological order.", "aggregation": "One top-level event counted once; linked trials and other child rows excluded.", "interaction": "Tooltip gives the decade and exact count.", "annotation": "Four resource archives have no usable top-level year; date coverage varies and bars are not annual activity."}
+
+      "why": {
+
+        "question": "Across which decades do the dated seed-bank accession records fall?",
+
+        "reader_task": "See the span of the dated sample without treating it as a time series of conservation activity."
+
+      },
+
+      "how": {
+
+        "marks": "Contiguous histogram bars spanning numeric ten-year intervals.",
+
+        "channels": "Quantitative decade start/end bound each bin horizontally; aligned bar height shows the count.",
+
+        "projection": "Not applicable.",
+
+        "color": "Muted ochre, reserved for the seed-bank evidence layer.",
+
+        "ordering": "Decades in chronological order.",
+
+        "aggregation": "One top-level event counted once; linked trials and other child rows excluded.",
+
+        "interaction": "Tooltip gives the decade and exact count.",
+
+        "annotation": "Dated records come from six resources; the 2020s interval ends at the 2025 snapshot and four resources lack usable years."
+
+      }
+
     },
+
     {
+
       "id": "V12",
+
       "legacy_ids": [],
-      "title": "How much of each seed-bank resource can be mapped?",
+
+      "title": "Map-ready coordinates range from zero to full coverage",
+
       "section": "03 · Beyond the garden gate",
+
       "idiom": "Horizontal bar / dot plot",
+
       "is_map": false,
+
       "advanced": false,
+
       "spec": "specs/V12-avsb-coordinate-coverage.json",
-      "data_files": ["data/ala_coordinate_coverage.csv"],
+
+      "data_files": [
+
+        "data/ala_coordinate_coverage.csv"
+
+      ],
+
       "what": {
-        "source": ["Ten licensed ALA event archives"],
+
+        "source": [
+
+          "Ten licensed ALA event archives"
+
+        ],
+
         "grain": "One data resource.",
-        "fields": ["map_eligible_coordinates (quantitative count)", "root_accessions (quantitative denominator)"],
-        "transformations": ["Map-ready share = valid AU-coded coordinate pairs inside the national extent ÷ top-level accessions."],
+
+        "fields": [
+
+          "map_eligible_coordinates (quantitative count)",
+
+          "root_accessions (quantitative denominator)"
+
+        ],
+
+        "transformations": [
+
+          "Map-ready share = valid AU-coded coordinate pairs inside the national extent ÷ top-level accessions."
+
+        ],
+
         "measure": "Percentage of top-level accession records ready for the origin map."
+
       },
-      "why": {"question": "Is the origin map based on the same share of records for each contributor?", "reader_task": "Judge how uneven coordinate availability may shape the visible pattern."},
-      "how": {"marks": "Horizontal bars with endpoint dots and printed percentages.", "channels": "Resource on y; percentage with map-ready coordinates on x.", "projection": "Not applicable.", "color": "Muted olive; this is data completeness, not conservation quality.", "ordering": "Descending map-ready percentage.", "aggregation": "One numerator and root-accession denominator per resource.", "interaction": "Tooltip gives map-ready count, total roots and percentage.", "annotation": "Australian PlantBank event records have 22.7% without map-ready coordinates in this snapshot; other resources vary."}
+
+      "why": {
+
+        "question": "Is the origin map based on the same share of records for each contributor?",
+
+        "reader_task": "Judge how uneven coordinate availability may shape the visible pattern."
+
+      },
+
+      "how": {
+
+        "marks": "Horizontal bars with endpoint dots and printed percentages.",
+
+        "channels": "Resource on y; percentage with map-ready coordinates on x.",
+
+        "projection": "Not applicable.",
+
+        "color": "Muted olive; this is data completeness, not conservation quality.",
+
+        "ordering": "Descending map-ready percentage.",
+
+        "aggregation": "One numerator and root-accession denominator per resource.",
+
+        "interaction": "Tooltip gives map-ready count, total roots and percentage.",
+
+        "annotation": "Australian PlantBank event records have 22.7% without map-ready coordinates in this snapshot; other resources vary."
+
+      }
+
     },
+
     {
+
       "id": "V13",
+
       "legacy_ids": [],
-      "title": "Which accession archives provide usable year ranges?",
+
+      "title": "Four of ten archives lack usable collection years",
+
       "section": "03 · Beyond the garden gate",
+
       "idiom": "Interval plot",
+
       "is_map": false,
+
       "advanced": false,
+
       "spec": "specs/V13-avsb-date-coverage.json",
-      "data_files": ["data/ala_date_coverage.csv"],
+
+      "data_files": [
+
+        "data/ala_date_coverage.csv"
+
+      ],
+
       "what": {
-        "source": ["Ten licensed ALA event archives"],
+
+        "source": [
+
+          "Ten licensed ALA event archives"
+
+        ],
+
         "grain": "One resource summarized across top-level accessions with a usable year.",
-        "fields": ["earliest_recorded_year (temporal)", "latest_recorded_year (temporal)", "dated_accessions (quantitative count)"],
-        "transformations": ["Filter parentEventID blank; parse dates; compute minimum and maximum year per resource."],
+
+        "fields": [
+
+          "earliest_recorded_year (temporal)",
+
+          "latest_recorded_year (temporal)",
+
+          "dated_accessions (quantitative count)"
+
+        ],
+
+        "transformations": [
+
+          "Filter parentEventID blank; parse dates; compute minimum and maximum year per resource."
+
+        ],
+
         "measure": "Documented year coverage within each archive; resources without parseable years are listed separately."
+
       },
-      "why": {"question": "Do participating seed-bank resources cover the same recorded time span?", "reader_task": "Understand the limits of the combined dated-record histogram."},
-      "how": {"marks": "Horizontal range rules with endpoint circles.", "channels": "Year on x; resource on y; rule length encodes min-to-max year span.", "projection": "Not applicable.", "color": "Muted ochre, consistent with seed-bank records.", "ordering": "Resources sorted by earliest year; one-year spans remain visible as points.", "aggregation": "Minimum and maximum parseable year per resource.", "interaction": "Tooltip gives date bounds, dated count and root-accession total.", "annotation": "No usable top-level year: Kensington, Australian PlantBank, Greening Australia and Alice Springs Desert Park."}
+
+      "why": {
+
+        "question": "Do participating seed-bank resources cover the same recorded time span?",
+
+        "reader_task": "Understand the limits of the combined dated-record histogram."
+
+      },
+
+      "how": {
+
+        "marks": "Horizontal range rules with endpoint circles.",
+
+        "channels": "Year on x; resource on y; rule length encodes min-to-max year span.",
+
+        "projection": "Not applicable.",
+
+        "color": "Muted ochre, consistent with seed-bank records.",
+
+        "ordering": "Resources sorted by earliest year; one-year spans remain visible as points.",
+
+        "aggregation": "Minimum and maximum parseable year per resource.",
+
+        "interaction": "Tooltip gives date bounds, dated count and root-accession total.",
+
+        "annotation": "Four archives lack usable top-level years; ranges are observed file endpoints, not continuous collecting activity."
+
+      }
+
     }
+
   ]
+
 }

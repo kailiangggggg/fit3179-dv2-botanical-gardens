@@ -1,6 +1,6 @@
 export const pageStory = {
   title: "Beyond the Garden Gate",
-  subtitle: "How Australia’s botanical gardens protect plant diversity",
+  subtitle: "Mapping Australia’s gardens, plant collections and wild seed origins",
   snapshot: "14 October 2026",
   hero: {
     kicker: "AUSTRALIA · BOTANICAL CONSERVATION",
@@ -8,7 +8,7 @@ export const pageStory = {
     lede:
       "A national register maps known gardens and arboreta. Public collection records offer narrower views of the plants and wild seed origins documented beyond their gates.",
     limitation:
-      "No single source measures conservation success. These records describe different places, specimens and accessions—not a complete census or proof of impact.",
+      "These datasets reveal where plants are documented and where some seeds originated. They do not measure plant survival, species recovery or educational outcomes.",
   },
   metrics: [
     { value: "182", label: "known register features", source: "Geoscience Australia · 2026 snapshot" },
@@ -44,7 +44,7 @@ export const pageStory = {
       title: "A national footprint",
       question: "Where are the known gardens and arboreta—and how do their registered sites differ?",
       intro:
-        "Geoscience Australia’s register records 182 features: 120 Botanic Gardens and 62 Arboretums. Their locations show the reach of a known network; circle area carries the reported site footprint.",
+        "Of 182 known-register sites, 135 are in New South Wales, Victoria and Queensland. An arboretum is a garden focused on trees and woody plants. Circle area shows reported land footprint, not a conservation score.",
       paragraphs: [
         "A register entry is not a guarantee that every facility is represented. Reported hectares describe a registered footprint, not planted area, public access, the size of a collection or conservation capacity.",
         "Raw counts and population-standardised rates answer different questions. ACT moves from sixth by count to first by facilities per million residents; the Northern Territory moves from a tie at 7.5 to second. These rates describe register density, not how easy a garden is to reach.",
@@ -62,12 +62,12 @@ export const pageStory = {
       title: "What records show",
       question: "Which plants and dates appear in the public collection datasets?",
       intro:
-        "A seed-bank accession, a living specimen and a preserved herbarium voucher are different records. Together they show parts of a documentation system, not a comparable league table of institutions.",
+        "A seed-bank accession is a catalogued seed collection; a herbarium voucher is a preserved reference specimen. A living-specimen record describes a plant recorded as living when collected, not necessarily today. These records answer different questions.",
       paragraphs: [
-        "Ten licensed Atlas of Living Australia seed-bank archives contain 119,278 event rows. Of these, 58,562 are top-level accession events; linked child events are excluded from the accession counts. The paired view compares each resource’s accession and taxon-ID coverage, not total bank holdings or standardised species richness.",
-        "The GBIF PlantBank dataset contains 10,609 records, all classified as living specimens. Of these, 10,599 have a family name and 9,689 have a usable year from 1960 to 2015. Myrtaceae accounts for 3,240 family-identified records. Those are indexed records, not a count of current living plants or annual additions.",
-        "Kings Park contributes a separate GBIF dataset of 20,647 preserved herbarium specimens. Its family counts describe voucher records—not living plants or seed accessions—and its occurrence rows have no usable collection years.",
-        "The BGANZ and CHABG published 2023 report supplies context only: its survey covered 26 mixed respondent organisations and reported 45 of 49 Myrtle Rust National Action Plan priority species represented. This is a respondent-survey baseline, not a census of Australian gardens or a measure of conservation outcomes.",
+        "Ten licensed ALA seed-bank archives contain 119,278 event rows. Only 58,562 are top-level accessions; linked child events are excluded. The paired view compares accession counts with distinct taxon IDs—database labels, not verified species counts. It does not measure whole-bank holdings.",
+        "PlantBank’s 10,609 records are all marked LIVING_SPECIMEN. Of these, 10,599 include a family and 9,689 a year (1960–2015). A plant family groups genera: 1,897 of 3,240 Myrtaceae records are labelled Eucalyptus. The treemap nests genera inside families; indexed rows do not count plants alive today or yearly additions.",
+        "Kings Park’s GBIF archive contains 20,647 preserved herbarium records. Its family counts describe vouchers—not living plants or seed accessions—and its occurrence rows lack usable years.",
+        "The published BGANZ/CHABG 2023 report surveyed 26 mixed respondent organisations; 45 of 49 Myrtle Rust National Action Plan priority species were represented. This is a respondent baseline, not a census of Australian gardens or a measure of conservation outcomes.",
       ],
       transition:
         "The seed-bank archive also records where some accessions began. Its coordinate and date coverage varies by resource, so the mapped sample needs its own context.",
@@ -83,9 +83,9 @@ export const pageStory = {
       intro:
         "The origin map shows collection places recorded in ten licensed ALA resources. It is deliberately different from the facility maps: these shapes mark broad wild collection origins, not gardens or receiving seed banks.",
       paragraphs: [
-        "The map filter retains 38,773 top-level accessions with an Australian country code and coordinates inside the national map extent. Their locations are grouped into 100-kilometre equal-area hexagons. Published cells contain 38,099 records; 674 records in cells below five are suppressed.",
+        "Of the top-level accessions, 38,773 have an Australian code and coordinates inside the map extent. The equal-area 100-kilometre hexagons show 38,099 records; 674 in cells below five are suppressed.",
         "Coordinate completeness ranges from 100% in the George Brown Darwin Botanic Gardens Seed Bank archive to 0% in the Alice Springs Desert Park archive. The percentage measures metadata available in this snapshot, not how representative each resource is geographically.",
-        "The decade histogram covers 33,765 top-level accessions with a usable year across six resources. Four resources have no usable top-level year. Its bars show the dates in the files, not annual collecting activity or a continuous history.",
+        "Only 33,765 top-level accessions have usable years, across six resources; four resources have none. The ten-year bins show dates recorded in those files, not annual collection effort. The 2020s bin is incomplete because the source snapshot stops in 2025.",
       ],
       transition:
         "The map and date charts describe the part of the archive that can be located and dated. They do not show where that material was stored or what conservation results followed.",

@@ -333,6 +333,7 @@ def summarize_gbif_archive(path: Path) -> dict:
     rows = 0
     basis = Counter()
     families = Counter()
+    family_genus = Counter()
     ranks = Counter()
     year_counts = Counter()
     names_by_family: dict[str, set[str]] = {}
@@ -347,6 +348,8 @@ def summarize_gbif_archive(path: Path) -> dict:
         family = record.get("family", "").strip()
         if family:
             families[family] += 1
+            genus = record.get("genus", "").strip() or "Genus not recorded"
+            family_genus[(family, genus)] += 1
             names_by_family.setdefault(family, set())
             accepted = record.get("acceptedNameUsage", "").strip()
             scientific = record.get("scientificName", "").strip()
@@ -369,6 +372,7 @@ def summarize_gbif_archive(path: Path) -> dict:
         "record_count": rows,
         "basis_of_record": dict(basis),
         "family_record_counts": dict(families),
+        "family_genus_counts": dict(family_genus),
         "family_count": len(families),
         "family_nonblank_records": sum(families.values()),
         "family_distinct_name_counts": {
@@ -742,7 +746,8 @@ def build_ala_origin_hexes(
 
 
 def build_treemap_layout(
-    family_counts: dict[str, int], width: float, height: float, top_n: int = 12
+    family_counts: dict[str, int], width: float, height: float, top_n: int = 12,
+    other_label: str = "Other families",
 ) -> list[dict]:
     """Create deterministic binary-treemap rectangles with area proportional to counts."""
     if width <= 0 or height <= 0 or top_n < 1:
@@ -756,7 +761,7 @@ def build_treemap_layout(
     visible = values[:top_n]
     remainder = sum(count for _, count in values[top_n:])
     if remainder:
-        visible.append(("Other families", remainder))
+        visible.append((other_label, remainder))
     total = sum(count for _, count in visible)
     rectangles: list[dict] = []
 
@@ -795,6 +800,64 @@ def build_treemap_layout(
 
     split(visible, 0.0, 0.0, float(width), float(height))
     return rectangles
+
+
+def build_family_genus_treemap(profile: dict, width: float, height: float) -> list[dict]:
+    """Nest real genus counts inside family rectangles, preserving parent areas."""
+    family_counts = profile["family_record_counts"]
+    parent_rects = build_treemap_layout(family_counts, width, height, top_n=5)
+    known = profile["family_genus_counts"]
+    total = sum(family_counts.values())
+    rows = []
+    for parent in parent_rects:
+        family = parent["family"]
+        family_count = parent["record_count"]
+        parent_row = {
+            **parent,
+            "level": "family",
+            "genus": "",
+            "colour_group": family,
+            "family_total": family_count,
+            "share": family_count / total,
+            "label_x": (parent["x0"] + parent["x1"]) / 2,
+            "label_y": (parent["y0"] + parent["y1"]) / 2,
+        }
+        rows.append(parent_row)
+        if family == "Other families":
+            genus_counts = {"Remaining families": family_count}
+        else:
+            genus_counts = {
+                genus: count for (parent_family, genus), count in known.items()
+                if parent_family == family
+            }
+            if sum(genus_counts.values()) != family_count:
+                raise AssertionError(f"Family/genus reconciliation failed for {family}")
+        nested = build_treemap_layout(
+            genus_counts,
+            parent["x1"] - parent["x0"],
+            parent["y1"] - parent["y0"],
+            top_n=4,
+            other_label="Other genera",
+        )
+        for child in nested:
+            rows.append({
+                "level": "genus",
+                "family": family,
+                "genus": child["family"],
+                "colour_group": parent_row["colour_group"],
+                "record_count": child["record_count"],
+                "family_total": family_count,
+                "share": child["record_count"] / total,
+                "area_share": child["record_count"] / total,
+                "x0": parent["x0"] + child["x0"],
+                "x1": parent["x0"] + child["x1"],
+                "y0": parent["y0"] + child["y0"],
+                "y1": parent["y0"] + child["y1"],
+                "label_x": parent["x0"] + (child["x0"] + child["x1"]) / 2,
+                "label_y": parent["y0"] + (child["y0"] + child["y1"]) / 2,
+            })
+    assert sum(r["record_count"] for r in rows if r["level"] == "genus") == total
+    return rows
 
 
 def _write_json(path: Path, value: object) -> None:
@@ -856,7 +919,7 @@ def _group_by_decade(year_counts: dict[int, int]) -> list[dict]:
     for year, count in year_counts.items():
         decades[(int(year) // 10) * 10] += int(count)
     return [
-        {"decade": decade, "decade_label": f"{decade}s", "record_count": decades[decade]}
+        {"decade": decade, "decade_end": decade + 10, "decade_label": f"{decade}s", "record_count": decades[decade]}
         for decade in sorted(decades)
     ]
 
@@ -1102,14 +1165,14 @@ def prepare_public_data(raw_root: Path, output_dir: Path) -> dict:
     ala_decades = _group_by_decade(dict(ala_years))
     _write_csv(
         output_dir / "ala_year_histogram.csv",
-        ["decade", "decade_label", "record_count"],
+        ["decade", "decade_end", "decade_label", "record_count"],
         ala_decades,
     )
 
     plantbank_decades = _group_by_decade(plantbank["year_counts"])
     _write_csv(
         output_dir / "plantbank_year_histogram.csv",
-        ["decade", "decade_label", "record_count"],
+        ["decade", "decade_end", "decade_label", "record_count"],
         plantbank_decades,
     )
     plantbank_family_decades = build_family_decade_matrix(plantbank, top_n=10)
@@ -1119,24 +1182,12 @@ def prepare_public_data(raw_root: Path, output_dir: Path) -> dict:
         plantbank_family_decades,
     )
     plantbank_families = _top_family_rows(plantbank, limit=12)
-    plantbank_layout = build_treemap_layout(
-        plantbank["family_record_counts"],
-        width=1000,
-        height=600,
-        top_n=12,
-    )
+    plantbank_layout = build_family_genus_treemap(plantbank, width=1000, height=600)
     _write_csv(
         output_dir / "plantbank_family_treemap.csv",
-        ["family", "record_count", "share", "area_share", "x0", "y0", "x1", "y1", "label_x", "label_y"],
-        [
-            {
-                **cell,
-                "share": cell["area_share"],
-                "label_x": (cell["x0"] + cell["x1"]) / 2,
-                "label_y": (cell["y0"] + cell["y1"]) / 2,
-            }
-            for cell in plantbank_layout
-        ],
+        ["level", "family", "genus", "colour_group", "record_count", "family_total", "share", "area_share",
+         "x0", "y0", "x1", "y1", "label_x", "label_y"],
+        plantbank_layout,
     )
 
     kingspark_families = _top_family_rows(kingspark, limit=12)

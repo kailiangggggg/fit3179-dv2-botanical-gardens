@@ -5,72 +5,217 @@
   "height": 430,
   "projection": {
     "type": "equalEarth",
-    "center": [132, -25],
-    "scale": {"signal": "min(615, width * 1.55)"},
-    "translate": {"signal": "[width / 2, 206]"}
+    "center": [
+      132,
+      -25
+    ],
+    "scale": {
+      "signal": "min(615, width * 1.55)"
+    },
+    "translate": {
+      "signal": "[width / 2, 206]"
+    }
   },
   "layer": [
     {
       "data": {
         "url": "../data/state_rates.geojson",
-        "format": {"type": "json", "property": "features"}
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
       },
-      "transform": [{"filter": "datum.properties.state_code !== '9'"}],
-      "mark": {"type": "geoshape", "fill": "#f1efe7", "stroke": "#b8c3bb", "strokeWidth": 0.65},
-      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
+      "transform": [
+        {
+          "filter": "datum.properties.state_code !== '9'"
+        }
+      ],
+      "mark": {
+        "type": "geoshape",
+        "fill": "#f1efe7",
+        "stroke": "#b8c3bb",
+        "strokeWidth": 0.65
+      },
+      "encoding": {
+        "shape": {
+          "field": "geometry",
+          "type": "geojson"
+        }
+      }
     },
     {
       "data": {
         "url": "../data/facility_points.geojson",
-        "format": {"type": "json", "property": "features"}
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
       },
-      "params": [{
-        "name": "facilityHover",
-        "select": {"type": "point", "fields": ["properties.feature_name"], "on": "pointerover", "clear": "pointerout"}
-      }],
-      "mark": {"type": "circle", "filled": true, "opacity": 0.64, "stroke": "#fffdf7", "strokeWidth": 0.7},
+      "params": [
+        {
+          "name": "facilityHover",
+          "select": {
+            "type": "point",
+            "fields": [
+              "properties.feature_name"
+            ],
+            "on": "pointerover",
+            "clear": "pointerout"
+          }
+        }
+      ],
+      "mark": {
+        "type": "circle",
+        "filled": true,
+        "opacity": 0.64,
+        "stroke": "#fffdf7",
+        "strokeWidth": 0.7
+      },
       "encoding": {
-        "longitude": {"field": "properties.longitude", "type": "quantitative"},
-        "latitude": {"field": "properties.latitude", "type": "quantitative"},
+        "longitude": {
+          "field": "properties.longitude",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "properties.latitude",
+          "type": "quantitative"
+        },
         "size": {
           "field": "properties.area_hectares",
           "type": "quantitative",
           "title": "Registered area (ha)",
-          "scale": {"domain": [0, 3739.30634602], "range": [0, 1200]},
-          "legend": null
+          "scale": {
+            "domain": [
+              0,
+              3739.30634602
+            ],
+            "range": [
+              0,
+              1200
+            ]
+          },
+          "legend": {
+            "title": "Registered area (ha)",
+            "orient": "bottom",
+            "direction": "horizontal",
+            "values": [
+              1,
+              100,
+              1000,
+              3739
+            ]
+          }
         },
-        "opacity": {"condition": {"param": "facilityHover", "empty": false, "value": 0.98}, "value": 0.42},
+        "opacity": {
+          "condition": {
+            "param": "facilityHover",
+            "empty": false,
+            "value": 0.98
+          },
+          "value": 0.42
+        },
         "color": {
           "field": "properties.feature_subtype",
           "type": "nominal",
           "title": "Register type",
-          "scale": {"domain": ["Botanic Garden", "Arboretum"], "range": ["#176247", "#b56637"]},
-          "legend": {"orient": "bottom", "direction": "horizontal"}
+          "scale": {
+            "domain": [
+              "Botanic Garden",
+              "Arboretum"
+            ],
+            "range": [
+              "#176247",
+              "#b56637"
+            ]
+          },
+          "legend": {
+            "orient": "bottom",
+            "direction": "horizontal"
+          }
         },
         "tooltip": [
-          {"field": "properties.feature_name", "type": "nominal", "title": "Facility"},
-          {"field": "properties.feature_subtype", "type": "nominal", "title": "Register type"},
-          {"field": "properties.locality", "type": "nominal", "title": "Locality"},
-          {"field": "properties.state", "type": "nominal", "title": "State / territory"},
-          {"field": "properties.area_hectares", "type": "quantitative", "title": "Registered area (ha)", "format": ",.1f"}
+          {
+            "field": "properties.feature_name",
+            "type": "nominal",
+            "title": "Facility"
+          },
+          {
+            "field": "properties.feature_subtype",
+            "type": "nominal",
+            "title": "Register type"
+          },
+          {
+            "field": "properties.locality",
+            "type": "nominal",
+            "title": "Locality"
+          },
+          {
+            "field": "properties.state",
+            "type": "nominal",
+            "title": "State / territory"
+          },
+          {
+            "field": "properties.area_hectares",
+            "type": "quantitative",
+            "title": "Registered area (ha)",
+            "format": ",.1f"
+          }
         ]
       }
     },
     {
       "data": {
         "url": "../data/facility_points.geojson",
-        "format": {"type": "json", "property": "features"}
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
       },
-      "mark": {"type": "circle", "filled": true, "size": 10, "color": "#173c31", "stroke": "#fffdf7", "strokeWidth": 0.6, "opacity": 0.92},
+      "mark": {
+        "type": "circle",
+        "filled": true,
+        "size": 10,
+        "color": "#173c31",
+        "stroke": "#fffdf7",
+        "strokeWidth": 0.6,
+        "opacity": 0.92
+      },
       "encoding": {
-        "longitude": {"field": "properties.longitude", "type": "quantitative"},
-        "latitude": {"field": "properties.latitude", "type": "quantitative"},
+        "longitude": {
+          "field": "properties.longitude",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "properties.latitude",
+          "type": "quantitative"
+        },
         "tooltip": [
-          {"field": "properties.feature_name", "type": "nominal", "title": "Facility"},
-          {"field": "properties.feature_subtype", "type": "nominal", "title": "Register type"},
-          {"field": "properties.locality", "type": "nominal", "title": "Locality"},
-          {"field": "properties.state", "type": "nominal", "title": "State / territory"},
-          {"field": "properties.area_hectares", "type": "quantitative", "title": "Registered area (ha)", "format": ",.1f"}
+          {
+            "field": "properties.feature_name",
+            "type": "nominal",
+            "title": "Facility"
+          },
+          {
+            "field": "properties.feature_subtype",
+            "type": "nominal",
+            "title": "Register type"
+          },
+          {
+            "field": "properties.locality",
+            "type": "nominal",
+            "title": "Locality"
+          },
+          {
+            "field": "properties.state",
+            "type": "nominal",
+            "title": "State / territory"
+          },
+          {
+            "field": "properties.area_hectares",
+            "type": "quantitative",
+            "title": "Registered area (ha)",
+            "format": ",.1f"
+          }
         ]
       }
     }

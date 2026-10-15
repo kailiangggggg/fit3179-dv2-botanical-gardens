@@ -28,11 +28,20 @@
       "title": "State / territory",
       "scale": {
         "domain": ["New South Wales", "Victoria", "Queensland", "Western Australia", "South Australia", "Australian Capital Territory", "Northern Territory", "Tasmania"],
-        "range": ["#176247", "#bc6c25", "#3b6e8f", "#75507b", "#a27a2c", "#417c78", "#c34f43", "#557339"]
+        "range": ["#005A8C", "#B77700", "#00734F", "#A34F79", "#8F6C00", "#2D759A", "#A53D1A", "#333333"]
       },
-      "legend": {"orient": "bottom", "direction": "horizontal", "columns": 4, "labelLimit": 190}
+      "legend": {"title": "State / territory", "orient": "bottom", "direction": "horizontal", "columns": 4, "labelLimit": 190}
     },
     "detail": {"field": "state", "type": "nominal"},
+    "shape": {
+      "field": "state",
+      "type": "nominal",
+      "scale": {
+        "domain": ["New South Wales", "Victoria", "Queensland", "Western Australia", "South Australia", "Australian Capital Territory", "Northern Territory", "Tasmania"],
+        "range": ["circle", "square", "diamond", "triangle-up", "triangle-down", "cross", "triangle-right", "triangle-left"]
+      },
+      "legend": {"title": "State / territory", "orient": "bottom", "direction": "horizontal", "columns": 4, "labelLimit": 190}
+    },
     "opacity": {
       "condition": {"test": "linkedState === null || datum.state === linkedState", "value": 1},
       "value": 0.14

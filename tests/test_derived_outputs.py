@@ -207,10 +207,32 @@ class DerivedOutputContractTests(unittest.TestCase):
 
             with (output_dir / "plantbank_family_treemap.csv").open(encoding="utf-8") as stream:
                 treemap = list(csv.DictReader(stream))
-            treemap_total = sum(int(row["record_count"]) for row in treemap)
-            for row in treemap:
+            families = [row for row in treemap if row["level"] == "family"]
+            genera = [row for row in treemap if row["level"] == "genus"]
+            treemap_total = sum(int(row["record_count"]) for row in genera)
+            self.assertEqual(treemap_total, 10_599)
+            self.assertEqual(sum(int(row["record_count"]) for row in families), treemap_total)
+            self.assertEqual(next(row for row in families if row["family"] == "Myrtaceae")["record_count"], "3240")
+            self.assertEqual(next(row for row in genera if row["genus"] == "Eucalyptus")["record_count"], "1897")
+            pooled_families = next(row for row in genera if row["family"] == "Other families")
+            self.assertEqual(pooled_families["genus"], "Remaining families")
+            self.assertEqual(pooled_families["record_count"], "3692")
+            for row in genera:
                 expected_share = int(row["record_count"]) / treemap_total
                 self.assertAlmostEqual(float(row["area_share"]), expected_share, places=6)
+                parent = next(item for item in families if item["family"] == row["family"])
+                parent_count = int(parent["record_count"])
+                parent_area = (float(parent["x1"]) - float(parent["x0"])) * (
+                    float(parent["y1"]) - float(parent["y0"])
+                )
+                child_area = (float(row["x1"]) - float(row["x0"])) * (
+                    float(row["y1"]) - float(row["y0"])
+                )
+                self.assertAlmostEqual(child_area / parent_area, int(row["record_count"]) / parent_count, places=6)
+                self.assertGreaterEqual(float(row["x0"]), float(parent["x0"]))
+                self.assertLessEqual(float(row["x1"]), float(parent["x1"]))
+                self.assertGreaterEqual(float(row["y0"]), float(parent["y0"]))
+                self.assertLessEqual(float(row["y1"]), float(parent["y1"]))
 
             with (output_dir / "plantbank_family_decades.csv").open(encoding="utf-8") as stream:
                 family_decades = list(csv.DictReader(stream))

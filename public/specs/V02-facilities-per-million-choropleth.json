@@ -2,12 +2,14 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "A state and territory choropleth of known registered botanical gardens and arboreta per million residents. The grouped Other Territories feature is shown neutrally because it combines four non-contiguous territories.",
   "width": 700,
-  "height": 370,
+  "height": 430,
   "params": [{"name": "linkedState", "value": null}],
   "projection": {
     "type": "conicEqualArea",
     "center": [132, -25],
-    "parallels": [-18, -36]
+    "parallels": [-18, -36],
+    "scale": {"signal": "min(615, width * 1.55)"},
+    "translate": {"signal": "[width / 2, 206]"}
   },
   "layer": [
     {
@@ -43,7 +45,7 @@
           "field": "properties.facilities_per_million",
           "type": "quantitative",
           "title": "Facilities per million residents",
-          "scale": {"domain": [5, 13], "scheme": "greens"},
+          "scale": {"domain": [5, 13], "scheme": "blues"},
           "legend": {"orient": "bottom", "direction": "horizontal", "format": ".0f"}
         },
         "tooltip": [

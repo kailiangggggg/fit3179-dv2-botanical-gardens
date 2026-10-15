@@ -1,17 +1,81 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Distribution by decade of top-level Australian Virtual Seed Bank accession records with a usable year. Dates are incomplete and uneven across resources; the chart does not show annual seed-bank activity.",
-  "data": {"url": "../data/ala_year_histogram.csv", "format": {"type": "csv"}},
+  "description": "Distribution by decade of top-level Australian Virtual Seed Bank accession records with a usable year. Dates are incomplete and uneven across resources; the chart does not show annual seed-bank activity. Decades are quantitative half-open intervals, not unrelated ordinal categories.",
+  "data": {
+    "url": "../data/ala_year_histogram.csv",
+    "format": {
+      "type": "csv"
+    }
+  },
   "width": 700,
   "height": 250,
-  "mark": {"type": "bar", "color": "#a27a2c", "cornerRadiusTopLeft": 2, "cornerRadiusTopRight": 2},
-  "encoding": {
-    "x": {"field": "decade_label", "type": "ordinal", "sort": {"field": "decade", "order": "ascending"}, "axis": {"title": "Recorded collection year, grouped by decade", "labelAngle": 0, "labelFontSize": 12}},
-    "y": {"field": "record_count", "type": "quantitative", "axis": {"title": "Dated top-level accessions", "format": "~s", "grid": true}},
-    "tooltip": [
-      {"field": "decade_label", "type": "ordinal", "title": "Decade"},
-      {"field": "record_count", "type": "quantitative", "title": "Dated top-level accessions", "format": ",.0f"}
-    ]
+  "mark": {
+    "type": "bar",
+    "color": "#a27a2c",
+    "cornerRadiusTopLeft": 2,
+    "cornerRadiusTopRight": 2,
+    "orient": "vertical"
   },
-  "config": {"view": {"stroke": null}}
+  "encoding": {
+    "x": {
+      "field": "decade",
+      "type": "quantitative",
+      "scale": {
+        "domain": [
+          1960,
+          2030
+        ],
+        "nice": false
+      },
+      "axis": {
+        "title": "Recorded decade (ten-year intervals)",
+        "values": [
+          1960,
+          1970,
+          1980,
+          1990,
+          2000,
+          2010,
+          2020,
+          2030
+        ],
+        "format": "d",
+        "labelAngle": 0,
+        "labelFontSize": 11
+      }
+    },
+    "y": {
+      "field": "record_count",
+      "type": "quantitative",
+      "axis": {
+        "title": "Dated top-level accessions",
+        "format": "~s",
+        "grid": true
+      }
+    },
+    "tooltip": [
+      {
+        "field": "decade_label",
+        "type": "ordinal",
+        "title": "Decade"
+      },
+      {
+        "field": "record_count",
+        "type": "quantitative",
+        "title": "Dated top-level accessions",
+        "format": ",.0f"
+      }
+    ],
+    "x2": {
+      "field": "decade_end"
+    },
+    "y2": {
+      "datum": 0
+    }
+  },
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  }
 }

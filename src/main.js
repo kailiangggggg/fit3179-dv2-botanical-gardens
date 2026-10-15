@@ -6,7 +6,7 @@ import "./site.css";
 
 import { renderPage } from "./content-renderer.js";
 import { adaptChartSpec, localizeDataUrls, resolveChartSpecUrl } from "./chart-runtime.js";
-import { formatLegendActionName, isLegendActivationKey } from "./legend-accessibility.js";
+import { formatLegendActionName, isLegendActivationKey, toggleLegendSelection } from "./legend-accessibility.js";
 import { getActiveSectionId } from "./navigation-runtime.js";
 
 const storyRoot = document.querySelector("#story-root");
@@ -47,7 +47,7 @@ async function renderChart(figure, chart, registerChartView) {
   let activeWidth = 0;
   let requestedWidth;
   let rendering = false;
-  let activeLegendLabel = null;
+  let activeLegendLabels = new Set();
 
   function updateLegendAccessibility() {
     if (chart.id !== "V03") return;
@@ -57,7 +57,7 @@ async function renderChart(figure, chart, registerChartView) {
       label.setAttribute("tabindex", "0");
       label.setAttribute("role", "button");
       label.setAttribute("aria-label", formatLegendActionName(name));
-      label.setAttribute("aria-pressed", String(name === activeLegendLabel));
+      label.setAttribute("aria-pressed", String(activeLegendLabels.has(name)));
     }
   }
 
@@ -78,7 +78,7 @@ async function renderChart(figure, chart, registerChartView) {
       requestedWidth = undefined;
       if (activeView && !forceRender && Math.abs(width - activeWidth) < 32) continue;
       if (activeView) registerChartView(chart.id, undefined);
-      if (activeView && chart.id === "V03") activeLegendLabel = null;
+      if (activeView && chart.id === "V03") activeLegendLabels.clear();
       activeView?.finalize();
       activeView = undefined;
       mount.replaceChildren();
@@ -126,7 +126,7 @@ async function renderChart(figure, chart, registerChartView) {
   }
 
   registerChartResetter(chart.id, () => {
-    activeLegendLabel = null;
+    activeLegendLabels.clear();
     return renderAtWidth(mount.clientWidth, true);
   });
   if (chart.id === "V03") {
@@ -143,14 +143,15 @@ async function renderChart(figure, chart, registerChartView) {
       const inLegend = Boolean(event.target.closest(".role-legend-entry"));
       const onMark = Boolean(event.target.closest(".role-mark"));
       if (inLegend) {
-        activeLegendLabel = legendLabelForTarget(event.target);
+        const label = legendLabelForTarget(event.target);
+        if (label) activeLegendLabels = toggleLegendSelection(activeLegendLabels, label);
         setLinkedJurisdiction(null, {
           preserveLegend: true,
           statusText: "The ranking chart is filtered by its legend; the rate map shows all jurisdictions.",
         });
         updateLegendAccessibility();
       } else if (!onMark) {
-        activeLegendLabel = null;
+        activeLegendLabels.clear();
         setLinkedJurisdiction(null, {
           preserveLegend: true,
           statusText: "The legend filter is cleared; all jurisdictions are shown.",

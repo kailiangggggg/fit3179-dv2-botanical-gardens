@@ -54,6 +54,15 @@ test("each section has reader-facing copy and a transition", () => {
   assert.ok(pageStory.hero.limitation.includes("not"));
 });
 
+test("the story avoids conservation-impact claims and defines unfamiliar record terms", () => {
+  assert.match(pageStory.subtitle, /Mapping Australia’s gardens/i);
+  assert.match(pageStory.hero.limitation, /do not measure plant survival, species recovery or educational outcomes/i);
+  assert.doesNotMatch(pageStory.subtitle, /protect plant diversity/i);
+  const records = pageStory.sections.find(({ id }) => id === "records");
+  assert.match(records.paragraphs[0], /taxon IDs—database labels, not verified species counts/i);
+  assert.match(records.paragraphs[1], /A plant family groups genera/i);
+});
+
 test("the page shell has a skip link, main landmark, and local module entry", () => {
   const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
   assert.match(html, /<html lang="en">/);
