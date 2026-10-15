@@ -1,6 +1,6 @@
 # Chart manifest
 
-**Inventory:** 13 rubric-counted chart groups, 14 visible panels, 3 map idioms, and 8 distinct advanced idiom types. V05a/V05b remains one paired chart group. These counts describe implemented specifications after validation; the final rubric audit is still pending visual and browser review.
+**Inventory:** 13 rubric-counted chart groups, 14 visible panels, 3 map idioms, and 8 distinct advanced idiom types. V05a/V05b remains one paired chart group. Final visual and browser review was completed on 15 October 2026; these counts describe the implementation and do not predict a marker-assessed grade.
 
 The complete machine-readable What / Why / How contracts, field types, transformations, mark/channel choices, interactions, caveats, spec paths and data paths are in [`public/specs/chart-manifest.json`](public/specs/chart-manifest.json). Each readable Vega-Lite v5 specification is in [`public/specs/`](public/specs/).
 

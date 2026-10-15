@@ -82,6 +82,14 @@ test("source disclosures identify licences and link all ten ALA collections", ()
   ));
 });
 
+test("ASGS Edition 4 source points to the current ABS boundary page", () => {
+  const source = pageStory.sources.find(({ label }) => label === "ASGS Edition 4 digital boundaries");
+  assert.equal(
+    source?.url,
+    "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-4-july-2026-june-2031/access-and-downloads/digital-boundary-files",
+  );
+});
+
 test("the site build cannot empty the project documentation directory", () => {
   assert.equal(viteConfig.build.outDir, "site-dist");
   assert.equal(viteConfig.build.emptyOutDir, true);

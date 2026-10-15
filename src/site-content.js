@@ -134,7 +134,7 @@ export const pageStory = {
       category: "ABS",
       label: "ASGS Edition 4 digital boundaries",
       publisher: "Australian Bureau of Statistics",
-      url: "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-asgs/edition-4-july-2026-june-2031/access-and-downloads/digital-boundary-files",
+      url: "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-4-july-2026-june-2031/access-and-downloads/digital-boundary-files",
       license: "CC BY 4.0; geometries simplified and reoriented for D3",
     },
     {
