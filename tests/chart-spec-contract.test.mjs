@@ -14,6 +14,12 @@ const rankChart = JSON.parse(
 const symbolMap = JSON.parse(
   readFileSync(new URL("../public/specs/V01-facility-symbol-map.json", import.meta.url), "utf8"),
 );
+const facilityPoints = JSON.parse(
+  readFileSync(new URL("../public/data/facility_points.geojson", import.meta.url), "utf8"),
+);
+const facilityBoxplot = JSON.parse(
+  readFileSync(new URL("../public/specs/V04-registered-footprint-boxplot.json", import.meta.url), "utf8"),
+);
 const plantbankHeatmap = JSON.parse(
   readFileSync(new URL("../public/specs/V09-plantbank-family-decade-heatmap.json", import.meta.url), "utf8"),
 );
@@ -120,12 +126,75 @@ test("V02 projection keeps the choropleth inside a compact Australia-focused fra
   assert.equal(facilitiesMap.projection.translate.signal, "[width / 2, 206]");
 });
 
-test("V01 labels proportional-symbol area and V02 separates rate colour from count greens", () => {
+test("V01 classifies each site once and uses an ordered graduated-symbol legend", () => {
   const size = symbolMap.layer[1].encoding.size;
-  assert.equal(size.title, "Registered area (ha)");
-  assert.equal(size.legend.title, "Registered area (ha)");
-  assert.deepEqual(size.legend.values, [1, 100, 1000, 3739]);
+  const classExpression = symbolMap.layer[1].transform?.find(
+    (transform) => transform.as === "registered_area_class",
+  )?.calculate;
+  assert.ok(classExpression, "V01 must calculate explicit registered-area classes");
+  assert.equal(
+    classExpression,
+    "datum.properties.area_hectares < 10 ? '0–<10 ha' : datum.properties.area_hectares < 100 ? '10–<100 ha' : datum.properties.area_hectares < 1000 ? '100–<1,000 ha' : '≥1,000 ha'",
+  );
+  const classify = (areaHectares) => {
+    if (areaHectares < 10) return "0–<10 ha";
+    if (areaHectares < 100) return "10–<100 ha";
+    if (areaHectares < 1000) return "100–<1,000 ha";
+    return "≥1,000 ha";
+  };
+  const classLabels = ["0–<10 ha", "10–<100 ha", "100–<1,000 ha", "≥1,000 ha"];
+  const classCounts = new Map(classLabels.map((label) => [label, 0]));
+
+  for (const feature of facilityPoints.features) {
+    const areaClass = classify(feature.properties.area_hectares);
+    assert.ok(classCounts.has(areaClass), `Unexpected class for ${feature.properties.feature_name}`);
+    classCounts.set(areaClass, classCounts.get(areaClass) + 1);
+  }
+
+  assert.deepEqual([...classCounts], [
+    ["0–<10 ha", 81],
+    ["10–<100 ha", 84],
+    ["100–<1,000 ha", 16],
+    ["≥1,000 ha", 1],
+  ]);
+  assert.equal(facilityPoints.features.length, 182);
+  assert.deepEqual(
+    [9.999, 10, 99.999, 100, 999.999, 1000].map(classify),
+    ["0–<10 ha", "10–<100 ha", "10–<100 ha", "100–<1,000 ha", "100–<1,000 ha", "≥1,000 ha"],
+  );
+
+  assert.equal(symbolMap.layer.length, 2, "V01 should not cover its size-coded circles with a locator overlay");
+  assert.match(siteStyles, /#chart-mount-V01\s+\.layer_0_marks\s*\{[^}]*pointer-events:\s*none/s);
+  assert.match(siteStyles, /#chart-mount-V01\s+\.background\s*\{[^}]*pointer-events:\s*none/s);
+  assert.match(siteStyles, /#chart-mount-V01\s+\.layer_1_marks\s+path\s*\{[^}]*pointer-events:\s*all\s*!important/s);
+  assert.equal(symbolMap.layer[1].mark.type, "circle");
+  assert.equal(symbolMap.layer[1].encoding.shape, undefined, "facility type must not be duplicated by shape");
+  assert.equal(size.field, "registered_area_class");
+  assert.equal(size.type, "nominal");
+  assert.equal(size.title, "Registered area class");
+  assert.deepEqual(size.scale.domain, classLabels);
+  assert.deepEqual(size.scale.range, [6, 18, 54, 162]);
+  assert.deepEqual(size.legend.values, classLabels);
+  assert.equal(size.legend.title, "Registered area class");
+
+  const areaTooltip = symbolMap.layer[1].encoding.tooltip.find(
+    (entry) => entry.field === "properties.area_hectares",
+  );
+  assert.equal(areaTooltip.format, ",.1f", "tooltip should preserve the reported hectares");
+  assert.match(symbolMap.description, /graduated|classes/i);
+  assert.doesNotMatch(symbolMap.description, /area is proportional/i);
   assert.equal(facilitiesMap.layer[1].encoding.color.scale.scheme, "blues");
+});
+
+test("V01 and V04 use the approved CVD-screened facility-type colours", () => {
+  const mapColors = symbolMap.layer[1].encoding.color.scale.range;
+  const boxplotColors = facilityBoxplot.encoding.color.scale.range;
+  assert.deepEqual(mapColors, ["#003F5C", "#B85C00"]);
+  assert.deepEqual(boxplotColors, mapColors);
+  assert.ok(minimumCvdSeparation(mapColors) >= 70);
+  for (const color of mapColors) {
+    assert.ok(contrastRatio(color, "#f1efe7") >= 3, `${color} lacks symbol contrast on the map land`);
+  }
 });
 
 test("V02 state labels switch polarity to preserve text contrast on dark rate fills", () => {

@@ -50,7 +50,7 @@
 
   "advanced_idiom_types": [
 
-    "Proportional-symbol map",
+    "Graduated-symbol map",
 
     "Choropleth",
 
@@ -92,7 +92,7 @@
 
       "section": "01 · A national footprint",
 
-      "idiom": "Proportional-symbol map",
+      "idiom": "Graduated-symbol map",
 
       "is_map": true,
 
@@ -134,7 +134,9 @@
 
         "transformations": [
 
-          "Retain all 182 register features; publish point coordinates and reduced state outlines."
+          "Retain all 182 register features; publish point coordinates and reduced state outlines.",
+
+          "Classify registered hectares into four graduated size classes; retain each reported area in the tooltip."
 
         ],
 
@@ -152,15 +154,15 @@
 
       "how": {
 
-        "marks": "State polygons, area-proportional circles and small center markers so every site remains locatable.",
+        "marks": "State polygons and one circle per register feature, sized with four graduated area classes.",
 
-        "channels": "Projected longitude/latitude for position; circle area for hectares; categorical hue for Botanic Garden or Arboretum. Quantitative circle-size legend shows reference hectares.",
+        "channels": "Projected longitude/latitude for position; discrete circle size for registered-area class; categorical hue for Botanic Garden or Arboretum. The size legend gives explicit hectare boundaries, while the tooltip retains reported hectares.",
 
         "projection": "Equal Earth equal-area projection centred on Australia.",
 
-        "color": "Deep green for Botanic Garden; muted ochre for Arboretum.",
+        "color": "Deep blue (#003F5C) for Botanic Garden; burnt orange (#B85C00) for Arboretum.",
 
-        "ordering": "Draw state outlines first, proportional symbols second, and site markers last.",
+        "ordering": "Draw state outlines first, then all facility circles; overlap remains possible in dense locations.",
 
         "aggregation": "None; one mark per GA register feature.",
 

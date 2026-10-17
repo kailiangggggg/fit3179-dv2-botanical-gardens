@@ -1,6 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Known Geoscience Australia botanical garden and arboretum features. Projected positions show location, circle area is proportional to registered facility hectares, and hue distinguishes the two register types.",
+  "description": "Known Geoscience Australia botanical garden and arboretum features. Projected positions show location, four graduated circle sizes show registered-area classes, and hue distinguishes the two register types. Tooltips retain each reported area in hectares.",
   "width": 900,
   "height": 430,
   "projection": {
@@ -51,6 +51,12 @@
           "property": "features"
         }
       },
+      "transform": [
+        {
+          "calculate": "datum.properties.area_hectares < 10 ? '0–<10 ha' : datum.properties.area_hectares < 100 ? '10–<100 ha' : datum.properties.area_hectares < 1000 ? '100–<1,000 ha' : '≥1,000 ha'",
+          "as": "registered_area_class"
+        }
+      ],
       "params": [
         {
           "name": "facilityHover",
@@ -81,28 +87,39 @@
           "type": "quantitative"
         },
         "size": {
-          "field": "properties.area_hectares",
-          "type": "quantitative",
-          "title": "Registered area (ha)",
+          "field": "registered_area_class",
+          "type": "nominal",
+          "title": "Registered area class",
+          "sort": [
+            "0–<10 ha",
+            "10–<100 ha",
+            "100–<1,000 ha",
+            "≥1,000 ha"
+          ],
           "scale": {
+            "type": "ordinal",
             "domain": [
-              0,
-              3739.30634602
+              "0–<10 ha",
+              "10–<100 ha",
+              "100–<1,000 ha",
+              "≥1,000 ha"
             ],
             "range": [
-              0,
-              1200
+              6,
+              18,
+              54,
+              162
             ]
           },
           "legend": {
-            "title": "Registered area (ha)",
+            "title": "Registered area class",
             "orient": "bottom",
             "direction": "horizontal",
             "values": [
-              1,
-              100,
-              1000,
-              3739
+              "0–<10 ha",
+              "10–<100 ha",
+              "100–<1,000 ha",
+              "≥1,000 ha"
             ]
           }
         },
@@ -124,70 +141,14 @@
               "Arboretum"
             ],
             "range": [
-              "#176247",
-              "#b56637"
+              "#003F5C",
+              "#B85C00"
             ]
           },
           "legend": {
             "orient": "bottom",
             "direction": "horizontal"
           }
-        },
-        "tooltip": [
-          {
-            "field": "properties.feature_name",
-            "type": "nominal",
-            "title": "Facility"
-          },
-          {
-            "field": "properties.feature_subtype",
-            "type": "nominal",
-            "title": "Register type"
-          },
-          {
-            "field": "properties.locality",
-            "type": "nominal",
-            "title": "Locality"
-          },
-          {
-            "field": "properties.state",
-            "type": "nominal",
-            "title": "State / territory"
-          },
-          {
-            "field": "properties.area_hectares",
-            "type": "quantitative",
-            "title": "Registered area (ha)",
-            "format": ",.1f"
-          }
-        ]
-      }
-    },
-    {
-      "data": {
-        "url": "../data/facility_points.geojson",
-        "format": {
-          "type": "json",
-          "property": "features"
-        }
-      },
-      "mark": {
-        "type": "circle",
-        "filled": true,
-        "size": 10,
-        "color": "#173c31",
-        "stroke": "#fffdf7",
-        "strokeWidth": 0.6,
-        "opacity": 0.92
-      },
-      "encoding": {
-        "longitude": {
-          "field": "properties.longitude",
-          "type": "quantitative"
-        },
-        "latitude": {
-          "field": "properties.latitude",
-          "type": "quantitative"
         },
         "tooltip": [
           {

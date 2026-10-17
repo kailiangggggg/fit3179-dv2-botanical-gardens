@@ -44,7 +44,7 @@ export const pageStory = {
       title: "A national footprint",
       question: "Where are the known gardens and arboreta—and how do their registered sites differ?",
       intro:
-        "Of 182 known-register sites, 135 are in New South Wales, Victoria and Queensland. An arboretum is a garden focused on trees and woody plants. Circle area shows reported land footprint, not a conservation score.",
+        "Of 182 known-register sites, 135 are in New South Wales, Victoria and Queensland. An arboretum is a garden focused on trees and woody plants. Four graduated circle sizes show registered-area classes; hover to see each facility’s reported hectares.",
       paragraphs: [
         "A register entry is not a guarantee that every facility is represented. Reported hectares describe a registered footprint, not planted area, public access, the size of a collection or conservation capacity.",
         "Raw counts and population-standardised rates answer different questions. ACT moves from sixth by count to first by facilities per million residents; the Northern Territory moves from a tie at 7.5 to second. These rates describe register density, not how easy a garden is to reach.",

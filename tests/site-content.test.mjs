@@ -45,6 +45,17 @@ test("every manifest chart group appears once in the story", () => {
   assert.equal(manifest.visible_panels, 14);
 });
 
+test("V01 narrative distinguishes graduated size classes from reported hectares", () => {
+  const footprint = pageStory.sections.find(({ id }) => id === "footprint");
+  const v01 = manifest.charts.find(({ id }) => id === "V01");
+  assert.match(footprint.intro, /four graduated circle sizes show registered-area classes/i);
+  assert.match(footprint.intro, /hover to see each facility’s reported hectares/i);
+  assert.doesNotMatch(footprint.intro, /circle area shows reported land footprint/i);
+  assert.equal(v01.idiom, "Graduated-symbol map");
+  assert.match(v01.how.channels, /discrete circle size for registered-area class/i);
+  assert.match(v01.how.channels, /explicit hectare boundaries/i);
+});
+
 test("each section has reader-facing copy and a transition", () => {
   for (const section of pageStory.sections) {
     assert.ok(section.title.trim(), `${section.id} has a title`);

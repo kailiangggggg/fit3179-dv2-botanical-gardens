@@ -330,6 +330,10 @@ h1 em { color: var(--green); font-weight: 500; }
 .chart-entry .figure-unit { max-width: 190px; white-space: normal; }
 .chart-entry .chart-frame { min-width: 0; }
 
+#chart-mount-V01 .layer_0_marks { pointer-events: none; }
+#chart-mount-V01 .background { pointer-events: none; }
+#chart-mount-V01 .layer_1_marks path { pointer-events: all !important; }
+
 .chart-loading {
   display: grid;
   min-height: 230px;
