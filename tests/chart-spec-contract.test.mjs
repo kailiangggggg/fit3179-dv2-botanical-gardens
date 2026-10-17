@@ -39,6 +39,7 @@ const manifest = JSON.parse(
   readFileSync(new URL("../public/specs/chart-manifest.json", import.meta.url), "utf8"),
 );
 const siteStyles = readFileSync(new URL("../src/site.css", import.meta.url), "utf8");
+const humanChartManifest = readFileSync(new URL("../CHART_MANIFEST.md", import.meta.url), "utf8");
 const rankLine = rankChart.layer.find((layer) => layer.mark?.type === "line");
 const rankEndpointLabels = rankChart.layer.find((layer) => layer.encoding?.text?.field === "state_abbreviation");
 
@@ -183,6 +184,9 @@ test("V01 classifies each site once and uses an ordered graduated-symbol legend"
   assert.equal(areaTooltip.format, ",.1f", "tooltip should preserve the reported hectares");
   assert.match(symbolMap.description, /graduated|classes/i);
   assert.doesNotMatch(symbolMap.description, /area is proportional/i);
+  assert.match(humanChartManifest, /\|\s*V01\s*\|[^\n]*\|\s*Graduated-symbol map\s*\|/);
+  assert.match(humanChartManifest, /four graduated circle sizes encode registered-area classes/i);
+  assert.doesNotMatch(humanChartManifest, /Proportional-symbol map/i);
   assert.equal(facilitiesMap.layer[1].encoding.color.scale.scheme, "blues");
 });
 

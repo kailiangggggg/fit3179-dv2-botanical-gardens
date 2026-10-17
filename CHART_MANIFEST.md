@@ -1,12 +1,12 @@
 # Chart manifest
 
-**Inventory:** 13 rubric-counted chart groups, 14 visible panels, 3 map idioms, and 8 distinct advanced idiom types. V05a/V05b remains one paired chart group. Final visual and browser review was completed on 15 October 2026; these counts describe the implementation and do not predict a marker-assessed grade.
+**Inventory:** 13 rubric-counted chart groups, 14 visible panels, 3 map idioms, and 8 distinct advanced idiom types. V05a/V05b remains one paired chart group. Final visual and browser review was completed on 18 October 2026; these counts describe the implementation and do not predict a marker-assessed grade.
 
 The complete machine-readable What / Why / How contracts, field types, transformations, mark/channel choices, interactions, caveats, spec paths and data paths are in [`public/specs/chart-manifest.json`](public/specs/chart-manifest.json). Each readable Vega-Lite v5 specification is in [`public/specs/`](public/specs/).
 
 | ID | Reader question | Idiom | Source / grain | Spec / data | Class |
 |---|---|---|---|---|---|
-| V01 | Where are the known gardens and arboreta, and how do their registered areas vary? | Proportional-symbol map | GA, one registered facility feature | [`V01`](public/specs/V01-facility-symbol-map.json) · facility points + ASGS boundaries | Advanced map |
+| V01 | Where are the known gardens and arboreta, and how do their registered areas vary? | Graduated-symbol map | GA, one registered facility feature | [`V01`](public/specs/V01-facility-symbol-map.json) · facility points + ASGS boundaries | Advanced map |
 | V02 | How many known facilities are registered per million residents? | Choropleth | GA counts + ABS March 2026 ERP, one state/territory | [`V02`](public/specs/V02-facilities-per-million-choropleth.json) · joined state GeoJSON | Advanced map |
 | V03 | Which state rankings shift after population adjustment? | Slopegraph | Same eight standard jurisdictions as V02 | [`V03`](public/specs/V03-count-rate-slopegraph.json) · rank comparison CSV | Advanced |
 | V04 | Do registered facility footprints differ by type? | Box plot | GA, one facility area | [`V04`](public/specs/V04-registered-footprint-boxplot.json) · area records/stats | Advanced |
@@ -26,8 +26,8 @@ The complete machine-readable What / Why / How contracts, field types, transform
 
 - **What:** GA’s 182 known-register facilities with coordinates, subtype and registered hectares.
 - **Why:** Locate sites and compare reported facility footprints.
-- **How:** Equal Earth map; position encodes location, circle area encodes hectares with a quantitative size legend, hue encodes Botanic Garden versus Arboretum. Small center marks keep small facilities locatable. Hover highlights a facility; its tooltip carries the name, jurisdiction, locality and area.
-- **Limit:** Register inclusion is not proof of national completeness, public access, collection size or conservation performance.
+- **How:** Equal Earth map; position encodes location, four graduated circle sizes encode registered-area classes, and hue encodes Botanic Garden versus Arboretum. The legend states the hectare ranges; the tooltip retains each reported area. Hover highlights a facility.
+- **Limit:** Symbol sizes show area classes, not continuous area proportions or within-class differences. Register inclusion is not proof of national completeness, public access, collection size or conservation performance.
 
 ### V02 — State-level register density
 
