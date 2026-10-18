@@ -62,22 +62,43 @@ test("V01 narrative distinguishes graduated size classes from reported hectares"
   assert.match(footprint.intro, /graduated circles group registered areas, with exact hectares available on hover/i);
   assert.doesNotMatch(footprint.intro, /circle area shows reported land footprint/i);
   assert.equal(v01.idiom, "Graduated-symbol map");
-  assert.match(v01.how.channels, /discrete circle size for registered-area class/i);
-  assert.match(v01.how.channels, /explicit hectare boundaries/i);
+  assert.match(v01.how.channels, /circle area values 12\/24\/48\/96 for the four registered-area classes/i);
+  assert.match(v01.how.channels, /legend gives hectare boundaries/i);
 });
 
-test("each adjacent chart pair has a concise, evidence-specific transition", () => {
+test("every chart has a concise visible finding or transition in reading order", () => {
   let transitionCount = 0;
   for (const section of pageStory.sections.filter(({ chartIds }) => chartIds.length > 1)) {
-    const expectedPairs = section.chartIds.slice(0, -1);
-    assert.deepEqual(section.chartTransitions.map(({ afterChart }) => afterChart), expectedPairs, `${section.id} transition order`);
+    assert.deepEqual(section.chartTransitions.map(({ afterChart }) => afterChart), section.chartIds, `${section.id} chart takeaway order`);
     for (const { afterChart: chartId, text: copy } of section.chartTransitions) {
       assert.ok(copy.trim().length > 0, `${chartId} transition has copy`);
-      assert.ok(copy.length <= 180, `${chartId} transition stays concise`);
+      assert.ok(copy.length <= 230, `${chartId} transition stays concise`);
       transitionCount += 1;
     }
   }
-  assert.equal(transitionCount, 10);
+  assert.equal(transitionCount, 13);
+});
+
+test("visible chart copy answers the archive, origin, and rank-change questions", () => {
+  const transition = (sectionId, chartId) => pageStory.sections
+    .find(({ id }) => id === sectionId)
+    .chartTransitions.find(({ afterChart }) => afterChart === chartId).text;
+
+  assert.match(transition("footprint", "V02"), /population.*smaller jurisdictions.*fewer facilities/i);
+  assert.match(transition("footprint", "V03"), /ACT.*sixth.*first.*NT.*second.*not access/i);
+  assert.match(transition("records", "V05"), /119,278.*58,562.*linked children.*taxon IDs/i);
+  assert.match(transition("records", "V06"), /10,609.*LIVING_SPECIMEN.*10,599.*current survival/i);
+  assert.match(transition("records", "V07"), /not necessarily accession dates/i);
+  assert.match(transition("records", "V08"), /20,647.*PRESERVED_SPECIMEN.*no usable years/i);
+  assert.match(transition("origins", "V10"), /fewer than five.*collection origins.*not gardens/i);
+  assert.match(transition("origins", "V12"), /0%.*100%.*22\.7%.*ALA Australian PlantBank archive.*top-level accessions.*map-ready coordinates.*not geographic representativeness/i);
+  assert.match(manifest.charts.find(({ id }) => id === "V12").how.annotation, /ALA Australian PlantBank archive.*2,921 of 12,871 top-level accessions \(22\.7%\)/i);
+  assert.match(manifest.charts.find(({ id }) => id === "V13").how.annotation, /Four archives lack usable top-level years/i);
+  assert.match(transition("origins", "V13"), /year spans.*file endpoints.*not continuous.*facility locations.*collection records/i);
+  assert.doesNotMatch(transition("records", "V06"), /1,897/);
+  assert.doesNotMatch(transition("origins", "V10"), /38,099/);
+  assert.doesNotMatch(transition("origins", "V11"), /33,765/);
+  assert.doesNotMatch(transition("origins", "V13"), /33,765/);
 });
 
 test("each section has reader-facing copy and a transition", () => {
@@ -95,8 +116,9 @@ test("the story avoids conservation-impact claims and defines unfamiliar record 
   assert.match(pageStory.hero.limitation, /do not measure plant survival, species recovery or educational outcomes/i);
   assert.doesNotMatch(pageStory.subtitle, /protect plant diversity/i);
   const records = pageStory.sections.find(({ id }) => id === "records");
-  assert.match(records.paragraphs[0], /taxon IDs—database labels, not verified species counts/i);
-  assert.match(records.paragraphs[1], /A plant family groups genera/i);
+  assert.match(records.chartTransitions.find(({ afterChart }) => afterChart === "V05").text, /taxon IDs are labels, not verified species counts/i);
+  assert.match(records.intro, /A plant family groups genera|A seed-bank accession is a catalogued seed collection/i);
+  assert.match(pageStory.sections.find(({ id }) => id === "evidence").transition, /known.*records.*origins|known.*published.*wild origins/i);
 });
 
 test("the page shell has a skip link, main landmark, and local module entry", () => {

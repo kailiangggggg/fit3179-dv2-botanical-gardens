@@ -26,21 +26,21 @@ The complete machine-readable What / Why / How contracts, field types, transform
 
 - **What:** GA’s 182 known-register facilities with coordinates, subtype and registered hectares.
 - **Why:** Locate sites and compare reported facility footprints.
-- **How:** Equal Earth map; position encodes location, four graduated circle sizes encode registered-area classes, and hue encodes Botanic Garden versus Arboretum. The legend states the hectare ranges; the tooltip retains each reported area. Hover highlights a facility.
+- **How:** Equal Earth map; position encodes location, four graduated circle sizes encode registered-area classes using Vega-Lite area values `12 / 24 / 48 / 96`, and hue encodes Botanic Garden versus Arboretum. The graduated values distinguish classes, not exact proportions. The legend states hectare ranges; the tooltip retains each reported area. Default opacity is 0.78, and hover highlights a facility.
 - **Limit:** Symbol sizes show area classes, not continuous area proportions or within-class differences. Register inclusion is not proof of national completeness, public access, collection size or conservation performance.
 
 ### V02 — State-level register density
 
 - **What:** GA facility counts joined to ABS ERP for 31 March 2026 and ASGS Edition 4 code 1–8 boundaries.
 - **Why:** Compare known register counts after adjusting for resident population.
-- **How:** State polygons; sequential blue luminance encodes facilities per million. State labels use dark text on light fills and white text with a dark outline on the two darkest fills. A linked jurisdiction selector focuses the same state on V03. The tooltip reveals numerator and denominator. Other Territories is neutral on the map.
+- **How:** State polygons; sequential blue luminance encodes facilities per million. Labels use dark text on pale fills and white text on the two darkest fills without text outlines; during linked focus, labels in de-emphasised regions remain dark and fully opaque. A linked jurisdiction selector focuses the same state on V03. The tooltip reveals numerator and denominator. Other Territories is neutral on the map.
 - **Limit:** It is register density, not access. The code-9 denominator groups Norfolk Island, Jervis Bay, Christmas Island and Cocos (Keeling) Islands; its 198.14 per-million value is not in the comparison.
 
 ### V03 — Count-to-rate rank change
 
 - **What:** Raw GA counts and March 2026 ERP-normalized rates for the same eight jurisdictions.
 - **Why:** Show which jurisdictions change order after population adjustment.
-- **How:** Lines join two rank positions; rank 1 is highest. TAS and NT share 7.5 on facility count. Short state abbreviations label the rate-rank endpoints; contrast-tested color and distinct endpoint shapes provide redundant cues. The full-name keyboard-operable legend filters series with click or Enter/Space. Choose All jurisdictions to clear the filter. The linked selector highlights the same state on V02; hover gives exact values.
+- **How:** Lines join two rank positions; rank 1 is highest. TAS and NT share 7.5 on facility count. The palette maps NSW `#005A8C`, VIC `#C45100`, QLD `#332288`, WA `#568EAE`, SA `#2D8A70`, ACT `#735A32`, NT `#444444`, and TAS `#5D6D7E`; short rate-rank abbreviations and distinct endpoint shapes repeat identity. The full-name keyboard-operable legend filters series with click or Enter/Space. Choose All jurisdictions to clear the filter. The linked selector highlights the same state on V02; hover gives exact values.
 - **Limit:** Rank is ordinal and hides magnitude; the rate map and labels carry the values.
 
 ### V04 — Footprint distributions

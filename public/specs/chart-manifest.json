@@ -156,13 +156,13 @@
 
         "marks": "State polygons and one circle per register feature, sized with four graduated area classes.",
 
-        "channels": "Projected longitude/latitude for position; discrete circle size for registered-area class; categorical hue for Botanic Garden or Arboretum. The size legend gives explicit hectare boundaries, while the tooltip retains reported hectares.",
+        "channels": "Projected longitude/latitude for position; discrete circle area values 12/24/48/96 for the four registered-area classes; categorical hue for Botanic Garden or Arboretum. These graduated values distinguish classes, not exact proportions; the legend gives hectare boundaries and the tooltip retains reported hectares.",
 
         "projection": "Equal Earth equal-area projection centred on Australia.",
 
         "color": "Deep blue (#003F5C) for Botanic Garden; burnt orange (#B85C00) for Arboretum.",
 
-        "ordering": "Draw state outlines first, then all facility circles; overlap remains possible in dense locations.",
+        "ordering": "Draw state outlines first, then all facility circles at 0.78 default opacity; the largest-to-smallest area ratio is 8:1. Overlap remains possible in dense locations.",
 
         "aggregation": "None; one mark per GA register feature.",
 
@@ -254,7 +254,7 @@
 
         "projection": "Australian conic equal-area using ASGS Edition 4 boundaries.",
 
-        "color": "Light-to-dark blue for population-normalized register rates; state labels use dark ink on light fills and white ink with a dark outline on the two darkest fills. Neutral grey marks Other Territories with no comparative rate.",
+        "color": "Light-to-dark blue for population-normalized register rates; labels use dark ink on light fills and white ink on the two darkest fills without text outlines. In linked focus, de-emphasised jurisdictions retain opaque dark labels. Neutral grey marks Other Territories with no comparative rate.",
 
         "ordering": "Continuous scale, state abbreviations and full-name tooltips.",
 
@@ -262,7 +262,7 @@
 
         "interaction": "The linked jurisdiction selector focuses the same state on V02 and V03; hover shows count, ERP and calculated rate.",
 
-        "annotation": "Other Territories includes Norfolk Island, Jervis Bay, Christmas Island and Cocos (Keeling) Islands; its grouped rate is not mapped."
+        "annotation": "Rates divide facility counts by population, so smaller jurisdictions can rank higher. Other Territories combines Norfolk Island, Jervis Bay, Christmas Island and Cocos (Keeling) Islands; its grouped rate is not mapped."
 
       }
 
@@ -340,7 +340,7 @@
 
         "projection": "Not applicable.",
 
-        "color": "Eight contrast-tested categorical colors and distinct endpoint shapes identify jurisdictions; short state abbreviations label every rate-rank endpoint, and the full-name legend supports keyboard filtering.",
+        "color": "Jurisdiction palette: NSW #005A8C, VIC #C45100, QLD #332288, WA #568EAE, SA #2D8A70, ACT #735A32, NT #444444, TAS #5D6D7E. Distinct endpoint shapes and rate-rank abbreviations repeat identity; the full-name legend supports keyboard filtering.",
 
         "ordering": "1 is highest; the raw-count TAS/NT tie is shown at midrank 7.5. Short abbreviations sit beside the rate-rank endpoints.",
 
@@ -348,7 +348,7 @@
 
         "interaction": "Click legend items or focus a legend label and press Enter or Space to filter series; choose All jurisdictions to clear the filter. The linked jurisdiction selector highlights the same state on V02 and V03; hover reveals state, rank, raw count and rate.",
 
-        "annotation": "ACT moves from rank 6 to 1; NT from 7.5 to 2; WA from 4 to 3."
+        "annotation": "ACT moves from rank 6 to 1, NT from midrank 7.5 to 2, and WA from 4 to 3. Rates divide counts by population; they describe register density, not access."
 
       }
 
@@ -700,7 +700,7 @@
 
         "interaction": "Tooltip gives exact count per decade.",
 
-        "annotation": "The 1980s bin contains 4,321 records; 920 source rows lack usable years, and the 2010s end in 2015."
+        "annotation": "The 1980s peak is 4,321 records; 9,689 of 10,609 PlantBank rows have usable years and 920 do not. Recorded event years are not necessarily accession dates; the series ends in 2015."
 
       }
 
@@ -784,7 +784,7 @@
 
         "interaction": "Tooltip gives family, count and share of family-identified rows.",
 
-        "annotation": "Other families pools smaller groups; Myrtaceae is the largest single family. Every row is PRESERVED_SPECIMEN, not a living-collection census."
+        "annotation": "Kings Park’s 20,647 rows are PRESERVED_SPECIMEN vouchers; Myrtaceae is its largest named family. Other families pools smaller groups; these are not living holdings."
 
       }
 
@@ -960,7 +960,7 @@
 
         "interaction": "Tooltip gives the aggregate count; no origin point or event identifier is exposed.",
 
-        "annotation": "The colour scale compresses larger counts so sparse cells remain visible. Origins are not garden or receiving-bank locations; coordinate completeness varies by resource."
+        "annotation": "Of 38,773 coordinate-eligible accessions, 38,099 appear in cells; 674 in cells under five are suppressed. These are recorded origins, not gardens or seed stores."
 
       }
 
@@ -1046,7 +1046,7 @@
 
         "interaction": "Tooltip gives the decade and exact count.",
 
-        "annotation": "Dated records come from six resources; the 2020s interval ends at the 2025 snapshot and four resources lack usable years."
+        "annotation": "33,765 of 58,562 top-level accessions have usable event years across six resources; four have none. The 2020s end in 2025; dates are not annual collecting effort."
 
       }
 
@@ -1128,7 +1128,7 @@
 
         "interaction": "Tooltip gives map-ready count, total roots and percentage.",
 
-        "annotation": "Australian PlantBank event records have 22.7% without map-ready coordinates in this snapshot; other resources vary."
+        "annotation": "Map-ready coordinates range from 0% in Alice Springs to 100% in Darwin; in the ALA Australian PlantBank archive, 2,921 of 12,871 top-level accessions (22.7%) lack them. Completeness is metadata availability, not geographic representativeness."
 
       }
 

@@ -30,7 +30,7 @@
           "title": "State / territory",
           "scale": {
             "domain": ["New South Wales", "Victoria", "Queensland", "Western Australia", "South Australia", "Australian Capital Territory", "Northern Territory", "Tasmania"],
-            "range": ["#005A8C", "#B77700", "#00734F", "#A34F79", "#8F6C00", "#2D759A", "#A53D1A", "#333333"]
+            "range": ["#005A8C", "#C45100", "#332288", "#568EAE", "#2D8A70", "#735A32", "#444444", "#5D6D7E"]
           },
           "legend": {"title": "State / territory", "orient": "bottom", "direction": "horizontal", "columns": 4, "labelLimit": 190}
         },

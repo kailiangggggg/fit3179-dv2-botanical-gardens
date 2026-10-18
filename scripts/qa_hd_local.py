@@ -10,10 +10,15 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 URL = "http://127.0.0.1:4173/"
-OUT = ROOT / "tmp" / "editorial-navigation-20261018" / "full-browser-qa"
+OUT = ROOT / "tmp" / "perceptual-visible-storytelling-20261018" / "full-local"
 OUT.mkdir(parents=True, exist_ok=True)
 VIEWPORTS = ((320, 700), (390, 844), (768, 900), (1024, 768), (1280, 800), (1366, 768), (1600, 900))
 CHART_IDS = tuple(f"V{i:02}" for i in range(1, 14))
+MACHADO_CVD = {
+    "protanopia": [[0.152286, 1.052583, -0.204868], [0.114503, 0.786281, 0.099216], [-0.003882, -0.048116, 1.051998]],
+    "deuteranopia": [[0.367322, 0.860646, -0.227968], [0.280085, 0.672501, 0.047413], [-0.011820, 0.042940, 0.968881]],
+    "tritanopia": [[1.255528, -0.076749, -0.178779], [-0.078411, 0.930809, 0.147602], [0.004733, 0.691367, 0.303900]],
+}
 
 
 def wait_for_charts(page):
@@ -64,7 +69,7 @@ EXPECTED_CHAPTERS = [
     "Beyond the garden gate",
     "What the evidence means",
 ]
-EXPECTED_CHART_TRANSITIONS = ["V01", "V02", "V03", "V05", "V06", "V07", "V08", "V10", "V11", "V12"]
+EXPECTED_CHART_TRANSITIONS = list(CHART_IDS)
 
 
 def check_navigation_layout(page, width):
@@ -86,7 +91,7 @@ def check_navigation_layout(page, width):
         navDisplay: getComputedStyle(list).display,
         navColumns: getComputedStyle(list).gridTemplateColumns.split(/\\s+/).length,
         chartTransitions: [...document.querySelectorAll('.chart-transition')].map(node => node.dataset.afterChart),
-        transitionsInPlace: ["V01", "V02", "V03", "V05", "V06", "V07", "V08", "V10", "V11", "V12"].every(id => {
+        transitionsInPlace: ["V01", "V02", "V03", "V04", "V05", "V06", "V07", "V08", "V09", "V10", "V11", "V12", "V13"].every(id => {
           const chart = document.querySelector('.chart-entry[data-chart-id="' + id + '"]');
           const next = chart?.nextElementSibling;
           return next?.classList.contains('chart-transition') && next.dataset.afterChart === id && next.textContent.trim().length > 0;
@@ -153,6 +158,117 @@ def check_navigation_interactions(page):
             raise AssertionError(f"Mouse anchor is obscured by the chapter guide: {section_id} {position}")
         mouse_anchors[section_id] = position
     return {"keyboardOrigin": origin_position, "mouseAnchors": mouse_anchors, "focus": keyboard_sequence[-1]}
+
+
+def check_no_interaction_reading_path(browser, width, height):
+    page = browser.new_page(viewport={"width": width, "height": height})
+    console_messages = []
+    failed_responses = []
+    page.on("pageerror", lambda error: console_messages.append(f"pageerror: {error}"))
+    page.on("console", lambda message: console_messages.append(f"console.{message.type}: {message.text}") if message.type in ("error", "warning") else None)
+    page.on("response", lambda response: failed_responses.append(f"{response.status} {response.url}") if response.status >= 400 else None)
+    page.goto(URL, wait_until="domcontentloaded", timeout=30000)
+    page.evaluate("document.documentElement.style.scrollBehavior = 'auto'")
+    page.wait_for_function("document.querySelectorAll('.story-section').length === 4", timeout=30000)
+    page.wait_for_function("document.querySelectorAll('.chart-entry').length === 13", timeout=30000)
+
+    questions = {
+        "Q1": ("135 of 182",),
+        "Q2": ("smaller jurisdictions can rank higher", "ACT rises from sixth by count to first per million"),
+        "Q3": ("1,897", "the most dated PlantBank records"),
+        "Q4": ("A seed-bank accession is a catalogued seed collection", "not necessarily today"),
+        "Q5": ("collection origins", "not gardens or seed stores"),
+        "Q6": ("33,765", "0% in Alice Springs", "100% in Darwin", "Four archives lack usable top-level years"),
+        "Q7": ("Taken together, these records show known facilities", "not total conservation success"),
+    }
+    matched = {question: set() for question in questions}
+    steps = []
+    rendered = set()
+    selectors = ".hero-lede,.hero-limit,.section-question,.section-intro,.section-copy p,.figure-topline h3,.figure-caption,.chart-transition,.section-transition,.takeaway-list li"
+
+    for step in range(60):
+        page.wait_for_function("""() => [...document.querySelectorAll('.chart-entry')].filter(entry => {
+          const r = entry.getBoundingClientRect();
+          return r.top < innerHeight && r.bottom > 0;
+        }).every(entry => {
+          const frame = entry.querySelector('.chart-frame');
+          return frame.classList.contains('chart-ready') || frame.classList.contains('chart-error');
+        })""", timeout=30000)
+        state = page.evaluate("""selectors => {
+          const visible = [...document.querySelectorAll(selectors)].filter(node => {
+            const r = node.getBoundingClientRect();
+            return r.top >= 0 && r.bottom <= innerHeight;
+          }).map(node => node.innerText.trim()).filter(Boolean);
+          const visibleCharts = [...document.querySelectorAll('.chart-entry')].filter(entry => {
+            const r = entry.getBoundingClientRect();
+            return r.top < innerHeight && r.bottom > 0;
+          }).map(entry => ({
+            id: entry.dataset.chartId,
+            ready: entry.querySelector('.chart-frame').classList.contains('chart-ready'),
+            error: entry.querySelector('.chart-frame').classList.contains('chart-error')
+          }));
+          return {
+            scrollY: Math.round(scrollY),
+            visibleText: visible,
+            visibleCharts,
+            documentWidth: document.documentElement.scrollWidth,
+            viewportWidth: innerWidth
+          };
+        }""", selectors)
+        rendered.update(chart["id"] for chart in state["visibleCharts"] if chart["ready"])
+        if any(chart["error"] for chart in state["visibleCharts"]):
+            raise AssertionError(f"A chart entered an error state during the no-interaction reading path: {state}")
+        if state["documentWidth"] > width:
+            raise AssertionError(f"No-interaction viewport overflow at {width}px: {state}")
+
+        visible_text = " ".join(state["visibleText"])
+        for question, phrases in questions.items():
+            for phrase in phrases:
+                if phrase.lower() in visible_text.lower():
+                    matched[question].add(phrase)
+        filename = f"no-interaction-{width}-{step:02}.png"
+        page.screenshot(path=str(OUT / filename), animations="disabled")
+        steps.append({"screenshot": filename, **state})
+
+        if page.evaluate("scrollY + innerHeight >= document.documentElement.scrollHeight - 2"):
+            break
+        page.evaluate("window.scrollBy(0, Math.round(innerHeight * 0.78))")
+        page.wait_for_timeout(80)
+    else:
+        raise AssertionError(f"No-interaction reading path did not reach the end at {width}px")
+
+    missing = {question: [phrase for phrase in phrases if phrase not in matched[question]] for question, phrases in questions.items()}
+    missing = {question: phrases for question, phrases in missing.items() if phrases}
+    if missing:
+        raise AssertionError(f"Visible-by-default reader questions were not answered at {width}px: {missing}")
+    if rendered != set(CHART_IDS):
+        raise AssertionError(f"No-interaction path did not render all chart groups at {width}px: {sorted(rendered)}")
+    if console_messages or failed_responses:
+        raise AssertionError(f"No-interaction browser output at {width}px: {console_messages}, {failed_responses}")
+
+    disclosure_state = page.evaluate("""() => ({
+      chartNotes: document.querySelectorAll('.chart-notes').length,
+      closedChartNotes: [...document.querySelectorAll('.chart-notes')].filter(node => !node.open).length,
+      sourceRegisterOpen: document.querySelector('.source-register')?.open === true,
+      captionsOutsideDetails: [...document.querySelectorAll('.figure-caption')].every(node => !node.closest('details')),
+      transitionsOutsideDetails: [...document.querySelectorAll('.chart-transition')].every(node => !node.closest('details')),
+      captionCount: document.querySelectorAll('.figure-caption').length,
+      transitionCount: document.querySelectorAll('.chart-transition').length
+    })""")
+    if disclosure_state["chartNotes"] != 13 or disclosure_state["closedChartNotes"] != 13:
+        raise AssertionError(f"Technical note disclosures changed unexpectedly: {disclosure_state}")
+    if not disclosure_state["sourceRegisterOpen"] or not disclosure_state["captionsOutsideDetails"] or not disclosure_state["transitionsOutsideDetails"]:
+        raise AssertionError(f"Visible story content is hidden in a disclosure: {disclosure_state}")
+    if disclosure_state["captionCount"] != 13 or disclosure_state["transitionCount"] != 13:
+        raise AssertionError(f"Expected one visible chart caption/transition per chart group: {disclosure_state}")
+
+    page.close()
+    return {
+        "viewport": f"{width}x{height}",
+        "scrollSteps": steps,
+        "questionPhrasesMatched": {question: sorted(phrases) for question, phrases in matched.items()},
+        "disclosures": disclosure_state,
+    }
 
 
 def check_heatmap_label_contrast(page):
@@ -251,14 +367,90 @@ def check_choropleth_label_contrast(page):
             const shape=shapes.find(path=>(path.getAttribute("aria-label")||"").includes(`Jurisdiction: ${state};`));
             if (!shape) return {abbreviation,contrast:null,missingShape:true};
             const foreground=getComputedStyle(label).fill, background=getComputedStyle(shape).fill;
-            return {abbreviation,foreground,background,stroke:getComputedStyle(label).stroke,contrast:ratio(foreground,background)};
+          return {abbreviation,foreground,background,stroke:getComputedStyle(label).stroke,opacity:getComputedStyle(label).opacity,contrast:ratio(foreground,background)};
           });
-          return {count:measured.length,minimum:Math.min(...measured.map(item=>item.contrast??0)),failures:measured.filter(item=>!item.contrast||item.contrast<4.5),labels:measured};
+          return {count:measured.length,minimum:Math.min(...measured.map(item=>item.contrast??0)),failures:measured.filter(item=>!item.contrast||item.contrast<4.5||item.stroke!=='none'||Number(item.opacity)<0.99),labels:measured};
         }"""
     )
     if result["count"] != 8 or result["failures"]:
         raise AssertionError(f"V02 state-label contrast failed: {json.dumps(result)}")
     return result
+
+
+def apply_cvd_filter(page, chart_id, vision):
+    matrix = MACHADO_CVD[vision]
+    values = [value for row in matrix for value in (*row, 0, 0)] + [0, 0, 0, 1, 0]
+    page.locator(f"#chart-mount-{chart_id} svg").evaluate(
+        """(svg, args) => {
+          const ns = 'http://www.w3.org/2000/svg';
+          const defs = svg.querySelector('defs') || document.createElementNS(ns, 'defs');
+          if (!defs.parentNode) svg.insertBefore(defs, svg.firstChild);
+          const filter = document.createElementNS(ns, 'filter');
+          filter.id = args.id;
+          filter.setAttribute('color-interpolation-filters', 'linearRGB');
+          const matrix = document.createElementNS(ns, 'feColorMatrix');
+          matrix.setAttribute('type', 'matrix');
+          matrix.setAttribute('values', args.values.join(' '));
+          filter.appendChild(matrix);
+          defs.appendChild(filter);
+          svg.style.filter = `url(#${args.id})`;
+        }""",
+        {"id": f"{vision}-simulation", "values": values},
+    )
+
+
+def check_choropleth_focus_labels(page):
+    default = page.locator("#chart-mount-V02 svg").evaluate("""svg => {
+      const abbreviations = new Set(["NSW","VIC","QLD","SA","WA","TAS","NT","ACT"]);
+      const labels = [...svg.querySelectorAll('.layer_2_marks text')]
+        .filter(node => abbreviations.has(node.textContent.trim()));
+      return labels.map(node => ({
+        text: node.textContent.trim(),
+        fill: getComputedStyle(node).fill,
+        stroke: getComputedStyle(node).stroke,
+        opacity: Number(getComputedStyle(node).opacity)
+      }));
+    }""")
+    if len(default) != 8 or any(label["stroke"] != "none" or label["opacity"] < 0.99 for label in default):
+        raise AssertionError(f"V02 labels are not stroke-free and fully legible by default: {default}")
+
+    page.locator("#jurisdiction-focus").select_option(label="Australian Capital Territory")
+    page.wait_for_function('document.querySelector("#jurisdiction-focus-status")?.textContent.includes("Australian Capital Territory")')
+    selected = page.locator("#chart-mount-V02 svg").evaluate("""svg => {
+      const abbreviations = new Set(["NSW","VIC","QLD","SA","WA","TAS","NT","ACT"]);
+      const labels = [...svg.querySelectorAll('.layer_2_marks text')]
+        .filter(node => abbreviations.has(node.textContent.trim()));
+      return labels.map(node => ({
+        text: node.textContent.trim(),
+        fill: getComputedStyle(node).fill,
+        stroke: getComputedStyle(node).stroke,
+        opacity: Number(getComputedStyle(node).opacity)
+      }));
+    }""")
+    selected_labels = {label["text"]: label for label in selected}
+    dark_ink = "rgb(22, 55, 46)"
+    white_ink = "rgb(255, 253, 247)"
+    if (
+        len(selected) != 8
+        or selected_labels.get("ACT", {}).get("fill") != white_ink
+        or any(label["fill"] != dark_ink for abbreviation, label in selected_labels.items() if abbreviation != "ACT")
+        or any(label["stroke"] != "none" or label["opacity"] < 0.99 for label in selected)
+    ):
+        raise AssertionError(f"V02 selected/de-emphasised labels lost clarity: {selected}")
+
+    metadata = page.locator('.chart-entry[data-chart-id="V02"] .figure-unit').evaluate("""node => {
+      const style = getComputedStyle(node);
+      const rgb = color => color.match(/[\\d.]+/g).slice(0,3).map(Number).map(value => {
+        const channel=value/255; return channel<=0.04045?channel/12.92:((channel+0.055)/1.055)**2.4;
+      });
+      const foreground=rgb(style.color), background=rgb(getComputedStyle(node.closest('.figure-shell')).backgroundColor);
+      const luminance=c=>0.2126*c[0]+0.7152*c[1]+0.0722*c[2];
+      const a=luminance(foreground), b=luminance(background);
+      return {fontSize:style.fontSize,color:style.color,contrast:(Math.max(a,b)+0.05)/(Math.min(a,b)+0.05)};
+    }""")
+    if metadata["fontSize"] != "11px" or metadata["contrast"] < 4.5:
+        raise AssertionError(f"V02 chart-group metadata is too small or low-contrast: {metadata}")
+    return {"default": default, "selectedACT": selected, "metadata": metadata}
 
 
 def check_hexbin_visibility(page):
@@ -320,6 +512,7 @@ def check_interactions(browser):
     selector = page.locator("#jurisdiction-focus")
     selector.select_option(label="Australian Capital Territory")
     page.wait_for_function('document.querySelector("#jurisdiction-focus-status")?.textContent.includes("Australian Capital Territory")')
+    v02_label_states = check_choropleth_focus_labels(page)
     focus_opacity = page.evaluate("""() => {
       const opacity = (selector) => {
         const mark = document.querySelector(selector);
@@ -417,7 +610,7 @@ def check_interactions(browser):
     if not fonts["sourceSans"] or not fonts["fraunces"]:
         raise AssertionError(f"A local typeface did not load: {fonts}")
 
-    result = {"marks": mark_counts, "tooltip": tooltip_text.replace("\n", " | "), "linkedFocus": focus_opacity, "pointerFilter": pointer_filter, "keyboardFilter": space_label, "selectedLegendStyle": selected_legend_style, "focus": focus, "fonts": fonts, "navigation": navigation}
+    result = {"marks": mark_counts, "tooltip": tooltip_text.replace("\n", " | "), "linkedFocus": focus_opacity, "v02Labels": v02_label_states, "pointerFilter": pointer_filter, "keyboardFilter": space_label, "selectedLegendStyle": selected_legend_style, "focus": focus, "fonts": fonts, "navigation": navigation}
     page.close()
     if console_messages or failed_responses:
         raise AssertionError(f"Browser warnings/errors or failed requests: {console_messages}, {failed_responses}")
@@ -497,9 +690,20 @@ try:
                     path=str(OUT / "V03-grayscale-1280.png"), animations="disabled"
                 )
                 v03.evaluate('(svg) => { svg.style.filter = ""; }')
+                for vision in MACHADO_CVD:
+                    apply_cvd_filter(page, "V03", vision)
+                    page.locator('.chart-entry[data-chart-id="V03"]').screenshot(
+                        path=str(OUT / f"V03-{vision}-1280.png"), animations="disabled"
+                    )
+                    v03.evaluate('(svg) => { svg.style.filter = ""; }')
                 grayscale_style.evaluate("style => style.remove()")
             viewport_results.append({"viewport": f"{width}x{height}", **metrics, "navigation": navigation_metrics, "marks": mark_counts, "heatmapContrast": heatmap_contrast, "treemapContrast": treemap_contrast, "choroplethLabelContrast": choropleth_contrast, "hexbinVisibility": hexbin_visibility})
             page.close()
+
+        no_interaction_results = [
+            check_no_interaction_reading_path(browser, width, height)
+            for width, height in ((1024, 768), (1280, 800), (1366, 768))
+        ]
 
         reduced = browser.new_page(viewport={"width": 390, "height": 844}, reduced_motion="reduce")
         reduced.goto(URL, wait_until="domcontentloaded", timeout=30000)
@@ -512,12 +716,12 @@ try:
         reduced.close()
 
         interaction_results = check_interactions(browser)
-        results = {"viewports": viewport_results, "reducedMotion": reduced_metrics, "interactions": interaction_results}
+        results = {"viewports": viewport_results, "noInteractionReading": no_interaction_results, "reducedMotion": reduced_metrics, "interactions": interaction_results}
         (OUT / "editorial-navigation-qa.json").write_text(
             json.dumps(results, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
-        print(json.dumps(results, ensure_ascii=False))
+        print(f"Local QA passed at {len(VIEWPORTS)} viewport sizes; evidence saved under {OUT}")
         browser.close()
 finally:
     server.terminate()

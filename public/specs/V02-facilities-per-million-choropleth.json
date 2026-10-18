@@ -62,22 +62,18 @@
         "format": {"type": "json", "property": "features"}
       },
       "transform": [{"filter": "datum.properties.comparison_eligible === true"}],
-      "mark": {"type": "text", "fontSize": 12, "fontWeight": 600, "strokeWidth": 0.65, "strokeJoin": "round"},
+      "mark": {"type": "text", "fontSize": 12, "fontWeight": 600},
       "encoding": {
         "color": {
-          "condition": {"test": "datum.properties.facilities_per_million >= 10", "value": "#fffdf7"},
+          "condition": [
+            {"test": "linkedState !== null && datum.properties.state !== linkedState", "value": "#16372e"},
+            {"test": "datum.properties.facilities_per_million >= 10", "value": "#fffdf7"}
+          ],
           "value": "#16372e"
-        },
-        "stroke": {
-          "condition": {"test": "datum.properties.facilities_per_million >= 10", "value": "#16372e"},
-          "value": "#f8f6ef"
         },
         "longitude": {"field": "properties.label_longitude", "type": "quantitative"},
         "latitude": {"field": "properties.label_latitude", "type": "quantitative"},
-        "opacity": {
-          "condition": {"test": "linkedState === null || datum.properties.state === linkedState", "value": 1},
-          "value": 0.18
-        },
+        "opacity": {"value": 1},
         "text": {"field": "properties.state_abbreviation", "type": "nominal"},
         "tooltip": [
           {"field": "properties.state", "type": "nominal", "title": "Jurisdiction"},

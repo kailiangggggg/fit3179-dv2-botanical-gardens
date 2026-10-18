@@ -17,6 +17,10 @@ const symbolMap = JSON.parse(
 const facilityPoints = JSON.parse(
   readFileSync(new URL("../public/data/facility_points.geojson", import.meta.url), "utf8"),
 );
+const stateRankComparison = readFileSync(
+  new URL("../public/data/state_rank_comparison.csv", import.meta.url),
+  "utf8",
+);
 const facilityBoxplot = JSON.parse(
   readFileSync(new URL("../public/specs/V04-registered-footprint-boxplot.json", import.meta.url), "utf8"),
 );
@@ -106,6 +110,44 @@ function minimumCvdSeparation(palette) {
   }));
 }
 
+function pairSeparation(palette, first, second, matrix) {
+  const firstLab = matrix
+    ? rgbToLab(simulateColorVision(palette[first], matrix))
+    : rgbToLab(rgbFromHex(palette[first]));
+  const secondLab = matrix
+    ? rgbToLab(simulateColorVision(palette[second], matrix))
+    : rgbToLab(rgbFromHex(palette[second]));
+  return Math.hypot(...firstLab.map((value, index) => value - secondLab[index]));
+}
+
+function crossingPairSeparation(palette) {
+  const [header, ...lines] = stateRankComparison.trim().split(/\r?\n/);
+  const columns = header.split(",");
+  const stateIndex = columns.indexOf("state");
+  const countIndex = columns.indexOf("facility_count_rank");
+  const rateIndex = columns.indexOf("facility_rate_rank");
+  const ranks = new Map(lines.map((line) => {
+    const values = line.split(",");
+    return [values[stateIndex], {
+      count: Number(values[countIndex]),
+      rate: Number(values[rateIndex]),
+    }];
+  }));
+  const states = rankLine.encoding.color.scale.domain;
+  const crossingPairs = [];
+  for (let first = 0; first < states.length; first += 1) {
+    for (let second = first + 1; second < states.length; second += 1) {
+      const a = ranks.get(states[first]);
+      const b = ranks.get(states[second]);
+      if ((a.count - b.count) * (a.rate - b.rate) < 0) crossingPairs.push([first, second]);
+    }
+  }
+  const matrices = [null, ...cvdMatrices];
+  return Math.min(...matrices.flatMap((matrix) =>
+    crossingPairs.map(([first, second]) => pairSeparation(palette, first, second, matrix)),
+  ));
+}
+
 test("V08 uses a readable thousand-record axis with the exact range", () => {
   assert.deepEqual(kingsPark.encoding.x.axis.values, [0, 1000, 2000, 3000, 4000, 5000, 6000]);
   assert.match(kingsPark.encoding.x.axis.labelExpr, /datum\.value/);
@@ -174,7 +216,9 @@ test("V01 classifies each site once and uses an ordered graduated-symbol legend"
   assert.equal(size.type, "nominal");
   assert.equal(size.title, "Registered area class");
   assert.deepEqual(size.scale.domain, classLabels);
-  assert.deepEqual(size.scale.range, [6, 18, 54, 162]);
+  assert.deepEqual(size.scale.range, [12, 24, 48, 96]);
+  assert.equal(symbolMap.layer[1].mark.opacity, 1);
+  assert.equal(symbolMap.layer[1].encoding.opacity.value, 0.78);
   assert.deepEqual(size.legend.values, classLabels);
   assert.equal(size.legend.title, "Registered area class");
 
@@ -204,10 +248,14 @@ test("V01 and V04 use the approved CVD-screened facility-type colours", () => {
 test("V02 state labels switch polarity to preserve text contrast on dark rate fills", () => {
   const labels = facilitiesMap.layer[2];
   assert.equal(labels.mark.fontSize, 12);
-  assert.equal(labels.encoding.color.condition.test, "datum.properties.facilities_per_million >= 10");
-  assert.equal(labels.encoding.color.condition.value.toLowerCase(), "#fffdf7");
+  assert.equal(labels.mark.strokeWidth, undefined, "map text should not have a halo");
+  assert.equal(labels.encoding.stroke, undefined, "map text should render without an outline");
+  assert.equal(labels.encoding.opacity.value, 1, "de-emphasised regions must retain readable labels");
+  assert.deepEqual(labels.encoding.color.condition.map(({ test, value }) => [test, value.toLowerCase()]), [
+    ["linkedState !== null && datum.properties.state !== linkedState", "#16372e"],
+    ["datum.properties.facilities_per_million >= 10", "#fffdf7"],
+  ]);
   assert.equal(labels.encoding.color.value.toLowerCase(), "#16372e");
-  assert.equal(labels.encoding.stroke.condition.value.toLowerCase(), "#16372e");
 });
 
 test("small interface text colors meet AA contrast on paper and chart surfaces", () => {
@@ -243,12 +291,25 @@ test("V03 repeats jurisdiction identity with endpoint shape for grayscale readin
 test("V03 jurisdiction colors stay distinct under CVD simulation and visible on paper", () => {
   const palette = rankLine.encoding.color.scale.range;
   assert.equal(palette.length, 8);
+  assert.deepEqual(Object.fromEntries(rankLine.encoding.color.scale.domain.map((state, index) => [state, palette[index]])), {
+    "New South Wales": "#005A8C",
+    Victoria: "#C45100",
+    Queensland: "#332288",
+    "Western Australia": "#568EAE",
+    "South Australia": "#2D8A70",
+    "Australian Capital Territory": "#735A32",
+    "Northern Territory": "#444444",
+    Tasmania: "#5D6D7E",
+  });
   for (const color of palette) {
     const luminance = relativeLuminance(color);
     const paperLuminance = relativeLuminance("#fffdf7");
     assert.ok((paperLuminance + 0.05) / (luminance + 0.05) >= 3, `${color} lacks line contrast on paper`);
   }
   assert.ok(minimumCvdSeparation(palette) >= 8, `palette separation dropped to ${minimumCvdSeparation(palette).toFixed(1)}`);
+  assert.ok(crossingPairSeparation(palette) >= 18, `crossing-line separation dropped to ${crossingPairSeparation(palette).toFixed(1)}`);
+  assert.ok(pairSeparation(palette, 0, 5, null) >= 30, "NSW and ACT need clear normal-vision separation");
+  assert.ok(pairSeparation(palette, 1, 4, null) >= 30, "Victoria and South Australia need clear normal-vision separation");
 });
 
 test("V06 family colors stay distinguishable for the CVD-screened legend", () => {

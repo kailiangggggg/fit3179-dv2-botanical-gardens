@@ -73,7 +73,7 @@
       "mark": {
         "type": "circle",
         "filled": true,
-        "opacity": 0.64,
+        "opacity": 1,
         "stroke": "#fffdf7",
         "strokeWidth": 0.7
       },
@@ -105,10 +105,10 @@
               "≥1,000 ha"
             ],
             "range": [
-              6,
-              18,
-              54,
-              162
+              12,
+              24,
+              48,
+              96
             ]
           },
           "legend": {
@@ -129,7 +129,7 @@
             "empty": false,
             "value": 0.98
           },
-          "value": 0.42
+          "value": 0.78
         },
         "color": {
           "field": "properties.feature_subtype",
