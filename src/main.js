@@ -10,6 +10,7 @@ import { formatLegendActionName, isLegendActivationKey, toggleLegendSelection } 
 import { getActiveSectionId } from "./navigation-runtime.js";
 
 const storyRoot = document.querySelector("#story-root");
+const sectionRail = document.querySelector(".section-rail");
 const navigation = document.querySelector("#section-nav");
 const siteBaseUrl = new URL("./", document.baseURI);
 let embedPromise;
@@ -276,6 +277,8 @@ async function startStory() {
     const manifestUrl = new URL("specs/chart-manifest.json", siteBaseUrl);
     const manifest = await fetchJson(manifestUrl, "Chart manifest");
     const rendered = renderPage(storyRoot, navigation, manifest, siteBaseUrl);
+    storyRoot.querySelector(".hero").after(sectionRail);
+    sectionRail.classList.add("is-ready");
     if (rendered.figures.length !== manifest.charts.length) {
       throw new Error("The rendered chart groups do not match the chart manifest.");
     }

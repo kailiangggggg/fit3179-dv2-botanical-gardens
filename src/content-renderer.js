@@ -145,6 +145,15 @@ function renderChartEntry(chart, baseUrl) {
   return article;
 }
 
+function renderChartTransition(transition) {
+  const className = transition.emphasis
+    ? "chart-transition chart-transition--lead"
+    : "chart-transition";
+  const paragraph = element("p", className, transition.text);
+  paragraph.dataset.afterChart = transition.afterChart;
+  return paragraph;
+}
+
 function renderJurisdictionControl() {
   const fieldset = element("fieldset", "linked-state-control");
   fieldset.append(element("legend", "", "Compare the same jurisdiction"));
@@ -206,7 +215,11 @@ function renderSection(section, chartsById, baseUrl) {
   for (const chartId of section.chartIds) {
     if (chartId === "V03") charts.append(renderJurisdictionControl());
     const chart = chartsById.get(chartId);
-    if (chart) charts.append(renderChartEntry(chart, baseUrl));
+    if (chart) {
+      charts.append(renderChartEntry(chart, baseUrl));
+      const transition = section.chartTransitions?.find(({ afterChart }) => afterChart === chartId);
+      if (transition) charts.append(renderChartTransition(transition));
+    }
   }
 
   const close = element("div", "section-copy section-copy-after");

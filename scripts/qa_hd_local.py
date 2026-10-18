@@ -10,7 +10,7 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 URL = "http://127.0.0.1:4173/"
-OUT = ROOT / "tmp" / "hd-review"
+OUT = ROOT / "tmp" / "editorial-navigation-20261018" / "full-browser-qa"
 OUT.mkdir(parents=True, exist_ok=True)
 VIEWPORTS = ((320, 700), (390, 844), (768, 900), (1024, 768), (1280, 800), (1366, 768), (1600, 900))
 CHART_IDS = tuple(f"V{i:02}" for i in range(1, 14))
@@ -56,6 +56,103 @@ def wait_for_charts(page):
             if len(set(abbreviations)) != 8:
                 raise AssertionError(f"V03 is missing direct rate-rank endpoint labels: {abbreviations}")
     return mark_counts
+
+
+EXPECTED_CHAPTERS = [
+    "A national footprint",
+    "Inside the collections",
+    "Beyond the garden gate",
+    "What the evidence means",
+]
+EXPECTED_CHART_TRANSITIONS = ["V01", "V02", "V03", "V05", "V06", "V07", "V08", "V10", "V11", "V12"]
+
+
+def check_navigation_layout(page, width):
+    page.wait_for_function("document.querySelectorAll('#section-nav a').length === 4", timeout=30000)
+    result = page.evaluate("""() => {
+      const rail = document.querySelector('.section-rail');
+      const list = document.querySelector('#section-nav');
+      const hero = document.querySelector('.hero');
+      const links = [...list.querySelectorAll('a')];
+      const sectionIds = new Set([...document.querySelectorAll('.story-section')].map(section => section.id));
+      const railRect = rail.getBoundingClientRect();
+      return {
+        labels: links.map(link => link.querySelector('.nav-label').textContent.trim()),
+        hrefs: links.map(link => link.getAttribute('href')),
+        targetsExist: links.every(link => sectionIds.has(link.getAttribute('href').slice(1))),
+        followsHero: hero.nextElementSibling === rail,
+        sticky: getComputedStyle(rail).position === 'sticky',
+        barHeight: Math.round(railRect.height),
+        navDisplay: getComputedStyle(list).display,
+        navColumns: getComputedStyle(list).gridTemplateColumns.split(/\\s+/).length,
+        chartTransitions: [...document.querySelectorAll('.chart-transition')].map(node => node.dataset.afterChart),
+        transitionsInPlace: ["V01", "V02", "V03", "V05", "V06", "V07", "V08", "V10", "V11", "V12"].every(id => {
+          const chart = document.querySelector('.chart-entry[data-chart-id="' + id + '"]');
+          const next = chart?.nextElementSibling;
+          return next?.classList.contains('chart-transition') && next.dataset.afterChart === id && next.textContent.trim().length > 0;
+        }),
+        documentWidth: document.documentElement.scrollWidth
+      };
+    }""")
+    if result["labels"] != EXPECTED_CHAPTERS:
+        raise AssertionError(f"Chapter labels/order changed: {result['labels']}")
+    if result["hrefs"] != ["#footprint", "#records", "#origins", "#evidence"] or not result["targetsExist"]:
+        raise AssertionError(f"Chapter links no longer target the same page sections: {result}")
+    if not result["followsHero"] or not result["sticky"]:
+        raise AssertionError(f"Chapter guide is not placed after the hero as a sticky same-page guide: {result}")
+    if result["chartTransitions"] != EXPECTED_CHART_TRANSITIONS or not result["transitionsInPlace"]:
+        raise AssertionError(f"Chart-to-chart story copy is missing or out of order: {result}")
+    expected_columns = 4 if width > 900 else 2
+    if result["navDisplay"] != "grid" or result["navColumns"] != expected_columns:
+        raise AssertionError(f"Unexpected chapter-guide columns at {width}px: {result}")
+    height_limit = 70 if width > 900 else 120
+    if result["barHeight"] > height_limit or result["documentWidth"] > width:
+        raise AssertionError(f"Chapter guide height/overflow check failed at {width}px: {result}")
+    return result
+
+
+def check_navigation_interactions(page):
+    page.emulate_media(reduced_motion="reduce")
+    page.evaluate("document.documentElement.style.scrollBehavior = 'auto'; window.scrollTo(0, 0)")
+    keyboard_sequence = []
+    for _ in range(12):
+        page.keyboard.press("Tab")
+        focused = page.evaluate("""() => ({
+          section: document.activeElement?.dataset?.sectionLink || null,
+          visible: document.activeElement?.matches(':focus-visible') || false,
+          outline: getComputedStyle(document.activeElement).outlineStyle
+        })""")
+        keyboard_sequence.append(focused)
+        if focused["section"] == "origins":
+            break
+    if keyboard_sequence[-1]["section"] != "origins" or not keyboard_sequence[-1]["visible"] or keyboard_sequence[-1]["outline"] == "none":
+        raise AssertionError(f"Keyboard focus did not reach the Origins link visibly: {keyboard_sequence}")
+    page.keyboard.press("Enter")
+    page.wait_for_function("location.hash === '#origins'")
+    page.wait_for_function("document.querySelector('a[data-section-link=origins]').getAttribute('aria-current') === 'location'")
+    origin_position = page.evaluate("""() => ({
+      headingTop: document.querySelector('#origins').getBoundingClientRect().top,
+      navBottom: document.querySelector('.section-rail').getBoundingClientRect().bottom,
+      scrollBehavior: getComputedStyle(document.documentElement).scrollBehavior
+    })""")
+    if origin_position["headingTop"] < origin_position["navBottom"] or origin_position["scrollBehavior"] != "auto":
+        raise AssertionError(f"Keyboard anchor is obscured or reduced motion is ignored: {origin_position}")
+
+    mouse_anchors = {}
+    for section_id in ("records", "footprint", "evidence"):
+        page.locator(f'a[data-section-link="{section_id}"]').click()
+        page.wait_for_function(f"location.hash === '#{section_id}'")
+        page.wait_for_function(
+            f"document.querySelector('a[data-section-link={section_id}]').getAttribute('aria-current') === 'location'"
+        )
+        position = page.evaluate("""id => ({
+          headingTop: document.querySelector('#' + id).getBoundingClientRect().top,
+          navBottom: document.querySelector('.section-rail').getBoundingClientRect().bottom
+        })""", section_id)
+        if position["headingTop"] < position["navBottom"]:
+            raise AssertionError(f"Mouse anchor is obscured by the chapter guide: {section_id} {position}")
+        mouse_anchors[section_id] = position
+    return {"keyboardOrigin": origin_position, "mouseAnchors": mouse_anchors, "focus": keyboard_sequence[-1]}
 
 
 def check_heatmap_label_contrast(page):
@@ -202,12 +299,18 @@ def check_interactions(browser):
     page.on("response", lambda response: failed_responses.append(f"{response.status} {response.url}") if response.status >= 400 else None)
     page.goto(URL, wait_until="domcontentloaded", timeout=30000)
     mark_counts = wait_for_charts(page)
+    navigation = check_navigation_interactions(page)
 
+    page.locator('.chart-entry[data-chart-id="V01"]').scroll_into_view_if_needed()
     large_symbol = page.locator('#chart-mount-V01 .layer_1_marks path[aria-label*="Helms Arboretum"]').first
     box = large_symbol.bounding_box()
     if not box or box["width"] < 10 or box["height"] < 10:
         raise AssertionError(f"V01 maximum-area symbol is not visibly targetable: {box}")
-    large_symbol.hover(position={"x": box["width"] * 0.25, "y": box["height"] * 0.25}, timeout=10000)
+    target = {"x": box["x"] + box["width"] / 2, "y": box["y"] + box["height"] / 2}
+    hit_label = page.evaluate("point => document.elementFromPoint(point.x, point.y)?.getAttribute('aria-label')", target)
+    if not hit_label or "Helms Arboretum" not in hit_label:
+        raise AssertionError(f"V01 symbol center is not pointer-targetable: {target}, hit={hit_label}")
+    page.mouse.move(target["x"], target["y"])
     page.locator(".vg-tooltip").wait_for(state="visible", timeout=5000)
     tooltip_text = page.locator(".vg-tooltip").inner_text()
     if "Facility" not in tooltip_text:
@@ -314,7 +417,7 @@ def check_interactions(browser):
     if not fonts["sourceSans"] or not fonts["fraunces"]:
         raise AssertionError(f"A local typeface did not load: {fonts}")
 
-    result = {"marks": mark_counts, "tooltip": tooltip_text.replace("\n", " | "), "linkedFocus": focus_opacity, "pointerFilter": pointer_filter, "keyboardFilter": space_label, "selectedLegendStyle": selected_legend_style, "focus": focus, "fonts": fonts}
+    result = {"marks": mark_counts, "tooltip": tooltip_text.replace("\n", " | "), "linkedFocus": focus_opacity, "pointerFilter": pointer_filter, "keyboardFilter": space_label, "selectedLegendStyle": selected_legend_style, "focus": focus, "fonts": fonts, "navigation": navigation}
     page.close()
     if console_messages or failed_responses:
         raise AssertionError(f"Browser warnings/errors or failed requests: {console_messages}, {failed_responses}")
@@ -347,6 +450,7 @@ try:
             page.on("pageerror", lambda error: console_messages.append(f"pageerror: {error}"))
             page.on("response", lambda response: failed_responses.append(f"{response.status} {response.url}") if response.status >= 400 else None)
             page.goto(URL, wait_until="domcontentloaded", timeout=30000)
+            navigation_metrics = check_navigation_layout(page, width)
             mark_counts = wait_for_charts(page)
             page.evaluate("async () => { await document.fonts.ready; return true; }")
             metrics = page.evaluate("""() => ({
@@ -394,7 +498,7 @@ try:
                 )
                 v03.evaluate('(svg) => { svg.style.filter = ""; }')
                 grayscale_style.evaluate("style => style.remove()")
-            viewport_results.append({"viewport": f"{width}x{height}", **metrics, "marks": mark_counts, "heatmapContrast": heatmap_contrast, "treemapContrast": treemap_contrast, "choroplethLabelContrast": choropleth_contrast, "hexbinVisibility": hexbin_visibility})
+            viewport_results.append({"viewport": f"{width}x{height}", **metrics, "navigation": navigation_metrics, "marks": mark_counts, "heatmapContrast": heatmap_contrast, "treemapContrast": treemap_contrast, "choroplethLabelContrast": choropleth_contrast, "hexbinVisibility": hexbin_visibility})
             page.close()
 
         reduced = browser.new_page(viewport={"width": 390, "height": 844}, reduced_motion="reduce")
@@ -408,7 +512,12 @@ try:
         reduced.close()
 
         interaction_results = check_interactions(browser)
-        print(json.dumps({"viewports": viewport_results, "reducedMotion": reduced_metrics, "interactions": interaction_results}, ensure_ascii=False))
+        results = {"viewports": viewport_results, "reducedMotion": reduced_metrics, "interactions": interaction_results}
+        (OUT / "editorial-navigation-qa.json").write_text(
+            json.dumps(results, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        print(json.dumps(results, ensure_ascii=False))
         browser.close()
 finally:
     server.terminate()

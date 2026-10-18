@@ -19,11 +19,20 @@ test("the story has four navigable sections, including evidence and sources", ()
   );
 });
 
-test("the approved hero break and compact rail labels stay intentional", () => {
+test("the approved hero break and chapter labels stay intentional", () => {
   assert.deepEqual(pageStory.hero.titleLines, ["Beyond the", "Garden Gate"]);
   assert.deepEqual(
     pageStory.navigation.map(({ label }) => label),
-    ["A national footprint", "What records show", "Beyond the gate", "Evidence & sources"],
+    [
+      "A national footprint",
+      "Inside the collections",
+      "Beyond the garden gate",
+      "What the evidence means",
+    ],
+  );
+  assert.deepEqual(
+    pageStory.navigation.map(({ label }) => label),
+    pageStory.sections.map(({ title }) => title),
   );
 });
 
@@ -48,12 +57,27 @@ test("every manifest chart group appears once in the story", () => {
 test("V01 narrative distinguishes graduated size classes from reported hectares", () => {
   const footprint = pageStory.sections.find(({ id }) => id === "footprint");
   const v01 = manifest.charts.find(({ id }) => id === "V01");
-  assert.match(footprint.intro, /four graduated circle sizes show registered-area classes/i);
-  assert.match(footprint.intro, /hover to see each facility’s reported hectares/i);
+  assert.match(footprint.intro, /Three states contain 135 of the 182 known-register sites/i);
+  assert.match(footprint.intro, /Arboreta are gardens focused on trees and woody plants/i);
+  assert.match(footprint.intro, /graduated circles group registered areas, with exact hectares available on hover/i);
   assert.doesNotMatch(footprint.intro, /circle area shows reported land footprint/i);
   assert.equal(v01.idiom, "Graduated-symbol map");
   assert.match(v01.how.channels, /discrete circle size for registered-area class/i);
   assert.match(v01.how.channels, /explicit hectare boundaries/i);
+});
+
+test("each adjacent chart pair has a concise, evidence-specific transition", () => {
+  let transitionCount = 0;
+  for (const section of pageStory.sections.filter(({ chartIds }) => chartIds.length > 1)) {
+    const expectedPairs = section.chartIds.slice(0, -1);
+    assert.deepEqual(section.chartTransitions.map(({ afterChart }) => afterChart), expectedPairs, `${section.id} transition order`);
+    for (const { afterChart: chartId, text: copy } of section.chartTransitions) {
+      assert.ok(copy.trim().length > 0, `${chartId} transition has copy`);
+      assert.ok(copy.length <= 180, `${chartId} transition stays concise`);
+      transitionCount += 1;
+    }
+  }
+  assert.equal(transitionCount, 10);
 });
 
 test("each section has reader-facing copy and a transition", () => {
@@ -87,10 +111,13 @@ test("the site styling supports mobile and reduced-motion preferences", () => {
   const css = readFileSync(new URL("../src/site.css", import.meta.url), "utf8");
   assert.match(css, /@media\s*\(max-width:\s*640px\)/);
   assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
-  assert.match(css, /\.section-rail,\s*\.section-rail nav\s*\{[^}]*min-width:\s*0/s);
-  const mobileRules = css.slice(css.indexOf("@media (max-width: 640px)"), css.indexOf("@media (max-width: 360px)"));
-  assert.match(mobileRules, /\.section-rail ol\s*\{[^}]*display:\s*grid/s);
-  assert.match(mobileRules, /grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/);
+  assert.match(css, /\.section-rail\s*\{[^}]*position:\s*sticky;[^}]*top:\s*0/s);
+  assert.match(css, /\.section-rail nav\s*\{[^}]*min-width:\s*0/s);
+  assert.match(css, /\.section-rail ol\s*\{[^}]*display:\s*grid/s);
+  assert.match(css, /\.chart-stack\s*\{[^}]*max-width:\s*1160px/s);
+  const tabletRules = css.slice(css.indexOf("@media (max-width: 900px)"), css.indexOf("@media (max-width: 640px)"));
+  assert.match(tabletRules, /\.section-rail ol\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s);
+  assert.match(tabletRules, /grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/);
 });
 
 test("source disclosures identify licences and link all ten ALA collections", () => {
