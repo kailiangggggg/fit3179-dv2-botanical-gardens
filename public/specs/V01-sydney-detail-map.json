@@ -1,0 +1,45 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Sydney regional detail view. The map repeats facilities already present in V01's 182-site national register and uses their original coordinates.",
+  "width": 420,
+  "height": 220,
+  "projection": {
+    "type": "mercator",
+    "center": [151, -33.85],
+    "scale": {
+      "signal": "min((width - 28) / 0.013962634015954834, (height - 24) / 0.01471097932836618) * 0.92"
+    },
+    "translate": {"signal": "[width / 2, height / 2]"}
+  },
+  "layer": [
+    {
+      "data": {"url": "../data/state_rates.geojson", "format": {"type": "json", "property": "features"}},
+      "transform": [{"filter": "datum.properties.state_abbreviation === 'NSW'"}],
+      "mark": {"type": "geoshape", "fill": "#f1efe7", "stroke": "#b8c3bb", "strokeWidth": 0.65},
+      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
+    },
+    {
+      "data": {"url": "../data/facility_points.geojson", "format": {"type": "json", "property": "features"}},
+      "transform": [{"filter": "datum.properties.longitude >= 150.6 && datum.properties.longitude <= 151.4 && datum.properties.latitude >= -34.2 && datum.properties.latitude <= -33.5"}],
+      "mark": {"type": "circle", "filled": true, "size": 26, "opacity": 0.94, "stroke": "#fffdf7", "strokeWidth": 0.7},
+      "encoding": {
+        "longitude": {"field": "properties.longitude", "type": "quantitative", "axis": null},
+        "latitude": {"field": "properties.latitude", "type": "quantitative", "axis": null},
+        "color": {
+          "field": "properties.feature_subtype",
+          "type": "nominal",
+          "scale": {"domain": ["Botanic Garden", "Arboretum"], "range": ["#003F5C", "#B85C00"]},
+          "legend": null
+        },
+        "tooltip": [
+          {"field": "properties.feature_name", "type": "nominal", "title": "Facility"},
+          {"field": "properties.feature_subtype", "type": "nominal", "title": "Register type"},
+          {"field": "properties.locality", "type": "nominal", "title": "Locality"},
+          {"field": "properties.state", "type": "nominal", "title": "State / territory"},
+          {"field": "properties.area_hectares", "type": "quantitative", "title": "Registered area (ha)", "format": ",.1f"}
+        ]
+      }
+    }
+  ],
+  "config": {"view": {"stroke": null}}
+}

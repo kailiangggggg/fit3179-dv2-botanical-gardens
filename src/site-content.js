@@ -44,7 +44,7 @@ export const pageStory = {
       title: "A national footprint",
       question: "Where are the known gardens and arboreta—and how do their registered sites differ?",
       intro:
-        "Three states contain 135 of the 182 known-register sites. Arboreta are gardens focused on trees and woody plants; graduated circles group registered areas, with exact hectares available on hover.",
+        "Three states contain 135 of the 182 known-register sites. Arboreta are gardens focused on trees and woody plants; graduated circles group registered areas, with exact hectares available on hover. Sydney and Melbourne detail views repeat existing sites; a linear view compares the 165 facilities below 100 ha.",
       paragraphs: [
         "A register entry is not a guarantee that every facility is represented. Reported hectares describe a registered footprint, not planted area, public access, the size of a collection or conservation capacity.",
       ],
@@ -55,7 +55,7 @@ export const pageStory = {
         {
           afterChart: "V01",
           emphasis: true,
-          text: "The register clusters in NSW, Victoria and Queensland. Circle classes show reported site area, not planted space or collection capacity. V02 adjusts counts for population.",
+          text: "Sydney and Melbourne detail maps repeat crowded sites; the 0–100 ha linear view compares 165 smaller facilities and reveals within-class differences. V04 shows the full range. V02 adjusts counts for population.",
         },
         {
           afterChart: "V02",

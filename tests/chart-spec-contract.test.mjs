@@ -14,6 +14,7 @@ const rankChart = JSON.parse(
 const symbolMap = JSON.parse(
   readFileSync(new URL("../public/specs/V01-facility-symbol-map.json", import.meta.url), "utf8"),
 );
+const nationalSymbolMap = symbolMap.vconcat?.[0] ?? symbolMap;
 const facilityPoints = JSON.parse(
   readFileSync(new URL("../public/data/facility_points.geojson", import.meta.url), "utf8"),
 );
@@ -41,6 +42,16 @@ const originHexbin = JSON.parse(
 );
 const manifest = JSON.parse(
   readFileSync(new URL("../public/specs/chart-manifest.json", import.meta.url), "utf8"),
+);
+const v01Manifest = manifest.charts.find(({ id }) => id === "V01");
+const sydneyDetail = JSON.parse(
+  readFileSync(new URL("../public/specs/V01-sydney-detail-map.json", import.meta.url), "utf8"),
+);
+const melbourneDetail = JSON.parse(
+  readFileSync(new URL("../public/specs/V01-melbourne-detail-map.json", import.meta.url), "utf8"),
+);
+const v01AreaSubset = JSON.parse(
+  readFileSync(new URL("../public/specs/V01-under100-area-beeswarm.json", import.meta.url), "utf8"),
 );
 const siteStyles = readFileSync(new URL("../src/site.css", import.meta.url), "utf8");
 const humanChartManifest = readFileSync(new URL("../CHART_MANIFEST.md", import.meta.url), "utf8");
@@ -159,8 +170,8 @@ test("V02 and V03 share a state-focus signal and V01 highlights hovered faciliti
   assert.match(facilitiesMap.layer[1].encoding.opacity.condition.test, /linkedState/);
   assert.match(rankLine.encoding.opacity.condition.test, /linkedState/);
   assert.match(rankEndpointLabels.encoding.opacity.condition.test, /linkedState/);
-  assert.equal(symbolMap.layer[1].params?.[0]?.select?.on, "pointerover");
-  assert.ok(symbolMap.layer[1].encoding.opacity.condition);
+  assert.equal(nationalSymbolMap.layer[1].params?.[0]?.select?.on, "pointerover");
+  assert.ok(nationalSymbolMap.layer[1].encoding.opacity.condition);
 });
 
 test("V02 projection keeps the choropleth inside a compact Australia-focused frame", () => {
@@ -170,8 +181,8 @@ test("V02 projection keeps the choropleth inside a compact Australia-focused fra
 });
 
 test("V01 classifies each site once and uses an ordered graduated-symbol legend", () => {
-  const size = symbolMap.layer[1].encoding.size;
-  const classExpression = symbolMap.layer[1].transform?.find(
+  const size = nationalSymbolMap.layer[1].encoding.size;
+  const classExpression = nationalSymbolMap.layer[1].transform?.find(
     (transform) => transform.as === "registered_area_class",
   )?.calculate;
   assert.ok(classExpression, "V01 must calculate explicit registered-area classes");
@@ -201,28 +212,31 @@ test("V01 classifies each site once and uses an ordered graduated-symbol legend"
     ["≥1,000 ha", 1],
   ]);
   assert.equal(facilityPoints.features.length, 182);
+  assert.equal(new Set(facilityPoints.features.map(({ properties }) => properties.globalid)).size, 182);
+  assert.equal(new Set(facilityPoints.features.map(({ geometry }) => geometry.coordinates.join(","))).size, 182);
+  assert.ok(facilityPoints.features.every(({ properties }) => Number.isFinite(properties.area_hectares)));
   assert.deepEqual(
     [9.999, 10, 99.999, 100, 999.999, 1000].map(classify),
     ["0–<10 ha", "10–<100 ha", "10–<100 ha", "100–<1,000 ha", "100–<1,000 ha", "≥1,000 ha"],
   );
 
-  assert.equal(symbolMap.layer.length, 2, "V01 should not cover its size-coded circles with a locator overlay");
+  assert.equal(nationalSymbolMap.layer.length, 2, "V01 should not cover its size-coded circles with a locator overlay");
   assert.match(siteStyles, /#chart-mount-V01\s+\.layer_0_marks\s*\{[^}]*pointer-events:\s*none/s);
   assert.match(siteStyles, /#chart-mount-V01\s+\.background\s*\{[^}]*pointer-events:\s*none/s);
   assert.match(siteStyles, /#chart-mount-V01\s+\.layer_1_marks\s+path\s*\{[^}]*pointer-events:\s*all\s*!important/s);
-  assert.equal(symbolMap.layer[1].mark.type, "circle");
-  assert.equal(symbolMap.layer[1].encoding.shape, undefined, "facility type must not be duplicated by shape");
+  assert.equal(nationalSymbolMap.layer[1].mark.type, "circle");
+  assert.equal(nationalSymbolMap.layer[1].encoding.shape, undefined, "facility type must not be duplicated by shape");
   assert.equal(size.field, "registered_area_class");
   assert.equal(size.type, "nominal");
   assert.equal(size.title, "Registered area class");
   assert.deepEqual(size.scale.domain, classLabels);
   assert.deepEqual(size.scale.range, [12, 24, 48, 96]);
-  assert.equal(symbolMap.layer[1].mark.opacity, 1);
-  assert.equal(symbolMap.layer[1].encoding.opacity.value, 0.78);
+  assert.equal(nationalSymbolMap.layer[1].mark.opacity, 1);
+  assert.equal(nationalSymbolMap.layer[1].encoding.opacity.value, 0.78);
   assert.deepEqual(size.legend.values, classLabels);
   assert.equal(size.legend.title, "Registered area class");
 
-  const areaTooltip = symbolMap.layer[1].encoding.tooltip.find(
+  const areaTooltip = nationalSymbolMap.layer[1].encoding.tooltip.find(
     (entry) => entry.field === "properties.area_hectares",
   );
   assert.equal(areaTooltip.format, ",.1f", "tooltip should preserve the reported hectares");
@@ -235,7 +249,7 @@ test("V01 classifies each site once and uses an ordered graduated-symbol legend"
 });
 
 test("V01 and V04 use the approved CVD-screened facility-type colours", () => {
-  const mapColors = symbolMap.layer[1].encoding.color.scale.range;
+  const mapColors = nationalSymbolMap.layer[1].encoding.color.scale.range;
   const boxplotColors = facilityBoxplot.encoding.color.scale.range;
   assert.deepEqual(mapColors, ["#003F5C", "#B85C00"]);
   assert.deepEqual(boxplotColors, mapColors);
@@ -243,6 +257,44 @@ test("V01 and V04 use the approved CVD-screened facility-type colours", () => {
   for (const color of mapColors) {
     assert.ok(contrastRatio(color, "#f1efe7") >= 3, `${color} lacks symbol contrast on the map land`);
   }
+});
+
+test("V01 regional details use bounded original coordinates and V01 area uses exact linear hectares", () => {
+  const viewByName = new Map(v01Manifest.support_views.regional.maps.map((view) => [view.name, view]));
+  const cases = [
+    { name: "Sydney", spec: sydneyDetail, bounds: [150.6, 151.4, -34.2, -33.5], state: "NSW", count: 14 },
+    { name: "Melbourne", spec: melbourneDetail, bounds: [144.55, 145.4, -38.25, -37.55], state: "VIC", count: 18 },
+  ];
+  for (const { name, spec, bounds, state, count } of cases) {
+    const regionView = viewByName.get(name);
+    const stateLayer = spec.layer[0];
+    const pointLayer = spec.layer[1];
+    const points = facilityPoints.features.filter((feature) => {
+      const { longitude, latitude } = feature.properties;
+      return longitude >= bounds[0] && longitude <= bounds[1] && latitude >= bounds[2] && latitude <= bounds[3];
+    });
+    assert.equal(points.length, count);
+    assert.equal(regionView.bounds.longitude[0], bounds[0]);
+    assert.equal(regionView.bounds.longitude[1], bounds[1]);
+    assert.equal(stateLayer.transform[0].filter, `datum.properties.state_abbreviation === '${state}'`);
+    assert.equal(pointLayer.mark.type, "circle");
+    assert.equal(pointLayer.mark.size, 26);
+    assert.equal(pointLayer.encoding.longitude.field, "properties.longitude");
+    assert.equal(pointLayer.encoding.latitude.field, "properties.latitude");
+  }
+
+  assert.equal(v01AreaSubset.encoding.x.field, "area");
+  assert.equal(v01AreaSubset.encoding.x.scale.type, "linear");
+  assert.deepEqual(v01AreaSubset.encoding.x.scale.domain, [0, 100]);
+  assert.equal(v01AreaSubset.encoding.color.field, "type");
+  assert.equal(v01AreaSubset.encoding.y.field, "displayY");
+  assert.equal(v01Manifest.support_views.quantitative.subset, "0 <= area_hectares < 100");
+  assert.match(v01AreaSubset.description, /vertical offsets only reduce mark collisions/i);
+  assert.equal(v01Manifest.idiom, "Graduated-symbol map");
+  assert.equal(manifest.visible_panels, 17);
+  assert.equal(manifest.rubric_chart_count, 13);
+  assert.equal(manifest.map_count, 3);
+  assert.equal(manifest.advanced_idiom_types.length, 8);
 });
 
 test("V02 state labels switch polarity to preserve text contrast on dark rate fills", () => {

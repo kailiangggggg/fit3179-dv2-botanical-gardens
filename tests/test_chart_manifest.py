@@ -22,6 +22,11 @@ class ChartManifestTests(unittest.TestCase):
         self.assertEqual(manifest["rubric_chart_count"], 13)
         self.assertEqual(manifest["map_count"], 3)
         self.assertEqual(len(set(manifest["advanced_idiom_types"])), 8)
+        self.assertEqual(manifest["visible_panels"], 17)
+
+        v01 = next(chart for chart in charts if chart["id"] == "V01")
+        self.assertEqual([view["id"] for view in v01["support_views"]["regional"]["maps"]], ["V01-SYD", "V01-MELB"])
+        self.assertEqual(v01["support_views"]["quantitative"]["id"], "V01-AREA")
 
         for chart in charts:
             self.assertTrue(chart["what"]["source"])
@@ -44,6 +49,17 @@ class ChartManifestTests(unittest.TestCase):
             for data_path in chart["data_files"]:
                 self.assertTrue((PUBLIC_ROOT / data_path).is_file(), data_path)
 
+            support_views = chart.get("support_views", {})
+            support_specs = [
+                *support_views.get("regional", {}).get("maps", []),
+                *([support_views["quantitative"]] if support_views.get("quantitative") else []),
+            ]
+            for support_view in support_specs:
+                support_spec_path = PUBLIC_ROOT / support_view["spec"]
+                self.assertTrue(support_spec_path.is_file(), support_view["spec"])
+                support_spec = json.loads(support_spec_path.read_text(encoding="utf-8"))
+                self.assertIn("vega-lite/v5.json", support_spec["$schema"])
+
     def test_map_manifest_names_three_distinct_map_idioms(self):
         manifest = json.loads(
             (PUBLIC_ROOT / "specs" / "chart-manifest.json").read_text(encoding="utf-8")
@@ -53,6 +69,19 @@ class ChartManifestTests(unittest.TestCase):
         self.assertEqual([chart["id"] for chart in maps], ["V01", "V02", "V10"])
         self.assertEqual(len({chart["idiom"] for chart in maps}), 3)
         self.assertEqual(manifest["legacy_chart_ids"]["V05"], ["V05a", "V05b"])
+
+    def test_v01_support_views_do_not_add_chart_groups_or_map_idioms(self):
+        manifest = json.loads(
+            (PUBLIC_ROOT / "specs" / "chart-manifest.json").read_text(encoding="utf-8")
+        )
+        v01 = next(chart for chart in manifest["charts"] if chart["id"] == "V01")
+        support = v01["support_views"]
+        self.assertEqual(len(manifest["charts"]), 13)
+        self.assertEqual(len(support["regional"]["maps"]), 2)
+        self.assertEqual(support["quantitative"]["subset"], "0 <= area_hectares < 100")
+        self.assertNotIn("V01-SYD", {chart["id"] for chart in manifest["charts"]})
+        self.assertNotIn("V01-MELB", {chart["id"] for chart in manifest["charts"]})
+        self.assertNotIn("V01-AREA", {chart["id"] for chart in manifest["charts"]})
 
 
 if __name__ == "__main__":

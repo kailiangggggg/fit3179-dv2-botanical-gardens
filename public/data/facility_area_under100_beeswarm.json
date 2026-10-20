@@ -1,0 +1,1497 @@
+{
+  "metadata": {
+    "source_file": "facility_points.geojson",
+    "filter": "0 <= properties.area_hectares < 100",
+    "count": 165,
+    "default_plot_width": 781,
+    "default_plot_height": 180,
+    "display_y_role": "deterministic collision-avoidance vertical placement; not a measured value"
+  },
+  "points": [
+    {
+      "id": "{7D945D78-BAA4-4B03-8695-BA869EE76748}",
+      "name": "Bardwell Park Botanical Gardens",
+      "type": "Botanic Garden",
+      "area": 0.58180691,
+      "displayY": 128,
+      "locality": "BEXLEY",
+      "state": "NSW"
+    },
+    {
+      "id": "{DDBA684F-0C2E-42AA-BE69-F4E207A511E3}",
+      "name": "Harry Mccormick Arboretum",
+      "type": "Botanic Garden",
+      "area": 0.76411645,
+      "displayY": 135.2,
+      "locality": "MATHOURA",
+      "state": "NSW"
+    },
+    {
+      "id": "{5201DD26-6378-4C15-B51E-AE215FA5E0C4}",
+      "name": "Shoalhaven Heads Native Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 1.23701951,
+      "displayY": 120.8,
+      "locality": "SHOALHAVEN HEADS",
+      "state": "NSW"
+    },
+    {
+      "id": "{4C054F19-27CC-4702-8F2E-FE74F349C725}",
+      "name": "Nangawooka Flora Park",
+      "type": "Botanic Garden",
+      "area": 1.9487134300000002,
+      "displayY": 128,
+      "locality": "HINDMARSH VALLEY",
+      "state": "SA"
+    },
+    {
+      "id": "{98B64551-AE7D-410B-92FF-00128F6E73CE}",
+      "name": "Karwarra Australian Native Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 2.08762611,
+      "displayY": 135.2,
+      "locality": "KALORAMA",
+      "state": "VIC"
+    },
+    {
+      "id": "{ED685B7F-E04B-477E-BB26-0E3561E9A68D}",
+      "name": "Mornington Botanical Rose Gardens",
+      "type": "Botanic Garden",
+      "area": 2.15428578,
+      "displayY": 142.4,
+      "locality": "MORNINGTON",
+      "state": "VIC"
+    },
+    {
+      "id": "{0250BF35-10C3-490F-91C4-01392CBB8381}",
+      "name": "Ivanhoe Park Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 2.16545851,
+      "displayY": 120.8,
+      "locality": "MANLY",
+      "state": "NSW"
+    },
+    {
+      "id": "{97D13235-E315-4622-B79B-062A45F689A7}",
+      "name": "Glenbrook Native Plant Reserve",
+      "type": "Botanic Garden",
+      "area": 2.28126754,
+      "displayY": 113.6,
+      "locality": "GLENBROOK",
+      "state": "NSW"
+    },
+    {
+      "id": "{931E4421-D512-47B9-BFE9-568790C42129}",
+      "name": "Barooga Botanical Gardens",
+      "type": "Botanic Garden",
+      "area": 2.64353941,
+      "displayY": 149.6,
+      "locality": "BAROOGA",
+      "state": "NSW"
+    },
+    {
+      "id": "{09677749-90B3-46AA-9D42-9B140294D104}",
+      "name": "Picton Botanical Gardens",
+      "type": "Botanic Garden",
+      "area": 2.6848540400000003,
+      "displayY": 106.4,
+      "locality": "PICTON",
+      "state": "NSW"
+    },
+    {
+      "id": "{B266EC83-5EC7-497A-BC40-0333B0724972}",
+      "name": "Maranoa Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 2.9940963299999996,
+      "displayY": 128,
+      "locality": "BALWYN",
+      "state": "VIC"
+    },
+    {
+      "id": "{4D68C154-AFF8-4FE7-B0F8-7B10CD13302B}",
+      "name": "Stony Range Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 3.16225002,
+      "displayY": 135.2,
+      "locality": "DEE WHY",
+      "state": "NSW"
+    },
+    {
+      "id": "{39225630-2613-467B-9E84-A72729125F01}",
+      "name": "Wanneroo Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 3.25268252,
+      "displayY": 120.8,
+      "locality": "WANNEROO",
+      "state": "WA"
+    },
+    {
+      "id": "{48EDA2AC-3E6C-4063-BA90-43787513BA54}",
+      "name": "Ingham Memorial Botanical Gardens",
+      "type": "Botanic Garden",
+      "area": 3.31422586,
+      "displayY": 142.4,
+      "locality": "INGHAM",
+      "state": "QLD"
+    },
+    {
+      "id": "{E1ECEAB9-0C28-4987-8BBF-439E66884924}",
+      "name": "Halls Gap Botanical Gardens (Grampians Flora Botanic Garden)",
+      "type": "Botanic Garden",
+      "area": 3.3480995499999997,
+      "displayY": 113.6,
+      "locality": "HALLS GAP",
+      "state": "VIC"
+    },
+    {
+      "id": "{9CE9DC9E-4194-4F70-A311-E3605D6C042E}",
+      "name": "Portland Botanical Gardens",
+      "type": "Botanic Garden",
+      "area": 3.61826687,
+      "displayY": 149.6,
+      "locality": "PORTLAND",
+      "state": "VIC"
+    },
+    {
+      "id": "{EFE4CD49-67AE-4CEB-97E0-F9B0EA4283BD}",
+      "name": "Hamilton Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 4.0596295,
+      "displayY": 128,
+      "locality": "HAMILTON",
+      "state": "VIC"
+    },
+    {
+      "id": "{2BFD5EBF-2D10-4158-A9E8-AA8FD7B88867}",
+      "name": "Redcliffe Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 4.07036936,
+      "displayY": 106.4,
+      "locality": "REDCLIFFE",
+      "state": "QLD"
+    },
+    {
+      "id": "{5605EF46-5BD1-4981-8E31-8F3DA0E76C1D}",
+      "name": "Williamstown Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 4.08279192,
+      "displayY": 156.8,
+      "locality": "WILLIAMSTOWN",
+      "state": "VIC"
+    },
+    {
+      "id": "{E1988DB2-FAF9-4742-A39B-BAFC37D9BD8A}",
+      "name": "Geraldton Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 4.2165627,
+      "displayY": 135.2,
+      "locality": "GERALDTON",
+      "state": "WA"
+    },
+    {
+      "id": "{62B393AF-E5BF-4CEC-93DB-DB7348E00C7C}",
+      "name": "Buninyong Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 4.26515967,
+      "displayY": 120.8,
+      "locality": "BUNINYONG",
+      "state": "VIC"
+    },
+    {
+      "id": "{E493E068-675C-4923-833A-E4C80471EDED}",
+      "name": "Albury Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 4.31823075,
+      "displayY": 142.4,
+      "locality": "ALBURY",
+      "state": "NSW"
+    },
+    {
+      "id": "{1C1EE6EB-BB6C-480A-8385-C645DC4D0119}",
+      "name": "Queens Gardens",
+      "type": "Botanic Garden",
+      "area": 4.419181,
+      "displayY": 113.6,
+      "locality": "NORTH WARD",
+      "state": "QLD"
+    },
+    {
+      "id": "{818D960A-C9DE-46ED-A2AA-F4ED43037924}",
+      "name": "Chinchilla Botanic Parkland",
+      "type": "Botanic Garden",
+      "area": 4.481487609999999,
+      "displayY": 99.2,
+      "locality": "CHINCHILLA",
+      "state": "QLD"
+    },
+    {
+      "id": "{5EA70491-9682-48EB-A429-0080BCFC7C4F}",
+      "name": "Keilor Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 4.5462777999999995,
+      "displayY": 149.6,
+      "locality": "KEILOR PARK",
+      "state": "VIC"
+    },
+    {
+      "id": "{03DBBE67-A05C-4FD5-83F5-B009EFFFD3A0}",
+      "name": "Camperdown Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 4.614514659999999,
+      "displayY": 164,
+      "locality": "CAMPERDOWN",
+      "state": "VIC"
+    },
+    {
+      "id": "{9C66B007-C0EE-4FAE-9EEB-0199319CE1FE}",
+      "name": "Sale Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 4.79509843,
+      "displayY": 92,
+      "locality": "SALE",
+      "state": "VIC"
+    },
+    {
+      "id": "{F7FF8564-FA8D-4BC4-A885-DCA4D86053A8}",
+      "name": "Geelong Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 5.07271082,
+      "displayY": 128,
+      "locality": "EAST GEELONG",
+      "state": "VIC"
+    },
+    {
+      "id": "{E0D1E294-D0DE-4048-AA1D-54929594A0F3}",
+      "name": "Pechey Forestry Arboretum",
+      "type": "Botanic Garden",
+      "area": 5.145541870000001,
+      "displayY": 135.2,
+      "locality": "PECHEY",
+      "state": "QLD"
+    },
+    {
+      "id": "{006D7AC7-5717-41D0-9462-A22473B39C6B}",
+      "name": "Mossvale Park",
+      "type": "Botanic Garden",
+      "area": 5.23020283,
+      "displayY": 120.8,
+      "locality": "BERRYS CREEK",
+      "state": "VIC"
+    },
+    {
+      "id": "{5C7E54E2-1AEF-42F8-94C3-A97973E200E3}",
+      "name": "Peacehaven Botanic Park",
+      "type": "Botanic Garden",
+      "area": 5.29593347,
+      "displayY": 142.4,
+      "locality": "HIGHFIELDS",
+      "state": "QLD"
+    },
+    {
+      "id": "{7026EE46-84DC-4B47-8833-A482BDCC704A}",
+      "name": "Penshurst Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 5.37844185,
+      "displayY": 113.6,
+      "locality": "PENSHURST",
+      "state": "VIC"
+    },
+    {
+      "id": "{C5CDA993-8DF1-4876-9A3E-B248BFDD11B1}",
+      "name": "Tumbarumba Botanical Gardens",
+      "type": "Botanic Garden",
+      "area": 5.458369230000001,
+      "displayY": 106.4,
+      "locality": "TUMBARUMBA",
+      "state": "NSW"
+    },
+    {
+      "id": "{91D7788D-9CE9-473C-BBB0-CECDC44A364F}",
+      "name": "Kangaroo Flat Native Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 5.50484298,
+      "displayY": 149.6,
+      "locality": "KANGAROO FLAT",
+      "state": "VIC"
+    },
+    {
+      "id": "{656058C0-EC2B-445D-A9BB-AC41889F5A8B}",
+      "name": "Norfolk Island Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 5.93940648,
+      "displayY": 156.8,
+      "locality": "NORFOLK ISLAND",
+      "state": "OT"
+    },
+    {
+      "id": "{D51431F7-C1FE-4089-81E8-DD577E1D2E69}",
+      "name": "Illawarra Grevillea Park Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 5.95524701,
+      "displayY": 99.2,
+      "locality": "BULLI",
+      "state": "NSW"
+    },
+    {
+      "id": "{592BF7F3-0804-4208-8478-AB184C529591}",
+      "name": "Malmsbury Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 6.11320267,
+      "displayY": 128,
+      "locality": "MALMSBURY",
+      "state": "VIC"
+    },
+    {
+      "id": "{C9559024-0C12-4EAF-BD52-73CB0C645618}",
+      "name": "Gisborne Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 6.20203519,
+      "displayY": 135.2,
+      "locality": "GISBORNE",
+      "state": "VIC"
+    },
+    {
+      "id": "{FC0848FD-FF9F-430F-ACF9-788F6CCBB785}",
+      "name": "St Kilda Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 6.6237350600000005,
+      "displayY": 120.8,
+      "locality": "MELBOURNE",
+      "state": "VIC"
+    },
+    {
+      "id": "{5168553B-375A-491B-8497-3CAA41FDD4D8}",
+      "name": "Moree Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 7.1031626800000005,
+      "displayY": 128,
+      "locality": "MOREE",
+      "state": "NSW"
+    },
+    {
+      "id": "{45A0804C-C07A-44D6-BEF9-53AE21F78547}",
+      "name": "Horsham Rural City Council Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 7.25337513,
+      "displayY": 135.2,
+      "locality": "HORSHAM",
+      "state": "VIC"
+    },
+    {
+      "id": "{3D8C50E2-8B66-4219-8C54-1EAC5CB22DD7}",
+      "name": "George Pentland Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 7.4736135400000006,
+      "displayY": 142.4,
+      "locality": "FRANKSTON",
+      "state": "VIC"
+    },
+    {
+      "id": "{CD03511B-5682-45C9-9FA2-E646AB667BAA}",
+      "name": "The Botanical Ark",
+      "type": "Botanic Garden",
+      "area": 7.5869281,
+      "displayY": 120.8,
+      "locality": "WHYANBEEL",
+      "state": "QLD"
+    },
+    {
+      "id": "{DA47E200-3CA7-46D0-9ACB-1B1399CE9BD3}",
+      "name": "Warrnambool Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 8.136172490000002,
+      "displayY": 128,
+      "locality": "WARRNAMBOOL",
+      "state": "VIC"
+    },
+    {
+      "id": "{9BDAF145-FEC5-4A2C-BC07-473723BDC5B7}",
+      "name": "Rivendell Botanical Gardens",
+      "type": "Botanic Garden",
+      "area": 8.14736962,
+      "displayY": 113.6,
+      "locality": "PARKHURST",
+      "state": "QLD"
+    },
+    {
+      "id": "{B7A79BA5-029F-46E1-A644-F10D0726232C}",
+      "name": "Gayndah Botanical Gardens And Pioneer Place",
+      "type": "Botanic Garden",
+      "area": 8.37904161,
+      "displayY": 135.2,
+      "locality": "GAYNDAH",
+      "state": "QLD"
+    },
+    {
+      "id": "{5250D7FC-C40A-406B-A134-3BEF91275F26}",
+      "name": "Fairhill Native Plants And Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 8.50236065,
+      "displayY": 142.4,
+      "locality": "NINDERRY",
+      "state": "QLD"
+    },
+    {
+      "id": "{7581A47C-CCC1-4748-964A-0D3255630BA7}",
+      "name": "Queens Road Aboretum",
+      "type": "Botanic Garden",
+      "area": 8.60582279,
+      "displayY": 120.8,
+      "locality": "SOUH GUILDFORD",
+      "state": "WA"
+    },
+    {
+      "id": "{415E15E7-1D74-4DB8-B2D6-17C24B5E177B}",
+      "name": "Tamborine Mountain Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 8.68154984,
+      "displayY": 149.6,
+      "locality": "TAMBORINE MOUNTAIN",
+      "state": "QLD"
+    },
+    {
+      "id": "{D19E4163-2E78-4FBA-BB30-264F8A3D927C}",
+      "name": "Noosa Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 9.06074944,
+      "displayY": 128,
+      "locality": "LAKE MACDONALD",
+      "state": "QLD"
+    },
+    {
+      "id": "{F07C980F-999B-4DD6-BA22-FE4B46E0C0C9}",
+      "name": "Ballarat Botanical Gardens",
+      "type": "Botanic Garden",
+      "area": 9.592688090000001,
+      "displayY": 135.2,
+      "locality": "LAKE WENDOUREE",
+      "state": "VIC"
+    },
+    {
+      "id": "{2CCA017E-1677-4F0F-BB8D-49EE91E8E47B}",
+      "name": "Bendigo Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 9.90147879,
+      "displayY": 120.8,
+      "locality": "WHITE HILLS",
+      "state": "VIC"
+    },
+    {
+      "id": "{97A383EA-4655-49A7-8CAE-290D8C47F30A}",
+      "name": "Gargarro Regional Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 9.919011320000001,
+      "displayY": 142.4,
+      "locality": "GIRGARRE",
+      "state": "VIC"
+    },
+    {
+      "id": "{B210D61C-3E6E-48E5-BBBD-6C3489A3BB95}",
+      "name": "Kyneton Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 10.00307461,
+      "displayY": 128,
+      "locality": "KYNETON",
+      "state": "VIC"
+    },
+    {
+      "id": "{C966FFE6-28CB-4EC0-A78B-CA857CCDCC40}",
+      "name": "Dubbo Regional Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 10.18087559,
+      "displayY": 113.6,
+      "locality": "DUBBO",
+      "state": "NSW"
+    },
+    {
+      "id": "{85867B27-91FF-40B3-AA26-87D57FF9879F}",
+      "name": "Benalla Botanical Gardens",
+      "type": "Botanic Garden",
+      "area": 10.31467039,
+      "displayY": 149.6,
+      "locality": "BENALLA",
+      "state": "VIC"
+    },
+    {
+      "id": "{D564AF1D-1FEC-482D-9543-FB63F5741DBC}",
+      "name": "Wombat Hill Botanical Gardens",
+      "type": "Botanic Garden",
+      "area": 11.04839793,
+      "displayY": 128,
+      "locality": "DAYLESFORD",
+      "state": "VIC"
+    },
+    {
+      "id": "{B60B011F-030A-4581-AB9C-912098EC0B09}",
+      "name": "Meribup Arboretum",
+      "type": "Botanic Garden",
+      "area": 11.79569075,
+      "displayY": 135.2,
+      "locality": "PERUP",
+      "state": "WA"
+    },
+    {
+      "id": "{A7AC0299-7E27-42CB-B0D2-D7FF6FDF1EAE}",
+      "name": "Royal Tasmanian Botanical Gardens",
+      "type": "Botanic Garden",
+      "area": 12.91109106,
+      "displayY": 128,
+      "locality": "HOBART",
+      "state": "TAS"
+    },
+    {
+      "id": "{874A2AA6-1716-44AD-8479-4D1673B17919}",
+      "name": "Colac Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 12.91750989,
+      "displayY": 135.2,
+      "locality": "COLAC",
+      "state": "VIC"
+    },
+    {
+      "id": "{AE8A9406-1309-4922-AC18-1E7179E751D0}",
+      "name": "Wittunga Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 13.00164445,
+      "displayY": 120.8,
+      "locality": "BLACKWOOD",
+      "state": "SA"
+    },
+    {
+      "id": "{71CF00D0-2130-48DE-BB78-6CA93FA15187}",
+      "name": "Redlands Indigiscapes Centre",
+      "type": "Botanic Garden",
+      "area": 13.299044669999999,
+      "displayY": 142.4,
+      "locality": "REDLANDS",
+      "state": "QLD"
+    },
+    {
+      "id": "{E4189F9B-F746-4C27-9052-4D50CC61E11A}",
+      "name": "Olive Pink Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 16.09572087,
+      "displayY": 128,
+      "locality": "ALICE SPRINGS",
+      "state": "NT"
+    },
+    {
+      "id": "{7253FBDF-BC64-46D8-8A2B-D344588D24B3}",
+      "name": "Galaringi Botanic Parkland",
+      "type": "Botanic Garden",
+      "area": 16.21331645,
+      "displayY": 135.2,
+      "locality": "CALINGFORD",
+      "state": "NSW"
+    },
+    {
+      "id": "{D87A4EBD-3B34-40DC-AEA2-C9E1E04454C7}",
+      "name": "Orange Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 16.24780991,
+      "displayY": 120.8,
+      "locality": "ORANGE",
+      "state": "NSW"
+    },
+    {
+      "id": "{2AAC2779-7725-4ECA-B573-F4445BD9E67E}",
+      "name": "Maleny Botanic Gardens And Bird World",
+      "type": "Botanic Garden",
+      "area": 16.41812505,
+      "displayY": 142.4,
+      "locality": "MALENY",
+      "state": "QLD"
+    },
+    {
+      "id": "{7C6784F2-C77D-45C0-AEEC-D8DFDA1DE3E8}",
+      "name": "City Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 18.084029949999998,
+      "displayY": 128,
+      "locality": "BRISBANE CITY",
+      "state": "QLD"
+    },
+    {
+      "id": "{68823D93-6790-43E7-B036-6BBB6C4BF7C7}",
+      "name": "Lismore Rainforest Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 18.50141264,
+      "displayY": 135.2,
+      "locality": "MONALTRIE",
+      "state": "NSW"
+    },
+    {
+      "id": "{183FF644-9E00-4D4D-88FA-7C0E5162F810}",
+      "name": "Auburn Botanical Gardens",
+      "type": "Botanic Garden",
+      "area": 18.7154846,
+      "displayY": 120.8,
+      "locality": "AUBURN",
+      "state": "NSW"
+    },
+    {
+      "id": "{806E28B8-9461-4774-83AD-36F733DA042B}",
+      "name": "Blue Mountains Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 18.75162595,
+      "displayY": 142.4,
+      "locality": "MOUNT TOMAH",
+      "state": "NSW"
+    },
+    {
+      "id": "{565A891F-8CC2-49A8-9A95-58C02889D597}",
+      "name": "Dalki Garringa Native Nursery",
+      "type": "Botanic Garden",
+      "area": 19.67571972,
+      "displayY": 128,
+      "locality": "WAIL",
+      "state": "VIC"
+    },
+    {
+      "id": "{331CBB58-286C-41CB-A9DE-FF794353C439}",
+      "name": "Goondiwindi Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 20.04515955,
+      "displayY": 135.2,
+      "locality": "GOONDIWINDI",
+      "state": "QLD"
+    },
+    {
+      "id": "{84FD34D2-28BE-45E8-A555-4510915F6339}",
+      "name": "Wagga Wagga Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 20.631633429999997,
+      "displayY": 128,
+      "locality": "WAGGA WAGGA",
+      "state": "NSW"
+    },
+    {
+      "id": "{D4A2D064-0C33-4BF9-953D-412C61297C14}",
+      "name": "North Coast Regional Botanic Gardens Coffs Harbour",
+      "type": "Botanic Garden",
+      "area": 21.8281372,
+      "displayY": 128,
+      "locality": "COFFS HARBOUR",
+      "state": "NSW"
+    },
+    {
+      "id": "{12C80330-5E37-4D80-8761-7883646BC78C}",
+      "name": "Mossman Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 22.49017105,
+      "displayY": 135.2,
+      "locality": "MOSSMAN",
+      "state": "QLD"
+    },
+    {
+      "id": "{E5C8073F-9786-4665-8078-BC1B042614EE}",
+      "name": "Hervey Bay Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 23.60217927,
+      "displayY": 128,
+      "locality": "URANGAN",
+      "state": "QLD"
+    },
+    {
+      "id": "{9F5078AD-9786-4C3E-BE19-3EDF6B32B7F1}",
+      "name": "Castlemaine Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 23.67672113,
+      "displayY": 135.2,
+      "locality": "CASTLEMAINE",
+      "state": "VIC"
+    },
+    {
+      "id": "{C67CAC9D-798B-4BCF-A9E2-9F7FCE093D88}",
+      "name": "Pangarinda Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 23.733644169999998,
+      "displayY": 120.8,
+      "locality": "WELLINGTON EAST",
+      "state": "SA"
+    },
+    {
+      "id": "{2AA4D725-A56F-4E73-9EAC-36EA41A0F7C1}",
+      "name": "Adelaide Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 24.70043145,
+      "displayY": 128,
+      "locality": "KENT TOWN",
+      "state": "SA"
+    },
+    {
+      "id": "{DF4AC43F-67F2-403C-8856-579E5B1AFC6E}",
+      "name": "Queens Park Gardens",
+      "type": "Botanic Garden",
+      "area": 26.215843380000003,
+      "displayY": 128,
+      "locality": "TOOWOOMBA",
+      "state": "QLD"
+    },
+    {
+      "id": "{0380B524-A97B-43ED-A821-C95179916A06}",
+      "name": "Bundaberg Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 26.33602886,
+      "displayY": 135.2,
+      "locality": "BUNDABERG",
+      "state": "QLD"
+    },
+    {
+      "id": "{7CFD8C9E-DEA6-47B2-BF01-975596D206EC}",
+      "name": "Anderson Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 27.130336959999998,
+      "displayY": 120.8,
+      "locality": "MUNDINGBURRA",
+      "state": "QLD"
+    },
+    {
+      "id": "{E339F473-4F73-4DBC-B18F-E9F9EDBB9151}",
+      "name": "Wollongong Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 27.1826891,
+      "displayY": 128,
+      "locality": "KEIRAVILLE",
+      "state": "NSW"
+    },
+    {
+      "id": "{BBF47567-1CFC-415A-BF63-67FD0D62D3E2}",
+      "name": "Royal Botanic Gardens Sydney",
+      "type": "Botanic Garden",
+      "area": 29.49211693,
+      "displayY": 128,
+      "locality": "SYDNEY",
+      "state": "NSW"
+    },
+    {
+      "id": "{D7A95B3D-E76E-481B-8404-39A5BB64CF91}",
+      "name": "Gold Coast Regional Botanic Gardens/Rosser Park",
+      "type": "Botanic Garden",
+      "area": 31.23761215,
+      "displayY": 128,
+      "locality": "BENOWA",
+      "state": "QLD"
+    },
+    {
+      "id": "{EDA66AFF-AB90-4255-8222-8A7DEB95E0C3}",
+      "name": "Fruit Spirit Botanical Garden",
+      "type": "Botanic Garden",
+      "area": 32.106923810000005,
+      "displayY": 135.2,
+      "locality": "DORROUGHBY",
+      "state": "NSW"
+    },
+    {
+      "id": "{6181A1E6-6C2D-43A3-8999-D69644CC5147}",
+      "name": "Australian Botanic Gardens Shepparton",
+      "type": "Botanic Garden",
+      "area": 34.033741570000004,
+      "displayY": 128,
+      "locality": "KIALLA",
+      "state": "VIC"
+    },
+    {
+      "id": "{228723AD-8522-4B27-ABA2-F30917726564}",
+      "name": "Foresters Wood",
+      "type": "Botanic Garden",
+      "area": 34.49006569,
+      "displayY": 135.2,
+      "locality": "GLENORAN",
+      "state": "WA"
+    },
+    {
+      "id": "{BE656BBB-6802-4651-90F3-C24C0EBE8099}",
+      "name": "Wilson Botanic Park",
+      "type": "Botanic Garden",
+      "area": 34.8292874,
+      "displayY": 120.8,
+      "locality": "BERWICK",
+      "state": "VIC"
+    },
+    {
+      "id": "{EBE8907C-AFFD-4032-875C-8078D2E5A0EE}",
+      "name": "Dandenong Ranges Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 36.38060907,
+      "displayY": 128,
+      "locality": "OLINDA",
+      "state": "VIC"
+    },
+    {
+      "id": "{44ECAFF7-63D7-44F9-AA37-0F2934D26A1B}",
+      "name": "Tamworth Regional Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 37.21437931,
+      "displayY": 135.2,
+      "locality": "TAMWORTH",
+      "state": "NSW"
+    },
+    {
+      "id": "{19A8D4B9-F4A0-42C2-92CF-B138AEA3C96E}",
+      "name": "Hunter Region Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 38.395867970000005,
+      "displayY": 128,
+      "locality": "TOMAGO",
+      "state": "NSW"
+    },
+    {
+      "id": "{2D77D67A-496F-4A96-BF1E-43F08275E6DD}",
+      "name": "Eurobodalla Regional Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 39.54909921,
+      "displayY": 128,
+      "locality": "BATEMANS BAY",
+      "state": "NSW"
+    },
+    {
+      "id": "{5D81F78F-D943-4BA9-8AFC-17C2C3B77697}",
+      "name": "Joon Joo Botanical Trail (Wanganut Reserve)",
+      "type": "Botanic Garden",
+      "area": 39.632473149999996,
+      "displayY": 135.2,
+      "locality": "DERBY",
+      "state": "WA"
+    },
+    {
+      "id": "{3A5E5FA9-419F-4704-A2F0-BBC4627A6117}",
+      "name": "Royal Botanic Gardens Victoria Melbourne Gardens",
+      "type": "Botanic Garden",
+      "area": 40.43844562,
+      "displayY": 120.8,
+      "locality": "MELBOURNE",
+      "state": "VIC"
+    },
+    {
+      "id": "{7AA8C72E-EAAB-4192-B01C-7FD5FEC91051}",
+      "name": "George Brown Darwin Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 41.82701743,
+      "displayY": 128,
+      "locality": "PALMERSTON",
+      "state": "NT"
+    },
+    {
+      "id": "{2C26AEF2-10DE-4253-8CB5-D2CA8FF54DF3}",
+      "name": "Cairns Botanical Gardens",
+      "type": "Botanic Garden",
+      "area": 43.99076269,
+      "displayY": 128,
+      "locality": "EDGE HILL",
+      "state": "QLD"
+    },
+    {
+      "id": "{31AD6BE4-4FD7-4177-998B-D26E6136468F}",
+      "name": "Brisbane Botanic Gardens Mount Coot Tha",
+      "type": "Botanic Garden",
+      "area": 44.892918959999996,
+      "displayY": 135.2,
+      "locality": "MOUNT COOT THA",
+      "state": "QLD"
+    },
+    {
+      "id": "{78D68D1C-ECA9-48F8-8C39-3E23DCF1790B}",
+      "name": "Emerald Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 46.30817021,
+      "displayY": 128,
+      "locality": "EMERALD",
+      "state": "QLD"
+    },
+    {
+      "id": "{CFBE9DE1-2D5E-4ED4-A197-0C6047CFBCAC}",
+      "name": "Rockhampton Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 48.140114909999994,
+      "displayY": 128,
+      "locality": "THE RANGE",
+      "state": "QLD"
+    },
+    {
+      "id": "{B8036F43-46F5-40BE-9644-E22AA3D960F9}",
+      "name": "Mackay Regional Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 48.42550232,
+      "displayY": 135.2,
+      "locality": "WEST MACKAY",
+      "state": "QLD"
+    },
+    {
+      "id": "{6FE3476B-A712-445A-871B-CEAACF95BE09}",
+      "name": "Australian National Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 49.16355878,
+      "displayY": 128,
+      "locality": "ACTON",
+      "state": "ACT"
+    },
+    {
+      "id": "{5B0174D3-2FA0-4391-BB94-552CB5C9E176}",
+      "name": "Alice Springs Desert Park",
+      "type": "Botanic Garden",
+      "area": 50.93307984,
+      "displayY": 128,
+      "locality": "ALICE SPRINGS",
+      "state": "NT"
+    },
+    {
+      "id": "{F9C6CB7D-64BA-4EA5-A1D7-538EC3F20922}",
+      "name": "Araluen Botanical Park",
+      "type": "Botanic Garden",
+      "area": 59.39218156,
+      "displayY": 128,
+      "locality": "ROLEYSTONE",
+      "state": "WA"
+    },
+    {
+      "id": "{E06F7A04-2275-497E-8956-B283C3FE6C92}",
+      "name": "Cooktown Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 60.13976201,
+      "displayY": 135.2,
+      "locality": "COOKTOWN",
+      "state": "QLD"
+    },
+    {
+      "id": "{19163B1E-0C94-4B5C-B382-AABD66E42C3C}",
+      "name": "Booderee National Park And Botanic Gardens (Formerly Jervis Bay Botanic Gardens)",
+      "type": "Botanic Garden",
+      "area": 67.33347432,
+      "displayY": 128,
+      "locality": "JERVIS BAY",
+      "state": "ACT"
+    },
+    {
+      "id": "{6EA5F73A-64BF-4632-AD40-4A9C850AB230}",
+      "name": "Golden Valley Tree Park",
+      "type": "Botanic Garden",
+      "area": 69.90320673,
+      "displayY": 128,
+      "locality": "BALINGUP",
+      "state": "WA"
+    },
+    {
+      "id": "{633AB57B-9D97-4270-AB5F-8F8DAA3BA724}",
+      "name": "Maroochy Regional Bushland Botanic Garden",
+      "type": "Botanic Garden",
+      "area": 82.03791179999999,
+      "displayY": 128,
+      "locality": "TANAWHA",
+      "state": "QLD"
+    },
+    {
+      "id": "{E85F3FF5-C525-420A-9227-2B828F8A977D}",
+      "name": "Tondoon Botanic Gardens",
+      "type": "Botanic Garden",
+      "area": 86.59947725,
+      "displayY": 128,
+      "locality": "GLADSTONE",
+      "state": "QLD"
+    },
+    {
+      "id": "{DF2152D0-3B0E-43E9-9561-F0845EC05766}",
+      "name": "Alpine Botanic Garden",
+      "type": "Arboretum",
+      "area": 0.49667664000000006,
+      "displayY": 52,
+      "locality": "BRINDABELLA",
+      "state": "NSW"
+    },
+    {
+      "id": "{780D2F16-3AB7-4DE3-8BE3-12E3F771B3A7}",
+      "name": "Nannup Arboretum",
+      "type": "Arboretum",
+      "area": 1.03640539,
+      "displayY": 59.2,
+      "locality": "NANNUP",
+      "state": "WA"
+    },
+    {
+      "id": "{243F4138-15F2-4A6E-BF8D-991A1A16D9F4}",
+      "name": "Dame Elisabeth Murdoch Arboretum",
+      "type": "Arboretum",
+      "area": 1.13401636,
+      "displayY": 44.80000000000001,
+      "locality": "LANGWARRIN",
+      "state": "VIC"
+    },
+    {
+      "id": "{4CF8DA2A-5B59-4193-A38E-75125090C422}",
+      "name": "Riddiford Arboretum",
+      "type": "Arboretum",
+      "area": 1.25787878,
+      "displayY": 66.4,
+      "locality": "BROKEN HILL",
+      "state": "NSW"
+    },
+    {
+      "id": "{D09D4255-CA80-4861-BFF0-B09F29101122}",
+      "name": "Collie Arboretum",
+      "type": "Arboretum",
+      "area": 1.28244351,
+      "displayY": 37.599999999999994,
+      "locality": "COLLIE",
+      "state": "WA"
+    },
+    {
+      "id": "{8FCFA975-1453-4CB3-9A59-01FFDB92BCCB}",
+      "name": "Davidson Arboretum",
+      "type": "Arboretum",
+      "area": 1.34332433,
+      "displayY": 73.6,
+      "locality": "HIGHFIELDS",
+      "state": "QLD"
+    },
+    {
+      "id": "{1314F171-710F-44D0-8C0A-5C373635AF73}",
+      "name": "Maslen Arboretum",
+      "type": "Arboretum",
+      "area": 1.48482532,
+      "displayY": 52,
+      "locality": "MULLIMBIMBY",
+      "state": "NSW"
+    },
+    {
+      "id": "{A058F082-8AE4-4B77-A57D-A385CB5A729C}",
+      "name": "The Magic Forest",
+      "type": "Arboretum",
+      "area": 1.58488783,
+      "displayY": 30.400000000000006,
+      "locality": "STANLEY",
+      "state": "VIC"
+    },
+    {
+      "id": "{8A9EA19D-58BA-46E7-8E0F-63539A0C3651}",
+      "name": "Macquarie Rivulet Arboretum",
+      "type": "Arboretum",
+      "area": 1.75849282,
+      "displayY": 80.8,
+      "locality": "ALBION PARK",
+      "state": "NSW"
+    },
+    {
+      "id": "{71E1F007-1073-403A-82C6-F618DA09905F}",
+      "name": "Clover Arboretum",
+      "type": "Arboretum",
+      "area": 2.08136564,
+      "displayY": 59.2,
+      "locality": "BOGONG",
+      "state": "VIC"
+    },
+    {
+      "id": "{8925BAA6-C62C-4B2C-9600-680DE35AC5A2}",
+      "name": "See Park Arboretum",
+      "type": "Arboretum",
+      "area": 2.1653913900000004,
+      "displayY": 44.80000000000001,
+      "locality": "GRAFTON",
+      "state": "NSW"
+    },
+    {
+      "id": "{CF4C1678-0B29-4E77-8031-E9660BFB857E}",
+      "name": "Bellingen Hospital Grounds Arboretum",
+      "type": "Arboretum",
+      "area": 2.17694669,
+      "displayY": 23.19999999999999,
+      "locality": "BELLINGEN",
+      "state": "NSW"
+    },
+    {
+      "id": "{3AA98F1E-B62C-4DA3-B618-A2BEDB249E81}",
+      "name": "Jack Mcgirr Arboretum",
+      "type": "Arboretum",
+      "area": 2.4371462,
+      "displayY": 52,
+      "locality": "GILGANDRA",
+      "state": "NSW"
+    },
+    {
+      "id": "{C3906C08-5437-4730-9BED-CEB04DCDFA71}",
+      "name": "Arboretum Park Young",
+      "type": "Arboretum",
+      "area": 2.9058586600000003,
+      "displayY": 66.4,
+      "locality": "YOUNG",
+      "state": "NSW"
+    },
+    {
+      "id": "{13A00E9F-63E9-44DF-95F1-8C795FD9AF9D}",
+      "name": "Gayundah Coastal Arboretum",
+      "type": "Arboretum",
+      "area": 3.2236474900000003,
+      "displayY": 59.2,
+      "locality": "WOODY POINT",
+      "state": "QLD"
+    },
+    {
+      "id": "{2A2A73BE-F18D-4F6A-BE9F-D2604916481E}",
+      "name": "Wongan Hills Arboretum",
+      "type": "Arboretum",
+      "area": 3.2944779,
+      "displayY": 44.80000000000001,
+      "locality": "WONAGN HILLS",
+      "state": "WA"
+    },
+    {
+      "id": "{3B858639-D8D3-4C7F-A532-0BEB4E505F06}",
+      "name": "Atherton Arboretum",
+      "type": "Arboretum",
+      "area": 3.68981736,
+      "displayY": 52,
+      "locality": "ATHERTON",
+      "state": "QLD"
+    },
+    {
+      "id": "{8571BA6C-EBC4-466D-A1C1-52A9BF83E11B}",
+      "name": "Bendora Arboretum",
+      "type": "Arboretum",
+      "area": 5.1805346100000005,
+      "displayY": 52,
+      "locality": "BRINDABELLA",
+      "state": "ACT"
+    },
+    {
+      "id": "{09EF995E-BCD1-40F7-8C7B-8B02116742AA}",
+      "name": "The Crommelin Native Arboretum - Pearl Beach",
+      "type": "Arboretum",
+      "area": 5.2351154300000005,
+      "displayY": 59.2,
+      "locality": "PEARL BEACH",
+      "state": "NSW"
+    },
+    {
+      "id": "{83BE24EE-ECB3-437C-83EE-1E626247C308}",
+      "name": "Donnybrook Arboretum",
+      "type": "Arboretum",
+      "area": 5.34389059,
+      "displayY": 44.80000000000001,
+      "locality": "DONNYBROOK",
+      "state": "WA"
+    },
+    {
+      "id": "{C57B1557-68C6-47CF-9EA5-A3967B0EF7F0}",
+      "name": "Tim Neville Arboretum",
+      "type": "Arboretum",
+      "area": 5.553580139999999,
+      "displayY": 66.4,
+      "locality": "FERNTREE GULLY",
+      "state": "VIC"
+    },
+    {
+      "id": "{52FE13A7-E2BD-427C-AD96-E81FC3737A7B}",
+      "name": "Murraguldrie Arboretum",
+      "type": "Arboretum",
+      "area": 6.34308109,
+      "displayY": 52,
+      "locality": "KYEAMBA",
+      "state": "NSW"
+    },
+    {
+      "id": "{7704E32F-08FF-40C6-9E89-81C18847E63C}",
+      "name": "Demesne Farm Minor Arboretum",
+      "type": "Arboretum",
+      "area": 6.69120722,
+      "displayY": 59.2,
+      "locality": "COOMBA PARK",
+      "state": "NSW"
+    },
+    {
+      "id": "{F4E5B51F-E458-4AAB-BC01-38C1760BDCE7}",
+      "name": "Westbourne Woods",
+      "type": "Arboretum",
+      "area": 7.7859152599999994,
+      "displayY": 52,
+      "locality": "YARRALUMLA",
+      "state": "ACT"
+    },
+    {
+      "id": "{25796EC0-C029-4A53-92A7-A73288832B3A}",
+      "name": "Sunny Corner Arboretum",
+      "type": "Arboretum",
+      "area": 8.61598733,
+      "displayY": 59.2,
+      "locality": "SUNNY CORNER",
+      "state": "NSW"
+    },
+    {
+      "id": "{70AEED71-6E14-4A88-8A42-1D5E84CB9B28}",
+      "name": "Wirrabara Arboretum",
+      "type": "Arboretum",
+      "area": 9.03040347,
+      "displayY": 52,
+      "locality": "WIRRABARA",
+      "state": "SA"
+    },
+    {
+      "id": "{3CE80799-4191-46F8-A31D-C2F08B744A26}",
+      "name": "Carnarvon Arboretum",
+      "type": "Arboretum",
+      "area": 9.81398137,
+      "displayY": 59.2,
+      "locality": "CARNARVON",
+      "state": "WA"
+    },
+    {
+      "id": "{40F87B92-5519-4E78-BD80-98F28D3BFDA5}",
+      "name": "Caboolture Arboretum",
+      "type": "Arboretum",
+      "area": 9.81688414,
+      "displayY": 44.80000000000001,
+      "locality": "CABOOLTURE SOUTH",
+      "state": "QLD"
+    },
+    {
+      "id": "{E1405C5E-86C9-45F8-855C-53469D86E2BC}",
+      "name": "Coolgardie Arboretum",
+      "type": "Arboretum",
+      "area": 10.177324010000001,
+      "displayY": 52,
+      "locality": "COOLGARDIE",
+      "state": "WA"
+    },
+    {
+      "id": "{4D491B0A-1BDC-4557-A79B-654AB79E552C}",
+      "name": "Pirianda Garden",
+      "type": "Arboretum",
+      "area": 11.15739571,
+      "displayY": 52,
+      "locality": "OLINDA",
+      "state": "VIC"
+    },
+    {
+      "id": "{738732E8-0DE7-420F-8F70-A12B6DDBAD39}",
+      "name": "Inglehope Arboretum",
+      "type": "Arboretum",
+      "area": 12.55060503,
+      "displayY": 52,
+      "locality": "ETMILYN",
+      "state": "WA"
+    },
+    {
+      "id": "{5798D651-48F8-4930-A687-F615B82ED965}",
+      "name": "Dryandra Arboretum",
+      "type": "Arboretum",
+      "area": 12.939247,
+      "displayY": 59.2,
+      "locality": "NARROGIN",
+      "state": "WA"
+    },
+    {
+      "id": "{8D77525D-7B00-43DE-A1F4-270698756EA5}",
+      "name": "Armidale Bicentennial Arboretum",
+      "type": "Arboretum",
+      "area": 13.21868648,
+      "displayY": 44.80000000000001,
+      "locality": "ARMIDALE",
+      "state": "NSW"
+    },
+    {
+      "id": "{5DDFCA09-9FD5-48FC-B0DA-F06F7EB767F0}",
+      "name": "Cumberland State Forest Arboretum",
+      "type": "Arboretum",
+      "area": 13.748032429999999,
+      "displayY": 52,
+      "locality": "WEST PENNANT HILLS",
+      "state": "NSW"
+    },
+    {
+      "id": "{62AF5158-FAE6-4313-9CAB-AEB66F19BFAD}",
+      "name": "Asplin Arboretum",
+      "type": "Arboretum",
+      "area": 14.66305536,
+      "displayY": 59.2,
+      "locality": "NANNUP",
+      "state": "WA"
+    },
+    {
+      "id": "{FFBD4CFD-5647-4636-8320-AA35982FB4F2}",
+      "name": "Sherwood Arboretum",
+      "type": "Arboretum",
+      "area": 15.77986657,
+      "displayY": 52,
+      "locality": "SHERWOOD",
+      "state": "QLD"
+    },
+    {
+      "id": "{4013D18F-32A3-4287-9591-554033F283EA}",
+      "name": "Dunkeld Arboretum",
+      "type": "Arboretum",
+      "area": 16.528160449999998,
+      "displayY": 59.2,
+      "locality": "DUNKELD",
+      "state": "VIC"
+    },
+    {
+      "id": "{AC6C3157-AC56-449F-86B8-286209D7F956}",
+      "name": "Big Brook Arboretum",
+      "type": "Arboretum",
+      "area": 17.21853577,
+      "displayY": 52,
+      "locality": "PEMBERTON",
+      "state": "WA"
+    },
+    {
+      "id": "{63A1CDA9-DDBA-47ED-9E56-E8F01FC5F3A5}",
+      "name": "Bussell Arboretum",
+      "type": "Arboretum",
+      "area": 21.822882630000002,
+      "displayY": 52,
+      "locality": "MANGALUP",
+      "state": "WA"
+    },
+    {
+      "id": "{E1A9774E-F485-4DEF-AD4B-A45D0978FFD3}",
+      "name": "Jawbone Arboretum",
+      "type": "Arboretum",
+      "area": 22.67552971,
+      "displayY": 59.2,
+      "locality": "WILLIAMSTOWN",
+      "state": "VIC"
+    },
+    {
+      "id": "{C30FEE4C-1B41-47ED-920A-46A32E205C94}",
+      "name": "Palmetum",
+      "type": "Arboretum",
+      "area": 23.872997390000002,
+      "displayY": 52,
+      "locality": "DOUGLAS",
+      "state": "QLD"
+    },
+    {
+      "id": "{A539BA4E-8F2F-4337-8C59-7C4FEA4BBA67}",
+      "name": "Lindsay Pryor National Arboretum",
+      "type": "Arboretum",
+      "area": 24.425086190000002,
+      "displayY": 59.2,
+      "locality": "YARRALUMLA",
+      "state": "ACT"
+    },
+    {
+      "id": "{77B7146A-5C7E-4091-BCED-C86185BA74D4}",
+      "name": "Melton Botanic Garden Dryland Eucalyptus Arboretum",
+      "type": "Arboretum",
+      "area": 25.566688900000003,
+      "displayY": 52,
+      "locality": "MELTON",
+      "state": "VIC"
+    },
+    {
+      "id": "{AB626211-A023-4F2C-A3C2-2C441B0DBA5B}",
+      "name": "Newholme Arboretum",
+      "type": "Arboretum",
+      "area": 27.04282549,
+      "displayY": 52,
+      "locality": "ARMIDALE",
+      "state": "NSW"
+    },
+    {
+      "id": "{750EE647-1772-4242-A3B7-84EDA2B4FF0A}",
+      "name": "Euroa Arboretum",
+      "type": "Arboretum",
+      "area": 27.079813209999998,
+      "displayY": 59.2,
+      "locality": "EUROA",
+      "state": "VIC"
+    },
+    {
+      "id": "{6884E7DE-6B69-4CBD-80B4-D8B41FC44749}",
+      "name": "Botanic Park Tainmuntilla",
+      "type": "Arboretum",
+      "area": 27.35999916,
+      "displayY": 44.80000000000001,
+      "locality": "ADELAIDE",
+      "state": "SA"
+    },
+    {
+      "id": "{828A7FCB-2948-44D4-A19E-00BFB086E789}",
+      "name": "Kalgoorlie Arboretum",
+      "type": "Arboretum",
+      "area": 27.96319828,
+      "displayY": 66.4,
+      "locality": "WEST LAMINGTON",
+      "state": "WA"
+    },
+    {
+      "id": "{A70EA031-F76F-4D00-ADDB-B17CCB4F16BA}",
+      "name": "Hyland Road Arboretum",
+      "type": "Arboretum",
+      "area": 28.79412492,
+      "displayY": 52,
+      "locality": "GREYSTANES",
+      "state": "NSW"
+    },
+    {
+      "id": "{FCDC2649-1330-4346-863B-D679657CE1B9}",
+      "name": "Stoodley Forest Arboretum",
+      "type": "Arboretum",
+      "area": 30.394158710000003,
+      "displayY": 52,
+      "locality": "SHEFFIELD",
+      "state": "TAS"
+    },
+    {
+      "id": "{09DE48D5-06C2-42D8-94F8-EE97D856083F}",
+      "name": "Waite Arboretum",
+      "type": "Arboretum",
+      "area": 33.654959819999995,
+      "displayY": 52,
+      "locality": "URRBRAE",
+      "state": "SA"
+    },
+    {
+      "id": "{EB8D718E-87AC-473F-A5DC-DC884365F8BE}",
+      "name": "Peter Francis Points Arboretum",
+      "type": "Arboretum",
+      "area": 37.19951771,
+      "displayY": 52,
+      "locality": "COLERAINE",
+      "state": "VIC"
+    },
+    {
+      "id": "{A23F9CAB-1E45-4372-AD03-696DF06BF178}",
+      "name": "Melbourne Arboretum",
+      "type": "Arboretum",
+      "area": 39.97642923,
+      "displayY": 52,
+      "locality": "MERNDA",
+      "state": "VIC"
+    },
+    {
+      "id": "{F77D9759-F73A-4F10-8B91-050B86DFEC67}",
+      "name": "Frogwood Arboretum",
+      "type": "Arboretum",
+      "area": 40.747891759999995,
+      "displayY": 59.2,
+      "locality": "DEANS MARSH",
+      "state": "VIC"
+    },
+    {
+      "id": "{37DAA285-89C4-4366-96C9-FC22563AF0BA}",
+      "name": "Pilot Hill Arboretum",
+      "type": "Arboretum",
+      "area": 44.48632316,
+      "displayY": 52,
+      "locality": "BATLOW",
+      "state": "NSW"
+    },
+    {
+      "id": "{BBDB469B-8682-454B-B65A-6C9F2760D460}",
+      "name": "Currency Creek Arboretum",
+      "type": "Arboretum",
+      "area": 64.5069779,
+      "displayY": 52,
+      "locality": "CURRENCY CREEK",
+      "state": "SA"
+    },
+    {
+      "id": "{7CB8F47F-9DBF-4A72-B082-40668D8BC28D}",
+      "name": "The Tasmanian Arboretum",
+      "type": "Arboretum",
+      "area": 67.79152821,
+      "displayY": 52,
+      "locality": "EUGENANA",
+      "state": "TAS"
+    }
+  ]
+}

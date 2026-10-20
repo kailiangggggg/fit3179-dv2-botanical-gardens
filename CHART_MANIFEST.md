@@ -1,12 +1,12 @@
 # Chart manifest
 
-**Inventory:** 13 rubric-counted chart groups, 14 visible panels, 3 map idioms, and 8 distinct advanced idiom types. V05a/V05b remains one paired chart group. Final visual and browser review was completed on 18 October 2026; these counts describe the implementation and do not predict a marker-assessed grade.
+**Inventory:** 13 rubric-counted chart groups, 17 visible panels, 3 map idioms, and 8 distinct advanced idiom types. V01’s two regional maps and supporting area strip remain inside one chart group; V05a/V05b remains one paired chart group. These counts describe the implementation and do not predict a marker-assessed grade.
 
 The complete machine-readable What / Why / How contracts, field types, transformations, mark/channel choices, interactions, caveats, spec paths and data paths are in [`public/specs/chart-manifest.json`](public/specs/chart-manifest.json). Each readable Vega-Lite v5 specification is in [`public/specs/`](public/specs/).
 
 | ID | Reader question | Idiom | Source / grain | Spec / data | Class |
 |---|---|---|---|---|---|
-| V01 | Where are the known gardens and arboreta, and how do their registered areas vary? | Graduated-symbol map | GA, one registered facility feature | [`V01`](public/specs/V01-facility-symbol-map.json) · facility points + ASGS boundaries | Advanced map |
+| V01 | Where are known gardens concentrated, and how do smaller registered areas vary within the map classes? | Graduated-symbol map | GA, one registered facility feature | [`V01`](public/specs/V01-facility-symbol-map.json) · 182 points + state outlines; two repeated regional views and a supporting under-100-ha strip plot remain inside this chart group | Advanced map |
 | V02 | How many known facilities are registered per million residents? | Choropleth | GA counts + ABS March 2026 ERP, one state/territory | [`V02`](public/specs/V02-facilities-per-million-choropleth.json) · joined state GeoJSON | Advanced map |
 | V03 | Which state rankings shift after population adjustment? | Slopegraph | Same eight standard jurisdictions as V02 | [`V03`](public/specs/V03-count-rate-slopegraph.json) · rank comparison CSV | Advanced |
 | V04 | Do registered facility footprints differ by type? | Box plot | GA, one facility area | [`V04`](public/specs/V04-registered-footprint-boxplot.json) · area records/stats | Advanced |
@@ -24,10 +24,11 @@ The complete machine-readable What / Why / How contracts, field types, transform
 
 ### V01 — Facility geography
 
-- **What:** GA’s 182 known-register facilities with coordinates, subtype and registered hectares.
-- **Why:** Locate sites and compare reported facility footprints.
-- **How:** Equal Earth map; position encodes location, four graduated circle sizes encode registered-area classes using Vega-Lite area values `12 / 24 / 48 / 96`, and hue encodes Botanic Garden versus Arboretum. The graduated values distinguish classes, not exact proportions. The legend states hectare ranges; the tooltip retains each reported area. Default opacity is 0.78, and hover highlights a facility.
-- **Limit:** Symbol sizes show area classes, not continuous area proportions or within-class differences. Register inclusion is not proof of national completeness, public access, collection size or conservation performance.
+- **What:** GA’s 182 known-register facilities with original coordinates, subtype and exact reported hectares.
+- **Why:** Locate all known sites, inspect the dense Sydney and Melbourne windows, and compare the 165 reported facility areas below 100 ha.
+- **How:** The primary Equal Earth map keeps one graduated circle per feature; position encodes location, four graduated circle sizes encode registered-area classes using Vega-Lite area values `12 / 24 / 48 / 96`, and hue encodes Botanic Garden versus Arboretum. The values distinguish classes, not exact proportions. Two local Mercator maps repeat 14 Sydney and 18 Melbourne facilities using their original coordinates and fixed-size type-coloured points; repeats do not add facilities. A linear 0–100 ha strip plot uses exact reported hectares on x, subtype rows, constant point size and deterministic y offsets solely to prevent collision. The approved type colours are reused. Map and quantitative tooltips retain exact facility details and hectares.
+- **Visible takeaway:** The first two graduated classes conceal real differences. 165 of 182 known sites (91%) are below 100 ha; subtype medians are similar at about 10.2 and 10.0 ha. V04 retains the full area distribution and extremes.
+- **Limit:** The national map retains overlap in dense places, and two Melbourne pairs remain close in the preferred regional view. The small-area strip is a restricted subset; V04 remains the full-distribution summary. Register inclusion is not proof of national completeness, public access, collection size or conservation performance.
 
 ### V02 — State-level register density
 

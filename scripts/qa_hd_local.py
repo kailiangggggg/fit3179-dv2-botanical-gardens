@@ -10,7 +10,7 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 URL = "http://127.0.0.1:4173/"
-OUT = ROOT / "tmp" / "perceptual-visible-storytelling-20261018" / "full-local"
+OUT = ROOT / "tmp" / "v01-spatial-quantitative-20261020" / "full-local-qa"
 OUT.mkdir(parents=True, exist_ok=True)
 VIEWPORTS = ((320, 700), (390, 844), (768, 900), (1024, 768), (1280, 800), (1366, 768), (1600, 900))
 CHART_IDS = tuple(f"V{i:02}" for i in range(1, 14))
@@ -39,6 +39,14 @@ def wait_for_charts(page):
         )
         if "chart-error" in (frame.get_attribute("class") or ""):
             raise AssertionError(f"{chart_id} rendered an error state")
+        if chart_id == "V01":
+            page.wait_for_function(
+                "[...document.querySelectorAll('.chart-support-frame')].length === 3 && "
+                "[...document.querySelectorAll('.chart-support-frame')].every(mount => mount.classList.contains('support-ready') || mount.classList.contains('chart-support-error'))",
+                timeout=45000,
+            )
+            if page.locator(".chart-support-error").count():
+                raise AssertionError("A V01 supporting view rendered an error state")
         if frame.locator("svg").count() != 1:
             raise AssertionError(f"{chart_id} did not render exactly one SVG")
         if chart_id == "V02" and frame.bounding_box()["height"] > 560:
@@ -61,6 +69,73 @@ def wait_for_charts(page):
             if len(set(abbreviations)) != 8:
                 raise AssertionError(f"V03 is missing direct rate-rank endpoint labels: {abbreviations}")
     return mark_counts
+
+
+def measure_v01_layout(page):
+    result = page.evaluate("""() => {
+      const summarize = (marks) => {
+        let overlapPairs = 0;
+        const nearest = [];
+        for (let first = 0; first < marks.length; first += 1) {
+          let closest = Infinity;
+          for (let second = 0; second < marks.length; second += 1) {
+            if (first === second) continue;
+            const distance = Math.hypot(marks[first].x - marks[second].x, marks[first].y - marks[second].y);
+            closest = Math.min(closest, distance);
+            if (second > first && distance < (marks[first].diameter + marks[second].diameter) / 2) overlapPairs += 1;
+          }
+          if (Number.isFinite(closest)) nearest.push(closest);
+        }
+        nearest.sort((a, b) => a - b);
+        return {
+          count: marks.length,
+          overlapPairs,
+          minNearestPx: nearest[0] ?? null,
+          medianNearestPx: nearest.length ? nearest[Math.floor(nearest.length / 2)] : null,
+          minDiameterPx: marks.length ? Math.min(...marks.map((mark) => mark.diameter)) : null,
+        };
+      };
+      const readMarks = (svg, selector) => [...(svg?.querySelectorAll(selector) ?? [])].map((path) => {
+        const rect = path.getBoundingClientRect();
+        const label = path.getAttribute('aria-label') || '';
+        const name = label.match(/Facility: ([^;]+)/)?.[1] || label.match(/properties\\.feature_name: ([^;]+)/)?.[1] || '';
+        return {x:(rect.left+rect.right)/2,y:(rect.top+rect.bottom)/2,diameter:Math.min(rect.width,rect.height),name};
+      });
+      const nationalMarks=readMarks(document.querySelector('#chart-mount-V01 svg'),'.layer_1_marks path');
+      const regional=[...document.querySelectorAll('.chart-support-frame[data-support-chart-id^="V01-"]')]
+        .filter((mount)=>mount.dataset.supportChartId!=='V01-AREA')
+        .map((mount)=>{
+          const marks=readMarks(mount.querySelector('svg'),'.layer_1_marks path');
+          const names=new Set(marks.map((mark)=>mark.name));
+          const nationalSubset=nationalMarks.filter((mark)=>names.has(mark.name));
+          return {id:mount.dataset.supportChartId,...summarize(marks),nationalSubset:summarize(nationalSubset)};
+        });
+      const quantMount=document.querySelector('.chart-support-frame[data-support-chart-id="V01-AREA"]');
+      const quant=summarize(readMarks(quantMount?.querySelector('svg'),'.mark-symbol path'));
+      const figure=document.querySelector('.chart-entry[data-chart-id="V01"]');
+      return {
+        figureHeightPx:figure?.getBoundingClientRect().height ?? null,
+        national:summarize(nationalMarks),
+        regional,
+        quantitative:quant,
+        supportErrors:document.querySelectorAll('.chart-support-error').length,
+        chartGroups:document.querySelectorAll('.chart-entry').length,
+        documentWidth:document.documentElement.scrollWidth,
+      };
+    }""")
+    if result["chartGroups"] != 13 or result["supportErrors"]:
+        raise AssertionError(f"V01 support views changed chart grouping or entered an error state: {result}")
+    if result["national"]["count"] != 182 or result["quantitative"]["count"] != 165:
+        raise AssertionError(f"V01 lost source facilities in a rendered view: {result}")
+    if any(view["count"] != (14 if view["id"] == "V01-SYD" else 18) for view in result["regional"]):
+        raise AssertionError(f"V01 regional window counts changed: {result['regional']}")
+    if any(view["nationalSubset"]["count"] != view["count"] for view in result["regional"]):
+        raise AssertionError(f"V01 insets do not match the same facilities in the national map: {result['regional']}")
+    if result["quantitative"]["overlapPairs"]:
+        raise AssertionError(f"V01 quantitative marks overlap: {result['quantitative']}")
+    if result["documentWidth"] > page.viewport_size["width"]:
+        raise AssertionError(f"V01 produced horizontal overflow: {result}")
+    return result
 
 
 EXPECTED_CHAPTERS = [
@@ -180,11 +255,14 @@ def check_no_interaction_reading_path(browser, width, height):
         "Q5": ("collection origins", "not gardens or seed stores"),
         "Q6": ("33,765", "0% in Alice Springs", "100% in Darwin", "Four archives lack usable top-level years"),
         "Q7": ("Taken together, these records show known facilities", "not total conservation success"),
+        "Q8": ("Sydney detail · 14 sites", "Melbourne detail · 18 sites"),
+        "Q9": ("All 165 known-register facilities", "within-class variation"),
+        "Q10": ("V04 retains the full distribution and extremes",),
     }
     matched = {question: set() for question in questions}
     steps = []
     rendered = set()
-    selectors = ".hero-lede,.hero-limit,.section-question,.section-intro,.section-copy p,.figure-topline h3,.figure-caption,.chart-transition,.section-transition,.takeaway-list li"
+    selectors = ".hero-lede,.hero-limit,.section-question,.section-intro,.section-copy p,.figure-topline h3,.figure-caption,.chart-transition,.section-transition,.takeaway-list li,.v01-support-title,.v01-support-dek,.v01-region-panel h5,.v01-region-meta,.v01-quant-note,.chart-support-frame svg text"
 
     for step in range(60):
         page.wait_for_function("""() => [...document.querySelectorAll('.chart-entry')].filter(entry => {
@@ -192,13 +270,15 @@ def check_no_interaction_reading_path(browser, width, height):
           return r.top < innerHeight && r.bottom > 0;
         }).every(entry => {
           const frame = entry.querySelector('.chart-frame');
-          return frame.classList.contains('chart-ready') || frame.classList.contains('chart-error');
+          const mainReady = frame.classList.contains('chart-ready') || frame.classList.contains('chart-error');
+          const supportReady = entry.dataset.chartId !== 'V01' || [...entry.querySelectorAll('.chart-support-frame')].every(mount => mount.classList.contains('support-ready') || mount.classList.contains('chart-support-error'));
+          return mainReady && supportReady;
         })""", timeout=30000)
         state = page.evaluate("""selectors => {
           const visible = [...document.querySelectorAll(selectors)].filter(node => {
             const r = node.getBoundingClientRect();
             return r.top >= 0 && r.bottom <= innerHeight;
-          }).map(node => node.innerText.trim()).filter(Boolean);
+          }).map(node => (node.innerText ?? node.textContent ?? "").trim()).filter(Boolean);
           const visibleCharts = [...document.querySelectorAll('.chart-entry')].filter(entry => {
             const r = entry.getBoundingClientRect();
             return r.top < innerHeight && r.bottom > 0;
@@ -218,6 +298,8 @@ def check_no_interaction_reading_path(browser, width, height):
         rendered.update(chart["id"] for chart in state["visibleCharts"] if chart["ready"])
         if any(chart["error"] for chart in state["visibleCharts"]):
             raise AssertionError(f"A chart entered an error state during the no-interaction reading path: {state}")
+        if "V01" in {chart["id"] for chart in state["visibleCharts"]} and page.locator(".chart-support-error").count():
+            raise AssertionError("A V01 supporting view entered an error state on the no-interaction reading path")
         if state["documentWidth"] > width:
             raise AssertionError(f"No-interaction viewport overflow at {width}px: {state}")
 
@@ -646,6 +728,7 @@ try:
             navigation_metrics = check_navigation_layout(page, width)
             mark_counts = wait_for_charts(page)
             page.evaluate("async () => { await document.fonts.ready; return true; }")
+            v01_layout = measure_v01_layout(page)
             metrics = page.evaluate("""() => ({
               fullWidth: document.documentElement.scrollWidth,
               viewport: window.innerWidth,
@@ -697,7 +780,7 @@ try:
                     )
                     v03.evaluate('(svg) => { svg.style.filter = ""; }')
                 grayscale_style.evaluate("style => style.remove()")
-            viewport_results.append({"viewport": f"{width}x{height}", **metrics, "navigation": navigation_metrics, "marks": mark_counts, "heatmapContrast": heatmap_contrast, "treemapContrast": treemap_contrast, "choroplethLabelContrast": choropleth_contrast, "hexbinVisibility": hexbin_visibility})
+            viewport_results.append({"viewport": f"{width}x{height}", **metrics, "navigation": navigation_metrics, "marks": mark_counts, "v01Layout": v01_layout, "heatmapContrast": heatmap_contrast, "treemapContrast": treemap_contrast, "choroplethLabelContrast": choropleth_contrast, "hexbinVisibility": hexbin_visibility})
             page.close()
 
         no_interaction_results = [

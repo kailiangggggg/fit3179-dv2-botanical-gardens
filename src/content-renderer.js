@@ -100,6 +100,69 @@ function renderChartNotes(chart) {
   return details;
 }
 
+function renderSupportMount(id, title, label) {
+  const mount = element("div", "chart-support-frame");
+  mount.id = `chart-mount-${id}`;
+  mount.dataset.supportChartId = id;
+  mount.setAttribute("role", "group");
+  mount.setAttribute("aria-label", label);
+  mount.setAttribute("aria-busy", "true");
+  const loading = element("p", "chart-loading", `Loading ${title}…`);
+  loading.setAttribute("role", "status");
+  mount.append(loading);
+  return mount;
+}
+
+function formatRegionalWindow(bounds) {
+  const [west, east] = bounds.longitude;
+  const [south, north] = bounds.latitude;
+  return `Window ${west.toFixed(2)}–${east.toFixed(2)}° E · ${Math.abs(north).toFixed(2)}–${Math.abs(south).toFixed(2)}° S. Original coordinates are unchanged.`;
+}
+
+function renderV01SupportViews(supportViews) {
+  const support = element("div", "v01-support");
+  support.setAttribute("aria-label", "V01 regional detail and smaller-area comparison");
+
+  const regionalSection = element("section", "v01-support-section");
+  regionalSection.setAttribute("aria-labelledby", "v01-regional-title");
+  const regionalTitle = element("h4", "v01-support-title", supportViews.regional.title);
+  regionalTitle.id = "v01-regional-title";
+  regionalSection.append(regionalTitle, element("p", "v01-support-dek", supportViews.regional.description));
+  const grid = element("div", "v01-region-grid");
+
+  for (const view of supportViews.regional.maps) {
+    const panel = element("section", "v01-region-panel");
+    panel.dataset.region = view.name;
+    panel.setAttribute("aria-labelledby", `${view.id}-title`);
+    const heading = element("h5", "", view.title);
+    heading.id = `${view.id}-title`;
+    const meta = element("p", "v01-region-meta", formatRegionalWindow(view.bounds));
+    panel.append(heading, meta, renderSupportMount(
+      view.id,
+      `${view.name} detail map`,
+      `${view.name} regional detail map; repeats existing national-map facilities. ${formatRegionalWindow(view.bounds)}`,
+    ));
+    grid.append(panel);
+  }
+  regionalSection.append(grid);
+
+  const quantitativeSection = element("section", "v01-support-section");
+  quantitativeSection.setAttribute("aria-labelledby", "v01-area-title");
+  const quantitativeTitle = element("h4", "v01-support-title", supportViews.quantitative.title);
+  quantitativeTitle.id = "v01-area-title";
+  const quantitativeDescription = element("p", "v01-support-dek", supportViews.quantitative.description);
+  const quantitativeMount = renderSupportMount(
+    supportViews.quantitative.id,
+    "under-100-hectare comparison",
+    "Linear comparison of reported hectares for all eligible facilities below 100 hectares, grouped by register type.",
+  );
+  const quantitativeAnnotation = element("p", "v01-quant-note", supportViews.quantitative.annotation);
+  quantitativeSection.append(quantitativeTitle, quantitativeDescription, quantitativeMount, quantitativeAnnotation);
+
+  support.append(regionalSection, quantitativeSection);
+  return support;
+}
+
 function renderChartEntry(chart, baseUrl) {
   const article = element("article", "chart-entry");
   article.dataset.chartId = chart.id;
@@ -130,11 +193,21 @@ function renderChartEntry(chart, baseUrl) {
 
   const caption = element("figcaption", "figure-caption");
   caption.append(element("span", "caption-mark", "↳"), element("span", "", chart.how.annotation));
-  figure.append(topLine, mount, caption);
+  figure.append(topLine, mount);
+  if (chart.support_views) figure.append(renderV01SupportViews(chart.support_views));
+  figure.append(caption);
 
   const actions = element("div", "figure-actions");
   const specUrl = new URL(chart.spec, baseUrl);
   actions.append(localLink(specUrl.href, "Open Vega-Lite specification"));
+  for (const supportView of chart.support_views?.regional.maps ?? []) {
+    const viewUrl = new URL(supportView.spec, baseUrl);
+    actions.append(localLink(viewUrl.href, `Open ${supportView.name} detail specification`));
+  }
+  if (chart.support_views?.quantitative) {
+    const viewUrl = new URL(chart.support_views.quantitative.spec, baseUrl);
+    actions.append(localLink(viewUrl.href, "Open under-100-ha specification"));
+  }
   for (const dataPath of chart.data_files) {
     const dataUrl = new URL(dataPath, baseUrl);
     const fileName = dataPath.split("/").at(-1);

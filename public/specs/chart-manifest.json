@@ -6,11 +6,11 @@
 
   "audience": "General Malaysian reader",
 
-  "chart_count_rule": "V05a and V05b are paired panels and count as one rubric chart group.",
+  "chart_count_rule": "V05a and V05b are paired panels and count as one rubric chart group; V01's regional and quantitative support views remain within V01.",
 
   "rubric_chart_count": 13,
 
-  "visible_panels": 14,
+  "visible_panels": 17,
 
   "map_count": 3,
 
@@ -104,9 +104,71 @@
 
         "data/state_rates.geojson",
 
-        "data/facility_points.geojson"
+        "data/facility_points.geojson",
+
+        "data/facility_area_under100_beeswarm.json"
 
       ],
+
+      "support_views": {
+
+        "regional": {
+
+          "title": "Regional detail views",
+
+          "description": "These windows repeat 32 facilities already shown on the 182-site national map. Fixed-size dots retain original coordinates and use the existing register-type colours.",
+
+          "maps": [
+
+            {
+
+              "id": "V01-SYD",
+
+              "name": "Sydney",
+
+              "title": "Sydney detail · 14 sites",
+
+              "bounds": {"longitude": [150.6, 151.4], "latitude": [-34.2, -33.5]},
+
+              "spec": "specs/V01-sydney-detail-map.json"
+
+            },
+
+            {
+
+              "id": "V01-MELB",
+
+              "name": "Melbourne",
+
+              "title": "Melbourne detail · 18 sites",
+
+              "bounds": {"longitude": [144.55, 145.4], "latitude": [-38.25, -37.55]},
+
+              "spec": "specs/V01-melbourne-detail-map.json"
+
+            }
+
+          ]
+
+        },
+
+        "quantitative": {
+
+          "id": "V01-AREA",
+
+          "title": "Compare smaller registered areas on a linear scale",
+
+          "description": "All 165 known-register facilities below 100 ha. Horizontal position is the reported hectares; vertical offsets only separate marks.",
+
+          "annotation": "The map’s first two classes hide within-class variation. Subtype medians are similar (10.2 and 10.0 ha); V04 retains the full distribution and extremes.",
+
+          "subset": "0 <= area_hectares < 100",
+
+          "spec": "specs/V01-under100-area-beeswarm.json"
+
+        }
+
+      },
 
       "what": {
 
@@ -116,7 +178,7 @@
 
         ],
 
-        "grain": "One known-register facility feature; 182 records.",
+        "grain": "One known-register facility feature; 182 national-map records. Regional maps repeat selected features; the area plot shows the 165 features below 100 ha.",
 
         "fields": [
 
@@ -136,7 +198,11 @@
 
           "Retain all 182 register features; publish point coordinates and reduced state outlines.",
 
-          "Classify registered hectares into four graduated size classes; retain each reported area in the tooltip."
+          "Classify registered hectares into four graduated size classes; retain each reported area in the tooltip.",
+
+          "Repeat the original coordinates for the 14-site Sydney and 18-site Melbourne windows; these insets do not add facilities.",
+
+          "Compare all 165 facilities below 100 ha by their exact reported hectares on a linear axis; deterministic vertical offsets only avoid point collisions."
 
         ],
 
@@ -146,29 +212,29 @@
 
       "why": {
 
-        "question": "Where are Australia’s known botanical gardens and arboreta, and how do their registered footprints vary?",
+        "question": "Where are Australia’s known botanical gardens and arboreta, and how do smaller registered areas vary within the map classes?",
 
-        "reader_task": "Locate the known facilities and compare their register classifications and reported land areas."
+        "reader_task": "Locate all known facilities, inspect crowded Sydney and Melbourne locations, then compare the 0–100 ha subset by position rather than circle size."
 
       },
 
       "how": {
 
-        "marks": "State polygons and one circle per register feature, sized with four graduated area classes.",
+        "marks": "The national map uses state polygons and one graduated circle per register feature. Two regional maps repeat selected circles as fixed-size points, and a supporting strip plot shows individual areas below 100 ha.",
 
-        "channels": "Projected longitude/latitude for position; discrete circle area values 12/24/48/96 for the four registered-area classes; categorical hue for Botanic Garden or Arboretum. These graduated values distinguish classes, not exact proportions; the legend gives hectare boundaries and the tooltip retains reported hectares.",
+        "channels": "The national map uses projected longitude/latitude for location, discrete circle area values 12/24/48/96 for the four registered-area classes, and categorical hue for register type. The legend gives hectare boundaries; graduated symbol values distinguish classes, not exact proportions. Regional maps use original longitude/latitude with constant-size points and type hue. The quantitative view uses exact registered hectares on a linear 0–100 ha horizontal axis, subtype rows and the existing type hue; deterministic vertical offsets are collision avoidance only.",
 
-        "projection": "Equal Earth equal-area projection centred on Australia.",
+        "projection": "Equal Earth equal-area projection centred on Australia for the national map; local Mercator projections centred on the selected Sydney and Melbourne windows for regional separation.",
 
         "color": "Deep blue (#003F5C) for Botanic Garden; burnt orange (#B85C00) for Arboretum.",
 
-        "ordering": "Draw state outlines first, then all facility circles at 0.78 default opacity; the largest-to-smallest area ratio is 8:1. Overlap remains possible in dense locations.",
+        "ordering": "Draw state outlines before national symbols at 0.78 default opacity; keep all 182 locations. Follow with the two selected regional windows and the under-100-ha linear comparison. National-map overlap remains possible.",
 
-        "aggregation": "None; one mark per GA register feature.",
+        "aggregation": "No aggregation. The national map has one mark per GA feature. Regional points are repeats of 14 Sydney and 18 Melbourne features; the quantitative subset contains each eligible feature once.",
 
-        "interaction": "Hover highlights the facility symbol; its tooltip identifies facility, type, locality, jurisdiction and hectares.",
+        "interaction": "All regional and quantitative explanations are visible without interaction. Hover highlights national-map facility symbols; map and quantitative tooltips reveal facility, type, locality, jurisdiction and exact reported hectares.",
 
-        "annotation": "182 known-register features: 120 Botanic Gardens and 62 Arboretums. Norfolk Island is included."
+        "annotation": "182 known-register features: 120 Botanic Gardens and 62 Arboreta; Norfolk Island is included. The regional windows repeat existing sites. 165 facilities (91%) are below 100 ha; the linear view shows within-class variation and V04 retains the full range."
 
       }
 

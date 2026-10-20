@@ -39,10 +39,122 @@ function setChartError(mount, chart) {
   mount.setAttribute("aria-busy", "false");
 }
 
+function setSupportChartError(mount, supportView, error) {
+  console.error(`${supportView.id} failed to render`, error);
+  const message = document.createElement("p");
+  message.className = "chart-error-message";
+  message.setAttribute("role", "alert");
+  message.textContent = `${supportView.title} could not be rendered.`;
+  mount.replaceChildren(message);
+  mount.classList.add("chart-support-error");
+  mount.setAttribute("aria-busy", "false");
+}
+
+function reserveV01SupportHeight(mount, supportView, availableWidth) {
+  const width = Math.max(240, Math.floor(availableWidth) || 240);
+  const chartWidth = Math.max(280, width);
+  const scale = Math.min(1, width / chartWidth);
+  if (supportView.id === "V01-AREA") {
+    const chartHeight = width < 480 ? 360 : width < 850 ? 260 : 180;
+    mount.style.minHeight = `${Math.ceil((chartHeight + 45) * scale)}px`;
+    return;
+  }
+  const mapHeight = Math.min(210, Math.max(160, Math.round(chartWidth * 0.62)));
+  mount.style.minHeight = `${Math.ceil((mapHeight + 4) * scale)}px`;
+}
+
+async function renderV01SupportCharts(figure, chart, embed, facilityFeatures) {
+  const supportViews = [
+    ...chart.support_views.regional.maps,
+    chart.support_views.quantitative,
+  ];
+
+  await Promise.all(supportViews.map(async (supportView) => {
+    const mount = figure.querySelector(`#chart-mount-${supportView.id}`);
+    reserveV01SupportHeight(mount, supportView, mount.clientWidth);
+    const specUrl = resolveChartSpecUrl(supportView.spec, siteBaseUrl);
+    const sourceSpec = localizeDataUrls(await fetchJson(specUrl, supportView.id), specUrl);
+    let activeView;
+    let activeWidth = 0;
+    let requestedWidth;
+    let rendering = false;
+
+    async function renderAtWidth(availableWidth, force = false) {
+      requestedWidth = { width: Math.max(240, Math.floor(availableWidth)), force };
+      if (rendering) return;
+      rendering = true;
+
+      while (requestedWidth) {
+        const { width, force: forceRender } = requestedWidth;
+        requestedWidth = undefined;
+        if (activeView && !forceRender && Math.abs(width - activeWidth) < 32) continue;
+        activeView?.finalize();
+        activeView = undefined;
+        mount.replaceChildren();
+        mount.setAttribute("aria-busy", "true");
+
+        try {
+          const spec = adaptChartSpec(sourceSpec, supportView.id, width, facilityFeatures);
+          const totalSpecWidth = supportView.id === "V01-AREA" ? spec.width + 118 : spec.width;
+          const displayScale = Math.min(1, mount.clientWidth / totalSpecWidth);
+          const embedExtraHeight = supportView.id === "V01-AREA" ? 45 : 4;
+          mount.style.minHeight = `${Math.ceil((spec.height + embedExtraHeight) * displayScale)}px`;
+          const result = await embed(mount, spec, {
+            actions: false,
+            renderer: "svg",
+            config: {
+              font: "Source Sans 3",
+              axis: {
+                labelFont: "Source Sans 3",
+                titleFont: "Source Sans 3",
+                labelColor: "#526259",
+                titleColor: "#34443a",
+                domainColor: "#c6cec7",
+                tickColor: "#c6cec7",
+                gridColor: "#e7e6de",
+              },
+              legend: {
+                labelFont: "Source Sans 3",
+                titleFont: "Source Sans 3",
+                labelColor: "#526259",
+                titleColor: "#34443a",
+              },
+              view: { stroke: null },
+            },
+          });
+          await result.view.runAsync();
+          activeView = result.view;
+          activeWidth = width;
+          mount.setAttribute("aria-busy", "false");
+          mount.classList.add("support-ready");
+        } catch (error) {
+          setSupportChartError(mount, supportView, error);
+        }
+      }
+
+      rendering = false;
+    }
+
+    await renderAtWidth(mount.clientWidth, true);
+    if ("ResizeObserver" in window) {
+      const observer = new ResizeObserver(([entry]) => {
+        renderAtWidth(entry.contentRect.width);
+      });
+      observer.observe(mount);
+    }
+  }));
+}
+
 async function renderChart(figure, chart, registerChartView) {
   const mount = figure.querySelector(".chart-frame");
   const specUrl = resolveChartSpecUrl(chart.spec, siteBaseUrl);
   const sourceSpec = localizeDataUrls(await fetchJson(specUrl, chart.id), specUrl);
+  let facilityFeatures;
+  if (chart.support_views) {
+    const pointsPath = chart.data_files.find((dataPath) => dataPath.endsWith("facility_points.geojson"));
+    const collection = await fetchJson(new URL(pointsPath, siteBaseUrl), "V01 facility points");
+    facilityFeatures = collection.features;
+  }
   const embed = await loadVegaEmbed();
   let activeView;
   let activeWidth = 0;
@@ -86,7 +198,7 @@ async function renderChart(figure, chart, registerChartView) {
       mount.setAttribute("aria-busy", "true");
 
       try {
-        const spec = adaptChartSpec(sourceSpec, chart.id, width);
+        const spec = adaptChartSpec(sourceSpec, chart.id, width, facilityFeatures);
         const result = await embed(mount, spec, {
           actions: false,
           renderer: "svg",
@@ -167,6 +279,7 @@ async function renderChart(figure, chart, registerChartView) {
   }
 
   await renderAtWidth(mount.clientWidth);
+  if (chart.support_views) await renderV01SupportCharts(figure, chart, embed, facilityFeatures);
   if ("ResizeObserver" in window) {
     const observer = new ResizeObserver(([entry]) => {
       renderAtWidth(entry.contentRect.width);

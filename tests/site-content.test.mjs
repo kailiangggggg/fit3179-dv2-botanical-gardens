@@ -51,7 +51,7 @@ test("every manifest chart group appears once in the story", () => {
   const storyChartIds = pageStory.sections.flatMap(({ chartIds }) => chartIds);
   assert.deepEqual(storyChartIds, manifest.charts.map(({ id }) => id));
   assert.equal(manifest.rubric_chart_count, 13);
-  assert.equal(manifest.visible_panels, 14);
+  assert.equal(manifest.visible_panels, 17);
 });
 
 test("V01 narrative distinguishes graduated size classes from reported hectares", () => {
@@ -64,6 +64,22 @@ test("V01 narrative distinguishes graduated size classes from reported hectares"
   assert.equal(v01.idiom, "Graduated-symbol map");
   assert.match(v01.how.channels, /circle area values 12\/24\/48\/96 for the four registered-area classes/i);
   assert.match(v01.how.channels, /legend gives hectare boundaries/i);
+});
+
+test("V01 visibly distinguishes repeated regional views, the 0–100 ha comparison, and V04's full range", () => {
+  const footprint = pageStory.sections.find(({ id }) => id === "footprint");
+  const v01 = manifest.charts.find(({ id }) => id === "V01");
+  const transition = footprint.chartTransitions.find(({ afterChart }) => afterChart === "V01").text;
+  assert.match(footprint.intro, /Sydney and Melbourne detail views repeat/i);
+  assert.match(footprint.intro, /linear.*165.*(?:under|below) 100 ha/i);
+  assert.match(transition, /Sydney.*Melbourne.*repeat/i);
+  assert.match(transition, /linear.*165.*within-class/i);
+  assert.match(transition, /V04.*full range/i);
+  assert.equal(v01.support_views.regional.maps.length, 2);
+  assert.equal(v01.support_views.quantitative.subset, "0 <= area_hectares < 100");
+  assert.equal(manifest.rubric_chart_count, 13);
+  assert.equal(manifest.map_count, 3);
+  assert.equal(manifest.visible_panels, 17);
 });
 
 test("every chart has a concise visible finding or transition in reading order", () => {

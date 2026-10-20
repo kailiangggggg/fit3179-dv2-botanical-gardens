@@ -6,6 +6,8 @@
   "packageManager": "pnpm@11.25.0",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
+    "build:v01-area-data": "node scripts/build_v01_area_beeswarm.mjs",
+    "prebuild": "pnpm run build:v01-area-data",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
     "validate:specs": "node scripts/validate_specs.mjs",
