@@ -15,6 +15,9 @@ const symbolMap = JSON.parse(
   readFileSync(new URL("../public/specs/V01-facility-symbol-map.json", import.meta.url), "utf8"),
 );
 const nationalSymbolMap = symbolMap.vconcat?.[0] ?? symbolMap;
+const nationalFacilityLayer = nationalSymbolMap.layer.find(
+  (layer) => layer.data?.url === "../data/facility_points.geojson",
+);
 const facilityPoints = JSON.parse(
   readFileSync(new URL("../public/data/facility_points.geojson", import.meta.url), "utf8"),
 );
@@ -170,8 +173,8 @@ test("V02 and V03 share a state-focus signal and V01 highlights hovered faciliti
   assert.match(facilitiesMap.layer[1].encoding.opacity.condition.test, /linkedState/);
   assert.match(rankLine.encoding.opacity.condition.test, /linkedState/);
   assert.match(rankEndpointLabels.encoding.opacity.condition.test, /linkedState/);
-  assert.equal(nationalSymbolMap.layer[1].params?.[0]?.select?.on, "pointerover");
-  assert.ok(nationalSymbolMap.layer[1].encoding.opacity.condition);
+  assert.equal(nationalFacilityLayer.params?.[0]?.select?.on, "pointerover");
+  assert.ok(nationalFacilityLayer.encoding.opacity.condition);
 });
 
 test("V02 projection keeps the choropleth inside a compact Australia-focused frame", () => {
@@ -181,8 +184,8 @@ test("V02 projection keeps the choropleth inside a compact Australia-focused fra
 });
 
 test("V01 classifies each site once and uses an ordered graduated-symbol legend", () => {
-  const size = nationalSymbolMap.layer[1].encoding.size;
-  const classExpression = nationalSymbolMap.layer[1].transform?.find(
+  const size = nationalFacilityLayer.encoding.size;
+  const classExpression = nationalFacilityLayer.transform?.find(
     (transform) => transform.as === "registered_area_class",
   )?.calculate;
   assert.ok(classExpression, "V01 must calculate explicit registered-area classes");
@@ -220,23 +223,24 @@ test("V01 classifies each site once and uses an ordered graduated-symbol legend"
     ["0–<10 ha", "10–<100 ha", "10–<100 ha", "100–<1,000 ha", "100–<1,000 ha", "≥1,000 ha"],
   );
 
-  assert.equal(nationalSymbolMap.layer.length, 2, "V01 should not cover its size-coded circles with a locator overlay");
+  assert.equal(nationalSymbolMap.layer.length, 6, "V01 layers should keep locators inside the existing map");
   assert.match(siteStyles, /#chart-mount-V01\s+\.layer_0_marks\s*\{[^}]*pointer-events:\s*none/s);
   assert.match(siteStyles, /#chart-mount-V01\s+\.background\s*\{[^}]*pointer-events:\s*none/s);
-  assert.match(siteStyles, /#chart-mount-V01\s+\.layer_1_marks\s+path\s*\{[^}]*pointer-events:\s*all\s*!important/s);
-  assert.equal(nationalSymbolMap.layer[1].mark.type, "circle");
-  assert.equal(nationalSymbolMap.layer[1].encoding.shape, undefined, "facility type must not be duplicated by shape");
+  assert.match(siteStyles, /#chart-mount-V01\s+\.layer_1_marks\s*,\s*#chart-mount-V01\s+\.layer_3_marks\s*,\s*#chart-mount-V01\s+\.layer_4_marks\s*,\s*#chart-mount-V01\s+\.layer_5_marks\s*\{[^}]*pointer-events:\s*none/s);
+  assert.match(siteStyles, /#chart-mount-V01\s+\.layer_2_marks\s+path\s*\{[^}]*pointer-events:\s*all\s*!important/s);
+  assert.equal(nationalFacilityLayer.mark.type, "circle");
+  assert.equal(nationalFacilityLayer.encoding.shape, undefined, "facility type must not be duplicated by shape");
   assert.equal(size.field, "registered_area_class");
   assert.equal(size.type, "nominal");
   assert.equal(size.title, "Registered area class");
   assert.deepEqual(size.scale.domain, classLabels);
   assert.deepEqual(size.scale.range, [12, 24, 48, 96]);
-  assert.equal(nationalSymbolMap.layer[1].mark.opacity, 1);
-  assert.equal(nationalSymbolMap.layer[1].encoding.opacity.value, 0.78);
+  assert.equal(nationalFacilityLayer.mark.opacity, 1);
+  assert.equal(nationalFacilityLayer.encoding.opacity.value, 0.78);
   assert.deepEqual(size.legend.values, classLabels);
   assert.equal(size.legend.title, "Registered area class");
 
-  const areaTooltip = nationalSymbolMap.layer[1].encoding.tooltip.find(
+  const areaTooltip = nationalFacilityLayer.encoding.tooltip.find(
     (entry) => entry.field === "properties.area_hectares",
   );
   assert.equal(areaTooltip.format, ",.1f", "tooltip should preserve the reported hectares");
@@ -249,7 +253,7 @@ test("V01 classifies each site once and uses an ordered graduated-symbol legend"
 });
 
 test("V01 and V04 use the approved CVD-screened facility-type colours", () => {
-  const mapColors = nationalSymbolMap.layer[1].encoding.color.scale.range;
+  const mapColors = nationalFacilityLayer.encoding.color.scale.range;
   const boxplotColors = facilityBoxplot.encoding.color.scale.range;
   assert.deepEqual(mapColors, ["#003F5C", "#B85C00"]);
   assert.deepEqual(boxplotColors, mapColors);

@@ -134,13 +134,18 @@ function renderV01SupportViews(supportViews) {
     const panel = element("section", "v01-region-panel");
     panel.dataset.region = view.name;
     panel.setAttribute("aria-labelledby", `${view.id}-title`);
-    const heading = element("h5", "", view.title);
+    const heading = element("h5", "v01-region-heading");
     heading.id = `${view.id}-title`;
+    heading.setAttribute("aria-label", view.title);
+    const locatorBadge = element("span", "v01-locator-badge", view.locator.id);
+    locatorBadge.setAttribute("aria-hidden", "true");
+    const locatorTitle = view.title.replace(/^[A-Z]\s+/, "");
+    heading.append(locatorBadge, element("span", "", locatorTitle));
     const meta = element("p", "v01-region-meta", formatRegionalWindow(view.bounds));
     panel.append(heading, meta, renderSupportMount(
       view.id,
       `${view.name} detail map`,
-      `${view.name} regional detail map; repeats existing national-map facilities. ${formatRegionalWindow(view.bounds)}`,
+      `${view.locator.label} regional detail map; repeats existing national-map facilities. ${formatRegionalWindow(view.bounds)}`,
     ));
     grid.append(panel);
   }

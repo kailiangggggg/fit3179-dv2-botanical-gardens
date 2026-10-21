@@ -78,6 +78,12 @@ class ChartManifestTests(unittest.TestCase):
         support = v01["support_views"]
         self.assertEqual(len(manifest["charts"]), 13)
         self.assertEqual(len(support["regional"]["maps"]), 2)
+        self.assertEqual(
+            [(view["locator"]["id"], view["locator"]["label"]) for view in support["regional"]["maps"]],
+            [("A", "A — Sydney"), ("B", "B — Melbourne")],
+        )
+        self.assertEqual(support["regional"]["locator_data_file"], "data/v01_detail_locator_geometry.geojson")
+        self.assertIn("data/v01_detail_locator_geometry.geojson", v01["data_files"])
         self.assertEqual(support["quantitative"]["subset"], "0 <= area_hectares < 100")
         self.assertNotIn("V01-SYD", {chart["id"] for chart in manifest["charts"]})
         self.assertNotIn("V01-MELB", {chart["id"] for chart in manifest["charts"]})

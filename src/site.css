@@ -364,7 +364,8 @@ h1 em { color: var(--green); font-weight: 500; }
 .v01-support-dek { max-width: 920px; margin: 0 0 7px; color: var(--ink-soft); font-size: 12px; line-height: 1.4; }
 .v01-region-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
 .v01-region-panel { min-width: 0; }
-.v01-region-panel h5 { margin: 0; color: var(--ink); font: 600 12px/1.2 var(--sans); }
+.v01-region-panel h5 { display: flex; align-items: center; gap: 5px; margin: 0; color: var(--ink); font: 600 12px/1.2 var(--sans); }
+.v01-locator-badge { display: inline-grid; flex: 0 0 15px; width: 15px; height: 15px; place-items: center; border: 1px solid #34443a; border-radius: 2px; background: #fffdf7; color: #34443a; font: 700 9px/1 var(--sans); }
 .v01-region-meta { margin: 3px 0 5px; color: var(--quiet); font-size: 10px; line-height: 1.35; }
 .chart-support-frame { min-width: 0; width: 100%; }
 .chart-support-frame svg { display: block; width: 100%; max-width: 100%; height: auto; }
@@ -373,7 +374,11 @@ h1 em { color: var(--green); font-weight: 500; }
 
 #chart-mount-V01 .layer_0_marks { pointer-events: none; }
 #chart-mount-V01 .background { pointer-events: none; }
-#chart-mount-V01 .layer_1_marks path { pointer-events: all !important; }
+#chart-mount-V01 .layer_1_marks,
+#chart-mount-V01 .layer_3_marks,
+#chart-mount-V01 .layer_4_marks,
+#chart-mount-V01 .layer_5_marks { pointer-events: none; }
+#chart-mount-V01 .layer_2_marks path { pointer-events: all !important; }
 
 .chart-loading {
   display: grid;

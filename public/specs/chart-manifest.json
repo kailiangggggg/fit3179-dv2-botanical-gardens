@@ -106,7 +106,9 @@
 
         "data/facility_points.geojson",
 
-        "data/facility_area_under100_beeswarm.json"
+        "data/facility_area_under100_beeswarm.json",
+
+        "data/v01_detail_locator_geometry.geojson"
 
       ],
 
@@ -116,7 +118,9 @@
 
           "title": "Regional detail views",
 
-          "description": "These windows repeat 32 facilities already shown on the 182-site national map. Fixed-size dots retain original coordinates and use the existing register-type colours.",
+          "description": "A and B locate Sydney and Melbourne window centres. Insets enlarge those areas and repeat 32 sites already in the 182-site national total; markers show points, not full extents.",
+
+          "locator_data_file": "data/v01_detail_locator_geometry.geojson",
 
           "maps": [
 
@@ -126,9 +130,16 @@
 
               "name": "Sydney",
 
-              "title": "Sydney detail · 14 sites",
+              "title": "A — Sydney area · 14 sites",
 
               "bounds": {"longitude": [150.6, 151.4], "latitude": [-34.2, -33.5]},
+
+              "locator": {
+                "id": "A",
+                "label": "A — Sydney",
+                "label_align": "left",
+                "label_anchor": {"longitude": 153, "latitude": -35.2}
+              },
 
               "spec": "specs/V01-sydney-detail-map.json"
 
@@ -140,9 +151,16 @@
 
               "name": "Melbourne",
 
-              "title": "Melbourne detail · 18 sites",
+              "title": "B — Melbourne area · 18 sites",
 
               "bounds": {"longitude": [144.55, 145.4], "latitude": [-38.25, -37.55]},
+
+              "locator": {
+                "id": "B",
+                "label": "B — Melbourne",
+                "label_align": "right",
+                "label_anchor": {"longitude": 143.7, "latitude": -40.5}
+              },
 
               "spec": "specs/V01-melbourne-detail-map.json"
 

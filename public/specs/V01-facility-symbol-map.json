@@ -1,6 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Known Geoscience Australia botanical garden and arboretum features. Projected positions show location, four graduated circle sizes show registered-area classes, and hue distinguishes the two register types. Tooltips retain each reported area in hectares.",
+  "description": "Known Geoscience Australia botanical garden and arboretum features. Projected positions show location, four graduated circle sizes show registered-area classes, and hue distinguishes the two register types. A/B anchor markers locate the centres of the selected Sydney and Melbourne windows, with leaders to their labels. Tooltips retain each reported area in hectares.",
   "width": 900,
   "height": 430,
   "projection": {
@@ -35,6 +35,32 @@
         "fill": "#f1efe7",
         "stroke": "#b8c3bb",
         "strokeWidth": 0.65
+      },
+      "encoding": {
+        "shape": {
+          "field": "geometry",
+          "type": "geojson"
+        }
+      }
+    },
+    {
+      "data": {
+        "url": "../data/v01_detail_locator_geometry.geojson",
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
+      },
+      "transform": [
+        {
+          "filter": "datum.properties.kind === 'leader'"
+        }
+      ],
+      "mark": {
+        "type": "geoshape",
+        "stroke": "#34443a",
+        "strokeWidth": 1,
+        "opacity": 0.92
       },
       "encoding": {
         "shape": {
@@ -178,6 +204,122 @@
             "format": ",.1f"
           }
         ]
+      }
+    },
+    {
+      "data": {
+        "url": "../data/v01_detail_locator_geometry.geojson",
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
+      },
+      "transform": [
+        {
+          "filter": "datum.properties.kind === 'anchor'"
+        }
+      ],
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "shape": "square",
+        "size": 260,
+        "stroke": "#34443a",
+        "strokeWidth": 1.8,
+        "fillOpacity": 0
+      },
+      "encoding": {
+        "longitude": {
+          "field": "properties.longitude",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "properties.latitude",
+          "type": "quantitative"
+        },
+        "color": {
+          "value": "#fffdf7"
+        }
+      }
+    },
+    {
+      "data": {
+        "url": "../data/v01_detail_locator_geometry.geojson",
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
+      },
+      "transform": [
+        {
+          "filter": "datum.properties.kind === 'anchor'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "center",
+        "baseline": "middle",
+        "font": "Source Sans 3",
+        "fontSize": 10.5,
+        "fontWeight": 700
+      },
+      "encoding": {
+        "longitude": {
+          "field": "properties.longitude",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "properties.latitude",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "properties.locator_id",
+          "type": "nominal"
+        },
+        "color": {
+          "value": "#34443a"
+        }
+      }
+    },
+    {
+      "data": {
+        "url": "../data/v01_detail_locator_geometry.geojson",
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
+      },
+      "transform": [
+        {
+          "filter": "datum.properties.kind === 'label'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": {"expr": "datum.properties.label_align"},
+        "baseline": "middle",
+        "dx": {"expr": "datum.properties.label_align === 'left' ? 7 : -7"},
+        "dy": -4,
+        "font": "Source Sans 3",
+        "fontSize": 12,
+        "fontWeight": 700
+      },
+      "encoding": {
+        "longitude": {
+          "field": "properties.longitude",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "properties.latitude",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "properties.place_label",
+          "type": "nominal"
+        },
+        "color": {
+          "value": "#34443a"
+        }
       }
     }
   ]

@@ -10,7 +10,9 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 URL = "http://127.0.0.1:4173/"
-OUT = ROOT / "tmp" / "v01-spatial-quantitative-20261020" / "full-local-qa"
+TASK_EVIDENCE = ROOT / "tmp" / "v01-overview-detail-geographic-linking-20261021"
+OUT = TASK_EVIDENCE / "full-local-qa"
+BUILD_DIR = TASK_EVIDENCE / "build"
 OUT.mkdir(parents=True, exist_ok=True)
 VIEWPORTS = ((320, 700), (390, 844), (768, 900), (1024, 768), (1280, 800), (1366, 768), (1600, 900))
 CHART_IDS = tuple(f"V{i:02}" for i in range(1, 14))
@@ -101,7 +103,27 @@ def measure_v01_layout(page):
         const name = label.match(/Facility: ([^;]+)/)?.[1] || label.match(/properties\\.feature_name: ([^;]+)/)?.[1] || '';
         return {x:(rect.left+rect.right)/2,y:(rect.top+rect.bottom)/2,diameter:Math.min(rect.width,rect.height),name};
       });
-      const nationalMarks=readMarks(document.querySelector('#chart-mount-V01 svg'),'.layer_1_marks path');
+      const nationalSvg=document.querySelector('#chart-mount-V01 svg');
+      const nationalMarks=readMarks(nationalSvg,'.layer_2_marks path');
+      const locatorLeaderPaths=[...(nationalSvg?.querySelectorAll('.layer_1_marks path') ?? [])];
+      const locatorBadges=[...(nationalSvg?.querySelectorAll('.layer_3_marks path') ?? [])];
+      const locatorCodes=[...(nationalSvg?.querySelectorAll('.layer_4_marks text') ?? [])];
+      const locatorPlaces=[...(nationalSvg?.querySelectorAll('.layer_5_marks text') ?? [])];
+      const facilityRects=nationalMarks.map((mark)=>({x:mark.x-mark.diameter/2,y:mark.y-mark.diameter/2,width:mark.diameter,height:mark.diameter}));
+      const labelRects=locatorPlaces.map((node)=>{const r=node.getBoundingClientRect();return {x:r.left,y:r.top,width:r.width,height:r.height};});
+      const intersects=(a,b)=>a.x<b.x+b.width && a.x+a.width>b.x && a.y<b.y+b.height && a.y+a.height>b.y;
+      const svgRect=nationalSvg?.getBoundingClientRect();
+      const locatorLabels=locatorPlaces.map((place)=>place.textContent.trim());
+      const locators={
+        leaderCount:locatorLeaderPaths.length,
+        anchorCount:locatorBadges.length,
+        anchorCodes:locatorCodes.map((code)=>code.textContent.trim()),
+        badgeCount:locatorBadges.length,
+        labels:locatorLabels,
+        labelsInsideSvg:Boolean(svgRect) && labelRects.every((r)=>r.x>=svgRect.left && r.y>=svgRect.top && r.x+r.width<=svgRect.right && r.y+r.height<=svgRect.bottom),
+        labelsOverlapFacilities:labelRects.some((r)=>facilityRects.some((mark)=>intersects(r,mark))),
+        anchorDiameters:locatorBadges.map((path)=>{const r=path.getBoundingClientRect();return Math.min(r.width,r.height);}),
+      };
       const regional=[...document.querySelectorAll('.chart-support-frame[data-support-chart-id^="V01-"]')]
         .filter((mount)=>mount.dataset.supportChartId!=='V01-AREA')
         .map((mount)=>{
@@ -116,6 +138,7 @@ def measure_v01_layout(page):
       return {
         figureHeightPx:figure?.getBoundingClientRect().height ?? null,
         national:summarize(nationalMarks),
+        locators,
         regional,
         quantitative:quant,
         supportErrors:document.querySelectorAll('.chart-support-error').length,
@@ -127,6 +150,15 @@ def measure_v01_layout(page):
         raise AssertionError(f"V01 support views changed chart grouping or entered an error state: {result}")
     if result["national"]["count"] != 182 or result["quantitative"]["count"] != 165:
         raise AssertionError(f"V01 lost source facilities in a rendered view: {result}")
+    locators = result["locators"]
+    if locators["anchorCount"] != 2 or locators["leaderCount"] != 2 or locators["badgeCount"] != 2:
+        raise AssertionError(f"V01 overview is missing a geographic anchor, leader or badge: {locators}")
+    if locators["anchorCodes"] != ["A", "B"] or locators["labels"] != ["A — Sydney", "B — Melbourne"]:
+        raise AssertionError(f"V01 overview locator labels do not match their detail views: {locators}")
+    if not locators["labelsInsideSvg"] or locators["labelsOverlapFacilities"]:
+        raise AssertionError(f"V01 locator labels are clipped or cover facility symbols: {locators}")
+    if any(diameter < 8.5 for diameter in locators["anchorDiameters"]):
+        raise AssertionError(f"V01 geographic anchor badges are too small to distinguish: {locators}")
     if any(view["count"] != (14 if view["id"] == "V01-SYD" else 18) for view in result["regional"]):
         raise AssertionError(f"V01 regional window counts changed: {result['regional']}")
     if any(view["nationalSubset"]["count"] != view["count"] for view in result["regional"]):
@@ -255,14 +287,18 @@ def check_no_interaction_reading_path(browser, width, height):
         "Q5": ("collection origins", "not gardens or seed stores"),
         "Q6": ("33,765", "0% in Alice Springs", "100% in Darwin", "Four archives lack usable top-level years"),
         "Q7": ("Taken together, these records show known facilities", "not total conservation success"),
-        "Q8": ("Sydney detail · 14 sites", "Melbourne detail · 18 sites"),
+        "Q8": ("A — Sydney area · 14 sites", "B — Melbourne area · 18 sites"),
         "Q9": ("All 165 known-register facilities", "within-class variation"),
         "Q10": ("V04 retains the full distribution and extremes",),
+        "Q11": ("A — Sydney", "B — Melbourne"),
+        "Q12": ("repeat 32 sites already in the 182-site national total",),
+        "Q13": ("not full extents",),
+        "Q14": ("linear 0–100 ha plot compares 165 smaller facilities", "within-class differences"),
     }
     matched = {question: set() for question in questions}
     steps = []
     rendered = set()
-    selectors = ".hero-lede,.hero-limit,.section-question,.section-intro,.section-copy p,.figure-topline h3,.figure-caption,.chart-transition,.section-transition,.takeaway-list li,.v01-support-title,.v01-support-dek,.v01-region-panel h5,.v01-region-meta,.v01-quant-note,.chart-support-frame svg text"
+    selectors = ".hero-lede,.hero-limit,.section-question,.section-intro,.section-copy p,.figure-topline h3,.figure-caption,.chart-transition,.section-transition,.takeaway-list li,.v01-support-title,.v01-support-dek,.v01-region-panel h5,.v01-region-meta,.v01-quant-note,.chart-support-frame svg text,#chart-mount-V01 svg text"
 
     for step in range(60):
         page.wait_for_function("""() => [...document.querySelectorAll('.chart-entry')].filter(entry => {
@@ -278,7 +314,16 @@ def check_no_interaction_reading_path(browser, width, height):
           const visible = [...document.querySelectorAll(selectors)].filter(node => {
             const r = node.getBoundingClientRect();
             return r.top >= 0 && r.bottom <= innerHeight;
-          }).map(node => (node.innerText ?? node.textContent ?? "").trim()).filter(Boolean);
+          }).map(node => (node.getAttribute('aria-label') ?? node.innerText ?? node.textContent ?? "").trim()).filter(Boolean);
+          const nationalSvg=document.querySelector('#chart-mount-V01 svg');
+          const locatorCodes=[...(nationalSvg?.querySelectorAll('.layer_4_marks text') ?? [])];
+          const locatorPlaces=[...(nationalSvg?.querySelectorAll('.layer_5_marks text') ?? [])];
+          for(let i=0;i<Math.min(locatorCodes.length,locatorPlaces.length);i+=1){
+            const codeBox=locatorCodes[i].getBoundingClientRect();
+            const placeBox=locatorPlaces[i].getBoundingClientRect();
+            if(codeBox.top>=0 && codeBox.bottom<=innerHeight && placeBox.top>=0 && placeBox.bottom<=innerHeight)
+              visible.push(locatorPlaces[i].textContent.trim());
+          }
           const visibleCharts = [...document.querySelectorAll('.chart-entry')].filter(entry => {
             const r = entry.getBoundingClientRect();
             return r.top < innerHeight && r.bottom > 0;
@@ -576,7 +621,7 @@ def check_interactions(browser):
     navigation = check_navigation_interactions(page)
 
     page.locator('.chart-entry[data-chart-id="V01"]').scroll_into_view_if_needed()
-    large_symbol = page.locator('#chart-mount-V01 .layer_1_marks path[aria-label*="Helms Arboretum"]').first
+    large_symbol = page.locator('#chart-mount-V01 .layer_2_marks path[aria-label*="Helms Arboretum"]').first
     box = large_symbol.bounding_box()
     if not box or box["width"] < 10 or box["height"] < 10:
         raise AssertionError(f"V01 maximum-area symbol is not visibly targetable: {box}")
@@ -700,7 +745,7 @@ def check_interactions(browser):
 
 
 server = subprocess.Popen(
-    [sys.executable, "-m", "http.server", "4173", "--bind", "127.0.0.1", "--directory", str(ROOT / "site-dist")],
+    [sys.executable, "-m", "http.server", "4173", "--bind", "127.0.0.1", "--directory", str(BUILD_DIR)],
     stdout=subprocess.DEVNULL,
     stderr=subprocess.DEVNULL,
 )

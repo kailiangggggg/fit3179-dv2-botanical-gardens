@@ -82,6 +82,17 @@ test("V01 visibly distinguishes repeated regional views, the 0–100 ha comparis
   assert.equal(manifest.visible_panels, 17);
 });
 
+test("V01 uses matching A/B labels to connect the national map with repeated detail views", () => {
+  const footprint = pageStory.sections.find(({ id }) => id === "footprint");
+  const v01 = manifest.charts.find(({ id }) => id === "V01");
+  assert.deepEqual(v01.support_views.regional.maps.map(({ title }) => title), [
+    "A — Sydney area · 14 sites",
+    "B — Melbourne area · 18 sites",
+  ]);
+  assert.match(footprint.intro, /A — Sydney.*B — Melbourne/i);
+  assert.match(v01.support_views.regional.description, /A and B locate.*window centres.*Insets enlarge.*repeat 32 sites already in the 182-site national total.*markers show points, not full extents/i);
+});
+
 test("every chart has a concise visible finding or transition in reading order", () => {
   let transitionCount = 0;
   for (const section of pageStory.sections.filter(({ chartIds }) => chartIds.length > 1)) {

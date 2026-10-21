@@ -100,8 +100,9 @@ test("compact layouts reduce V04 ticks and treemap labels without mutating sourc
 });
 
 test("V01 keeps its national map and declares three supporting views inside one chart group", () => {
-  assert.equal(v01Spec.layer[1].mark.type, "circle");
-  assert.deepEqual(v01Spec.layer[1].encoding.size.scale.range, [12, 24, 48, 96]);
+  const nationalFacilityLayer = v01Spec.layer.find((layer) => layer.data?.url === "../data/facility_points.geojson");
+  assert.equal(nationalFacilityLayer.mark.type, "circle");
+  assert.deepEqual(nationalFacilityLayer.encoding.size.scale.range, [12, 24, 48, 96]);
   assert.deepEqual(v01.support_views.regional.maps.map(({ id }) => id), ["V01-SYD", "V01-MELB"]);
   assert.equal(v01.support_views.quantitative.id, "V01-AREA");
   assert.equal(manifest.charts.length, 13);
