@@ -380,13 +380,12 @@ h1 em { color: var(--green); font-weight: 500; }
 .chart-support-frame .chart-loading { min-height: 160px; }
 .v01-quant-note { max-width: 920px; margin: 4px 0 0; color: var(--ink-soft); font-size: 12px; line-height: 1.4; }
 
-#chart-mount-V01 .layer_0_marks { pointer-events: none; }
-#chart-mount-V01 .background { pointer-events: none; }
+#chart-mount-V01 .layer_0_marks,
 #chart-mount-V01 .layer_1_marks,
+#chart-mount-V01 .background,
 #chart-mount-V01 .layer_3_marks,
 #chart-mount-V01 .layer_4_marks,
-#chart-mount-V01 .layer_6_marks { pointer-events: none; }
-#chart-mount-V01 .layer_5_marks path { pointer-events: all !important; }
+#chart-mount-V01 .layer_5_marks { pointer-events: none !important; }
 #chart-mount-V01 .layer_2_marks path { pointer-events: all !important; }
 
 .chart-loading {

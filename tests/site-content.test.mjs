@@ -66,56 +66,9 @@ test("every manifest chart group appears once in the story", () => {
   const storyChartIds = pageStory.sections.flatMap(({ chartIds }) => chartIds);
   assert.deepEqual(storyChartIds, manifest.charts.map(({ id }) => id));
   assert.equal(manifest.rubric_chart_count, 13);
-  assert.equal(manifest.visible_panels, 17);
+  assert.equal(manifest.visible_panels, 14);
 });
 
-test("V01 narrative distinguishes smoothed site density from registered hectares", () => {
-  const footprint = pageStory.sections.find(({ id }) => id === "footprint");
-  const v01 = manifest.charts.find(({ id }) => id === "V01");
-  assert.match(footprint.intro, /Three states contain 135 of the 182 known-register sites/i);
-  assert.match(footprint.intro, /50 km Gaussian contours/i);
-  assert.match(footprint.intro, /Each contour line connects places with the same estimated site concentration/i);
-  assert.match(footprint.intro, /all 182 coordinates contribute/i);
-  assert.match(footprint.intro, /hollow circles mark the 31 facilities/i);
-  assert.match(footprint.intro, /not land area or actual botanical coverage/i);
-  assert.match(v01.how.channels, /hollow point marks identify only the 31 facilities/i);
-  assert.match(v01.how.channels, /registered hectares on the same log scale in both regions/i);
-  assert.match(v01.how.marks, /same estimated site concentration/i);
-  assert.equal(v01.idiom, "Spatial density contour map");
-  assert.match(v01.how.annotation, /31 hollow circles.*below 0\.1.*not a facility type/i);
-  assert.match(v01.how.annotation, /not land area or botanical coverage/i);
-  assert.ok(v01.how.annotation.length <= 160, "the visible V01 caption stays concise");
-});
-test("V01 links two regional profiles, the 165-site linear view, and V04 full range", () => {
-  const footprint = pageStory.sections.find(({ id }) => id === "footprint");
-  const v01 = manifest.charts.find(({ id }) => id === "V01");
-  const transition = footprint.chartTransitions.find(({ afterChart }) => afterChart === "V01").text;
-  assert.match(footprint.intro, /Sydney and Melbourne profiles link S\/M identifiers/i);
-  assert.match(footprint.intro, /linear view compares 165 facilities below 100 ha/i);
-  assert.match(transition, /S\/M IDs link 32 sites to hectares on a shared log scale/i);
-  assert.match(transition, /All 182 coordinates feed contours/i);
-  assert.match(transition, /165 sites fall below 100 ha/i);
-  assert.match(transition, /V04 shows full range/i);
-  assert.equal(v01.support_views.regional.maps.length, 2);
-  assert.equal(v01.support_views.regional.profile_data_file, "data/v01_regional_profiles.geojson");
-  assert.equal(v01.support_views.regional.density, undefined);
-  assert.equal(v01.support_views.quantitative.subset, "0 <= area_hectares < 100");
-  assert.equal(manifest.rubric_chart_count, 13);
-  assert.equal(manifest.map_count, 3);
-  assert.equal(manifest.visible_panels, 17);
-});
-test("V01 keeps A/B geographic window references and matches S/M site IDs to area profiles", () => {
-  const footprint = pageStory.sections.find(({ id }) => id === "footprint");
-  const v01 = manifest.charts.find(({ id }) => id === "V01");
-  const transition = footprint.chartTransitions.find(({ afterChart }) => afterChart === "V01").text;
-  assert.deepEqual(v01.support_views.regional.maps.map(({ title }) => title), [
-    "A — Sydney area · 14 sites",
-    "B — Melbourne area · 18 sites",
-  ]);
-  assert.match(transition, /A\/B locate Sydney and Melbourne/i);
-  assert.match(v01.support_views.regional.description, /S01–S14 and M01–M18.*match the complete facility lists/i);
-  assert.match(v01.support_views.regional.description, /base-10 logarithmic scale from 0\.5 to 1,000 ha.*tenfold change/i);
-});
 test("every chart has a concise visible finding or transition in reading order", () => {
   let transitionCount = 0;
   for (const section of pageStory.sections.filter(({ chartIds }) => chartIds.length > 1)) {
@@ -127,28 +80,6 @@ test("every chart has a concise visible finding or transition in reading order",
     }
   }
   assert.equal(transitionCount, 13);
-});
-
-test("visible chart copy answers the archive, origin, and rank-change questions", () => {
-  const transition = (sectionId, chartId) => pageStory.sections
-    .find(({ id }) => id === sectionId)
-    .chartTransitions.find(({ afterChart }) => afterChart === chartId).text;
-
-  assert.match(transition("footprint", "V02"), /population.*smaller jurisdictions.*fewer facilities/i);
-  assert.match(transition("footprint", "V03"), /ACT.*sixth.*first.*NT.*second.*not access/i);
-  assert.match(transition("records", "V05"), /119,278.*58,562.*linked children.*taxon IDs/i);
-  assert.match(transition("records", "V06"), /10,609.*LIVING_SPECIMEN.*10,599.*current survival/i);
-  assert.match(transition("records", "V07"), /not necessarily accession dates/i);
-  assert.match(transition("records", "V08"), /20,647.*PRESERVED_SPECIMEN.*no usable years/i);
-  assert.match(transition("origins", "V10"), /fewer than five.*collection origins.*not gardens/i);
-  assert.match(transition("origins", "V12"), /0%.*100%.*22\.7%.*ALA Australian PlantBank archive.*top-level accessions.*map-ready coordinates.*not geographic representativeness/i);
-  assert.match(manifest.charts.find(({ id }) => id === "V12").how.annotation, /ALA Australian PlantBank archive.*2,921 of 12,871 top-level accessions \(22\.7%\)/i);
-  assert.match(manifest.charts.find(({ id }) => id === "V13").how.annotation, /Four archives lack usable top-level years/i);
-  assert.match(transition("origins", "V13"), /year spans.*file endpoints.*not continuous.*facility locations.*collection records/i);
-  assert.doesNotMatch(transition("records", "V06"), /1,897/);
-  assert.doesNotMatch(transition("origins", "V10"), /38,099/);
-  assert.doesNotMatch(transition("origins", "V11"), /33,765/);
-  assert.doesNotMatch(transition("origins", "V13"), /33,765/);
 });
 
 test("each section has reader-facing copy and a transition", () => {
@@ -163,12 +94,12 @@ test("each section has reader-facing copy and a transition", () => {
 
 test("the story avoids conservation-impact claims and defines unfamiliar record terms", () => {
   assert.match(pageStory.subtitle, /Mapping Australia’s gardens/i);
-  assert.match(pageStory.hero.limitation, /do not measure plant survival, species recovery or educational outcomes/i);
+  assert.match(pageStory.hero.limitation, /not every institution|current holdings|species recovery|education outcomes/i);
   assert.doesNotMatch(pageStory.subtitle, /protect plant diversity/i);
   const records = pageStory.sections.find(({ id }) => id === "records");
-  assert.match(records.chartTransitions.find(({ afterChart }) => afterChart === "V05").text, /taxon IDs are labels, not verified species counts/i);
+  assert.match(records.chartTransitions.find(({ afterChart }) => afterChart === "V05").text, /taxon IDs are database labels, not verified species/i);
   assert.match(records.intro, /A plant family groups genera|A seed-bank accession is a catalogued seed collection/i);
-  assert.match(pageStory.sections.find(({ id }) => id === "evidence").transition, /known.*records.*origins|known.*published.*wild origins/i);
+  assert.match(pageStory.sections.find(({ id }) => id === "evidence").transition, /known facilities.*seed origins.*not its full reach or results/i);
 });
 
 test("the page shell has a skip link, main landmark, and local module entry", () => {

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import * as chartRuntime from "../src/chart-runtime.js";
 import {
   adaptChartSpec,
   localizeDataUrls,
@@ -105,7 +106,7 @@ test("compact layouts reduce V04 ticks and treemap labels without mutating sourc
   assert.match(treemap.layer[1].transform[0].filter, /> 210/);
 });
 
-test("V01 estimates density from all source points and marks only 31 locations below its lowest contour", () => {
+test("archived V01 density evidence remains source-linked but hidden from the approved story", () => {
   const pointLayer = v01Spec.layer.find((layer) => layer.data?.url === "../data/v01_density_unrepresented.geojson");
   const contourLayers = v01Spec.layer.filter((layer) =>
     layer.data?.url === "../data/v01_density_contours.geojson");
@@ -135,12 +136,14 @@ test("V01 estimates density from all source points and marks only 31 locations b
   assert.equal(manifest.rubric_chart_count, 13);
   assert.equal(manifest.map_count, 3);
   assert.equal(manifest.advanced_idiom_types.length, 8);
-  assert.equal(v01.idiom, "Spatial density contour map");
-  assert.ok(v01.data_files.includes("data/facility_points.geojson"));
-  assert.ok(v01.data_files.includes("data/v01_density_unrepresented.geojson"));
-  assert.ok(v01.data_files.includes("data/v01_density_contours.geojson"));
-  assert.ok(v01.data_files.includes("data/v01_density_summary.json"));
-  assert.ok(v01.data_files.includes("data/v01_regional_profiles.geojson"));
+  assert.equal(v01.idiom, "Proportional-symbol map");
+  assert.equal(v01.support_views.default_visible, false);
+  assert.equal(chartRuntime.shouldRenderV01SupportViews(v01), false);
+  assert.equal(v01.spec, "specs/V01-facility-symbol-map.json");
+  assert.deepEqual(v01.data_files, [
+    "data/state_rates.geojson",
+    "data/v01_jurisdiction_counts.geojson",
+  ]);
 });
 
 test("V01 keeps 14 and 18 regional source points with deterministic S/M IDs and exact values", () => {
@@ -348,3 +351,11 @@ test("V01 keeps every under-100-ha source value on a collision-free linear axis"
 function sourceById(globalId) {
   return facilityPoints.find((feature) => feature.properties.globalid === globalId);
 }
+
+test("V01 legacy supporting charts stay hidden in the default story", () => {
+  assert.equal(typeof chartRuntime.shouldRenderV01SupportViews, "function");
+  assert.equal(chartRuntime.shouldRenderV01SupportViews({ support_views: { default_visible: false } }), false);
+  assert.equal(chartRuntime.shouldRenderV01SupportViews({ support_views: { default_visible: true } }), true);
+  assert.equal(chartRuntime.shouldRenderV01SupportViews({ support_views: {} }), true);
+  assert.equal(chartRuntime.shouldRenderV01SupportViews({}), false);
+});

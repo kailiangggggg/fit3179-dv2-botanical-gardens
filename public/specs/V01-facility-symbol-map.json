@@ -1,170 +1,106 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "A spatial density contour map estimated from all 182 known Geoscience Australia botanical garden and arboretum locations. An unweighted Gaussian kernel is calculated in an Australia-centred azimuthal-equidistant projection with a 50 km bandwidth. Each contour line connects places with the same estimated site concentration. Hollow marks identify only the 31 locations whose pointwise estimate is below the lowest displayed contour; the full 182-record source remains intact. Contours represent smoothed location density, not hectares, facility boundaries, land area, botanical coverage or conservation outcomes. A/B labels locate the Sydney and Melbourne windows.",
+  "description": "Jurisdiction-level proportional-symbol map of the 182 Geoscience Australia register facilities. Circle area, not radius, represents each jurisdiction's known facility count. Symbol anchors are representative jurisdiction locations, not individual gardens.",
   "width": 900,
-  "height": 360,
+  "height": 440,
   "projection": {
     "type": "equalEarth",
     "center": [132, -25],
-    "scale": {"signal": "min(555, width * 1.42)"},
-    "translate": {"signal": "[width / 2, 180]"}
+    "scale": {"signal": "min(615, width * 1.55)"},
+    "translate": {"signal": "[width / 2, 210]"}
   },
-  "resolve": {"scale": {"color": "independent"}},
   "layer": [
     {
-      "data": {
-        "url": "../data/state_rates.geojson",
-        "format": {"type": "json", "property": "features"}
-      },
+      "data": {"url": "../data/state_rates.geojson", "format": {"type": "json", "property": "features"}},
       "transform": [{"filter": "datum.properties.state_code !== '9'"}],
-      "mark": {
-        "type": "geoshape",
-        "fill": "#f1efe7",
-        "stroke": "#b8c3bb",
-        "strokeWidth": 0.65
-      },
+      "mark": {"type": "geoshape", "fill": "#efeee7", "stroke": "#aebbb1", "strokeWidth": 0.75},
       "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
     },
     {
       "data": {
-        "url": "../data/v01_density_contours.geojson",
+        "url": "../data/v01_jurisdiction_counts.geojson",
         "format": {"type": "json", "property": "features"}
       },
-      "transform": [{"filter": "datum.properties.kind === 'density-contour' && datum.properties.density_sites_per_1000_projected_km2 === 0.1"}],
-      "mark": {"type": "geoshape", "fill": null, "stroke": "#78ac89", "strokeWidth": 1.6, "opacity": 0.92},
-      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
-    },
-    {
-      "data": {
-        "url": "../data/v01_density_contours.geojson",
-        "format": {"type": "json", "property": "features"}
-      },
-      "transform": [{"filter": "datum.properties.kind === 'density-contour' && datum.properties.density_sites_per_1000_projected_km2 === 0.2"}],
-      "mark": {"type": "geoshape", "fill": null, "stroke": "#5b996e", "strokeWidth": 1.7, "opacity": 0.95},
-      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
-    },
-    {
-      "data": {
-        "url": "../data/v01_density_contours.geojson",
-        "format": {"type": "json", "property": "features"}
-      },
-      "transform": [{"filter": "datum.properties.kind === 'density-contour' && datum.properties.density_sites_per_1000_projected_km2 === 0.4"}],
-      "mark": {"type": "geoshape", "fill": null, "stroke": "#397851", "strokeWidth": 1.8, "opacity": 0.98},
-      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
-    },
-    {
-      "data": {
-        "url": "../data/v01_density_contours.geojson",
-        "format": {"type": "json", "property": "features"}
-      },
-      "transform": [{"filter": "datum.properties.kind === 'density-contour' && datum.properties.density_sites_per_1000_projected_km2 === 0.8"}],
-      "mark": {"type": "geoshape", "fill": null, "stroke": "#154830", "strokeWidth": 2, "opacity": 1},
-      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
-    },
-    {
-      "data": {
-        "url": "../data/v01_density_unrepresented.geojson",
-        "format": {"type": "json", "property": "features"}
-      },
-      "mark": {
-        "type": "circle",
-        "size": 32,
-        "filled": true,
-        "fill": "#fffdf7",
-        "opacity": 1,
-        "stroke": "#263a31",
-        "strokeWidth": 1.35
-      },
+      "transform": [{"filter": "datum.properties.facility_count < 24"}],
+      "mark": {"type": "rule", "stroke": "#68796e", "strokeWidth": 0.9, "opacity": 0.85},
       "encoding": {
         "longitude": {"field": "properties.longitude", "type": "quantitative"},
         "latitude": {"field": "properties.latitude", "type": "quantitative"},
+        "longitude2": {"field": "properties.label_longitude", "type": "quantitative"},
+        "latitude2": {"field": "properties.label_latitude", "type": "quantitative"}
+      }
+    },
+    {
+      "data": {
+        "url": "../data/v01_jurisdiction_counts.geojson",
+        "format": {"type": "json", "property": "features"}
+      },
+      "mark": {"type": "circle", "filled": true, "fill": "#176247", "stroke": "#fffdf7", "strokeWidth": 1.4, "opacity": 0.97},
+      "encoding": {
+        "longitude": {"field": "properties.longitude", "type": "quantitative"},
+        "latitude": {"field": "properties.latitude", "type": "quantitative"},
+        "size": {
+          "field": "properties.facility_count",
+          "type": "quantitative",
+          "title": "Known facilities (circle area)",
+          "scale": {"type": "linear", "domain": [0, 50], "range": [0, 2000], "zero": true, "nice": false},
+          "legend": {
+            "orient": "bottom",
+            "direction": "horizontal",
+            "values": [10, 25, 50],
+            "title": "Known facilities · circle area",
+            "labelFontSize": 12,
+            "titleFontSize": 12,
+            "symbolFillColor": "#176247",
+            "symbolStrokeColor": "#fffdf7",
+            "symbolStrokeWidth": 1
+          }
+        },
         "tooltip": [
-          {"field": "properties.feature_name", "type": "nominal", "title": "Facility"},
-          {"field": "properties.feature_subtype", "type": "nominal", "title": "Register type"},
-          {"field": "properties.state", "type": "nominal", "title": "State / territory"},
-          {
-            "field": "properties.area_text",
-            "type": "nominal",
-            "title": "Registered area (source ha)"
-          },
-          {"field": "properties.longitude", "type": "quantitative", "title": "Longitude", "format": ".5f"},
-          {"field": "properties.latitude", "type": "quantitative", "title": "Latitude", "format": ".5f"}
+          {"field": "properties.state", "type": "nominal", "title": "Jurisdiction"},
+          {"field": "properties.facility_count", "type": "quantitative", "title": "Known register facilities", "format": ",.0f"}
         ]
       }
     },
     {
       "data": {
-        "url": "../data/v01_detail_locator_geometry.geojson",
+        "url": "../data/v01_jurisdiction_counts.geojson",
         "format": {"type": "json", "property": "features"}
       },
-      "transform": [{"filter": "datum.properties.kind === 'leader'"}],
-      "mark": {"type": "geoshape", "stroke": "#34443a", "strokeWidth": 1, "opacity": 0.92},
-      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
-    },
-    {
-      "data": {
-        "url": "../data/v01_detail_locator_geometry.geojson",
-        "format": {"type": "json", "property": "features"}
-      },
-      "transform": [{"filter": "datum.properties.kind === 'anchor'"}],
-      "mark": {
-        "type": "point",
-        "filled": true,
-        "shape": "square",
-        "size": 260,
-        "stroke": "#34443a",
-        "strokeWidth": 1.8,
-        "fillOpacity": 0
-      },
+      "transform": [{"filter": "datum.properties.facility_count >= 24"}],
+      "mark": {"type": "text", "align": "center", "baseline": "middle", "dy": -5, "font": "Source Sans 3", "fontSize": 11, "fontWeight": 700, "color": "#fffdf7"},
       "encoding": {
         "longitude": {"field": "properties.longitude", "type": "quantitative"},
         "latitude": {"field": "properties.latitude", "type": "quantitative"},
-        "color": {"value": "#fffdf7"}
+        "text": {"field": "properties.abbreviation", "type": "nominal"}
       }
     },
     {
       "data": {
-        "url": "../data/v01_detail_locator_geometry.geojson",
+        "url": "../data/v01_jurisdiction_counts.geojson",
         "format": {"type": "json", "property": "features"}
       },
-      "transform": [{"filter": "datum.properties.kind === 'anchor'"}],
-      "mark": {
-        "type": "text",
-        "align": "center",
-        "baseline": "middle",
-        "font": "Source Sans 3",
-        "fontSize": 10.5,
-        "fontWeight": 700
-      },
+      "transform": [{"filter": "datum.properties.facility_count >= 24"}],
+      "mark": {"type": "text", "align": "center", "baseline": "middle", "dy": 8, "font": "Source Sans 3", "fontSize": 10, "fontWeight": 700, "color": "#fffdf7"},
       "encoding": {
         "longitude": {"field": "properties.longitude", "type": "quantitative"},
         "latitude": {"field": "properties.latitude", "type": "quantitative"},
-        "text": {"field": "properties.locator_id", "type": "nominal"},
-        "color": {"value": "#34443a"}
+        "text": {"field": "properties.facility_count", "type": "quantitative", "format": ",.0f"}
       }
     },
     {
       "data": {
-        "url": "../data/v01_detail_locator_geometry.geojson",
+        "url": "../data/v01_jurisdiction_counts.geojson",
         "format": {"type": "json", "property": "features"}
       },
-      "transform": [{"filter": "datum.properties.kind === 'label'"}],
-      "mark": {
-        "type": "text",
-        "align": {"expr": "datum.properties.label_align"},
-        "baseline": "middle",
-        "dx": {"expr": "datum.properties.label_align === 'left' ? 7 : -7"},
-        "dy": -4,
-        "font": "Source Sans 3",
-        "fontSize": 12,
-        "fontWeight": 700
-      },
+      "transform": [{"filter": "datum.properties.facility_count < 24"}],
+      "mark": {"type": "text", "align": "left", "baseline": "middle", "font": "Source Sans 3", "fontSize": 12, "fontWeight": 600, "color": "#202a27", "clip": false},
       "encoding": {
-        "longitude": {"field": "properties.longitude", "type": "quantitative"},
-        "latitude": {"field": "properties.latitude", "type": "quantitative"},
-        "text": {"field": "properties.place_label", "type": "nominal"},
-        "color": {"value": "#34443a"}
+        "longitude": {"field": "properties.label_longitude", "type": "quantitative"},
+        "latitude": {"field": "properties.label_latitude", "type": "quantitative"},
+        "text": {"field": "properties.label", "type": "nominal"}
       }
     }
-  ]
+  ],
+  "config": {"view": {"stroke": null}}
 }

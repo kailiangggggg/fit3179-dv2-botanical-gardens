@@ -214,33 +214,38 @@ class V01DensityProfileTests(unittest.TestCase):
             },
         )
 
-    def test_manifest_retains_group_map_and_advanced_idiom_counts(self):
+    def test_manifest_keeps_candidate_a_active_and_legacy_support_evidence_hidden(self):
         self.assertEqual(len(self.manifest["charts"]), 13)
         self.assertEqual(self.manifest["rubric_chart_count"], 13)
         self.assertEqual(self.manifest["map_count"], 3)
         self.assertEqual(len(set(self.manifest["advanced_idiom_types"])), 8)
-        self.assertEqual(self.v01["idiom"], "Spatial density contour map")
+        self.assertEqual(self.manifest["visible_panels"], 14)
+        self.assertEqual(self.v01["idiom"], "Proportional-symbol map")
+        self.assertFalse(self.v01["support_views"]["default_visible"])
         self.assertEqual(self.v01["support_views"]["regional"]["area_scale"]["type"], "log")
         self.assertEqual(self.v01["support_views"]["regional"]["area_scale"]["domain_ha"], [0.5, 1000])
         self.assertIn("tenfold change", self.v01["support_views"]["regional"]["description"])
-        self.assertIn("data/v01_density_unrepresented.geojson", self.v01["data_files"])
+        self.assertEqual(
+            self.v01["data_files"],
+            ["data/state_rates.geojson", "data/v01_jurisdiction_counts.geojson"],
+        )
         self.assertEqual(
             [chart["id"] for chart in self.manifest["charts"]],
             ["V01", "V02", "V03", "V04", "V05", "V06", "V07", "V08", "V09", "V10", "V11", "V12", "V13"],
         )
         self.assertEqual(self.v01["support_views"]["quantitative"]["subset"], "0 <= area_hectares < 100")
 
-    def test_v01_method_notes_ground_contours_in_week9_and_distinguish_map_idioms(self):
+    def test_v01_method_notes_explain_candidate_a_and_archived_density_evidence(self):
         notes = (ROOT / "docs" / "sources-and-methods.md").read_text(encoding="utf-8")
-        self.assertIn("Each contour line connects places with the same estimated site concentration.", notes)
-        self.assertIn("FIT3179 Week 9", notes)
-        self.assertRegex(notes.lower(), r"scalar[- ]field")
+        self.assertIn("FIT3179 Week 8", notes)
+        self.assertIn("proportional-symbol map", notes.lower())
         self.assertIn("V02", notes)
         self.assertIn("V10", notes)
         self.assertIn("50 km", notes)
         self.assertIn("15 km", notes)
-        self.assertNotRegex(notes.lower(), r"graduated[- ]symbol")
-        self.assertIn("same estimated site concentration", self.v01["how"]["marks"].lower())
+        self.assertIn("31 facilities fell below", notes)
+        self.assertIn("circle area", self.v01["how"]["channels"].lower())
+        self.assertEqual(self.v01["advanced_classification"], "defensible-but-marker-dependent")
         self.assertIn("V02", notes)
         self.assertIn("V10", notes)
 

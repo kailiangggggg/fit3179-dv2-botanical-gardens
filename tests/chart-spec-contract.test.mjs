@@ -189,11 +189,13 @@ test("V02 projection keeps the choropleth inside a compact Australia-focused fra
   assert.equal(facilitiesMap.projection.translate.signal, "[width / 2, 206]");
 });
 
-test("the legacy V01 specification URL remains an exact compatibility copy", () => {
-  assert.deepEqual(legacyDensityMap, densityMap);
+test("the prior V01 density specification is retained separately from the active count map", () => {
+  assert.equal(v01Manifest.spec, "specs/V01-facility-symbol-map.json");
+  assert.equal(v01Manifest.idiom, "Proportional-symbol map");
+  assert.equal(v01Manifest.support_views.default_visible, false);
+  assert.notDeepEqual(legacyDensityMap, densityMap);
 });
-
-test("V01 encodes density with fixed-stroke contours and only the 31 below-threshold locations", () => {
+test("retained V01 density evidence preserves all source points and the 31 below-threshold locations", () => {
   const pointLayer = nationalExceptionLayer;
   const contourLayers = densityMap.layer.filter((layer) =>
     layer.data?.url === "../data/v01_density_contours.geojson");
@@ -224,8 +226,8 @@ test("V01 encodes density with fixed-stroke contours and only the 31 below-thres
   assert.match(densityMap.description, /Gaussian|density contour/i);
   assert.match(densityMap.description, /not hectares|not.*coverage/i);
   assert.match(densityMap.description, /all 182.*31 locations/i);
-  assert.match(humanChartManifest, /\\|\\s*V01\\s*\\|[^\\n]*\\|\\s*Spatial density contour map\\s*\\|/);
-  assert.match(humanChartManifest, /50 km bandwidth/i);
+  assert.match(humanChartManifest, /\\|\\s*V01\\s*\\|[^\\n]*\\|\\s*Proportional-symbol map\\s*\\|/);
+  assert.match(humanChartManifest, /50 km.*bandwidth/i);
 });
 test("V01 regional profiles and V04 use the approved CVD-screened facility-type colours", () => {
   const regionalFacilityLayer = sydneyDetail.hconcat[0].layer.find((layer) => layer.mark?.type === "circle");
@@ -306,8 +308,8 @@ test("V01 links each regional point to one exact source-area row on a common log
   assert.equal(v01AreaSubset.encoding.color.field, "type");
   assert.equal(v01AreaSubset.encoding.y.field, "displayY");
   assert.equal(v01Manifest.support_views.quantitative.subset, "0 <= area_hectares < 100");
-  assert.equal(v01Manifest.idiom, "Spatial density contour map");
-  assert.equal(manifest.visible_panels, 17);
+  assert.equal(v01Manifest.idiom, "Proportional-symbol map");
+  assert.equal(manifest.visible_panels, 14);
   assert.equal(manifest.rubric_chart_count, 13);
   assert.equal(manifest.map_count, 3);
   assert.equal(manifest.advanced_idiom_types.length, 8);
@@ -427,7 +429,7 @@ test("the chart manifest explains visible V01 evidence and linked-jurisdiction i
 
 test("V08 identifies Myrtaceae as the largest named family, excluding the pooled remainder", () => {
   const kingsParkChart = manifest.charts.find((chart) => chart.id === "V08");
-  assert.equal(kingsParkChart.title, "Myrtaceae is the largest named Kings Park family");
+  assert.equal(kingsParkChart.title, "Myrtaceae is Kings Park’s largest named voucher family");
   assert.match(kingsParkChart.how.ordering, /Other families is the final pooled row/i);
 });
 
@@ -438,4 +440,24 @@ test("chart annotations are reader-facing and explain the log axis and taxon IDs
   const resourceChart = manifest.charts.find((chart) => chart.id === "V05");
   assert.match(resourceChart.how.annotation, /taxon IDs are database labels/i);
   assert.match(resourceChart.how.annotation, /not verified species counts/i);
+});
+
+test("V09 parses numeric fields so zero labels and family ordering render correctly", () => {
+  const csv = readFileSync(new URL("../public/data/plantbank_family_decades.csv", import.meta.url), "utf8").trim();
+  const [header, ...lines] = csv.split(/\r?\n/);
+  const countIndex = header.split(",").indexOf("record_count");
+  const values = lines.map((line) => line.split(",")[countIndex]);
+  assert.equal(values.length, 66);
+  assert.equal(values.filter((value) => value === "0").length, 10);
+  assert.equal(values.filter((value) => value === "").length, 0);
+  assert.deepEqual(plantbankHeatmap.data.format.parse, {
+    family_order: "number",
+    decade: "number",
+    record_count: "number",
+  }, "numeric CSV fields must parse as numbers for strict zero filters and numeric sorts");
+  const zeroLabels = plantbankHeatmap.layer.find((layer) =>
+    layer.mark?.type === "text" && layer.transform?.some(({ filter }) => filter === "datum.record_count === 0"));
+  assert.ok(zeroLabels, "every observed zero cell should display a zero label");
+  assert.equal(zeroLabels.encoding.text.field, "record_count");
+  assert.equal(zeroLabels.mark.fontSize, 10);
 });

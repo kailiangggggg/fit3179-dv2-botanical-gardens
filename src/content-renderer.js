@@ -1,4 +1,5 @@
 import { pageStory } from "./site-content.js";
+import { shouldRenderV01SupportViews } from "./chart-runtime.js";
 
 function element(tagName, className, text) {
   const node = document.createElement(tagName);
@@ -235,18 +236,18 @@ function renderChartEntry(chart, baseUrl) {
   const caption = element("figcaption", "figure-caption");
   caption.append(element("span", "caption-mark", "↳"), element("span", "", chart.how.annotation));
   figure.append(topLine, mount);
-  if (chart.support_views?.density) figure.append(renderV01DensityKey(chart.support_views.density));
-  if (chart.support_views) figure.append(renderV01SupportViews(chart.support_views));
+  if (shouldRenderV01SupportViews(chart) && chart.support_views?.density) figure.append(renderV01DensityKey(chart.support_views.density));
+  if (shouldRenderV01SupportViews(chart)) figure.append(renderV01SupportViews(chart.support_views));
   figure.append(caption);
 
   const actions = element("div", "figure-actions");
   const specUrl = new URL(chart.spec, baseUrl);
   actions.append(localLink(specUrl.href, "Open Vega-Lite specification"));
-  for (const supportView of chart.support_views?.regional.maps ?? []) {
+  for (const supportView of (shouldRenderV01SupportViews(chart) ? chart.support_views?.regional.maps ?? [] : [])) {
     const viewUrl = new URL(supportView.spec, baseUrl);
     actions.append(localLink(viewUrl.href, `Open ${supportView.name} detail specification`));
   }
-  if (chart.support_views?.quantitative) {
+  if (shouldRenderV01SupportViews(chart) && chart.support_views?.quantitative) {
     const viewUrl = new URL(chart.support_views.quantitative.spec, baseUrl);
     actions.append(localLink(viewUrl.href, "Open under-100-ha specification"));
   }

@@ -22,17 +22,17 @@ class ChartManifestTests(unittest.TestCase):
         self.assertEqual(manifest["rubric_chart_count"], 13)
         self.assertEqual(manifest["map_count"], 3)
         self.assertEqual(len(set(manifest["advanced_idiom_types"])), 8)
-        self.assertEqual(manifest["visible_panels"], 17)
+        self.assertEqual(manifest["visible_panels"], 14)
 
         v01 = next(chart for chart in charts if chart["id"] == "V01")
-        self.assertEqual(v01["idiom"], "Spatial density contour map")
+        self.assertEqual(v01["idiom"], "Proportional-symbol map")
         self.assertEqual([view["id"] for view in v01["support_views"]["regional"]["maps"]], ["V01-SYD", "V01-MELB"])
         self.assertEqual(v01["support_views"]["quantitative"]["id"], "V01-AREA")
         self.assertEqual(v01["support_views"]["regional"]["profile_data_file"], "data/v01_regional_profiles.geojson")
-        self.assertIn("data/v01_density_contours.geojson", v01["data_files"])
-        self.assertIn("data/v01_density_summary.json", v01["data_files"])
-        self.assertIn("data/v01_density_unrepresented.geojson", v01["data_files"])
-        self.assertIn("data/v01_regional_profiles.geojson", v01["data_files"])
+        self.assertEqual(v01["data_files"], ["data/state_rates.geojson", "data/v01_jurisdiction_counts.geojson"])
+        self.assertFalse(v01["support_views"]["default_visible"])
+        self.assertIn("0.1", [item["label"] for item in v01["support_views"]["density"]["contours"]])
+        self.assertTrue((PUBLIC_ROOT / "data" / "v01_regional_profiles.geojson").is_file())
         self.assertEqual(v01["support_views"]["regional"]["area_scale"]["type"], "log")
         self.assertEqual(v01["support_views"]["regional"]["area_scale"]["domain_ha"], [0.5, 1000])
 
@@ -78,12 +78,13 @@ class ChartManifestTests(unittest.TestCase):
         self.assertEqual(len({chart["idiom"] for chart in maps}), 3)
         self.assertEqual(manifest["legacy_chart_ids"]["V05"], ["V05a", "V05b"])
 
-    def test_v01_support_views_do_not_add_chart_groups_or_map_idioms(self):
+    def test_v01_supporting_views_are_retained_but_not_visible_by_default(self):
         manifest = json.loads(
             (PUBLIC_ROOT / "specs" / "chart-manifest.json").read_text(encoding="utf-8")
         )
         v01 = next(chart for chart in manifest["charts"] if chart["id"] == "V01")
         support = v01["support_views"]
+        self.assertFalse(support["default_visible"])
         self.assertEqual(len(manifest["charts"]), 13)
         self.assertEqual(len(support["regional"]["maps"]), 2)
         self.assertEqual(
@@ -100,7 +101,8 @@ class ChartManifestTests(unittest.TestCase):
             [item["label"] for item in support["density"]["contours"]],
             ["0.1", "0.2", "0.4", "0.8"],
         )
-        self.assertIn("data/v01_detail_locator_geometry.geojson", v01["data_files"])
+        self.assertNotIn("data/v01_detail_locator_geometry.geojson", v01["data_files"])
+        self.assertTrue((PUBLIC_ROOT / "data" / "v01_detail_locator_geometry.geojson").is_file())
         self.assertIn("tenfold change", support["regional"]["description"])
         self.assertEqual(support["quantitative"]["subset"], "0 <= area_hectares < 100")
         self.assertNotIn("V01-SYD", {chart["id"] for chart in manifest["charts"]})

@@ -3,17 +3,30 @@ export const pageStory = {
   subtitle: "Mapping Australia’s gardens, plant collections and wild seed origins",
   snapshot: "14 October 2026",
   hero: {
-    kicker: "AUSTRALIA · BOTANICAL CONSERVATION",
-    titleLines: ["Beyond the", "Garden Gate"],
-    lede:
-      "A national register maps known gardens and arboreta. Public collection records offer narrower views of the plants and wild seed origins documented beyond their gates.",
-    limitation:
-      "These datasets reveal where plants are documented and where some seeds originated. They do not measure plant survival, species recovery or educational outcomes.",
+    "kicker": "AUSTRALIA · BOTANICAL CONSERVATION",
+    "titleLines": [
+      "Beyond the",
+      "Garden Gate"
+    ],
+    "lede": "Australia’s gardens and arboreta are known places; public records also describe living specimens, preserved vouchers and seeds collected in the wild.",
+    "limitation": "These records show documented work, not every institution, current holdings, public access, species recovery, conservation effectiveness or education outcomes."
   },
   metrics: [
-    { value: "182", label: "known register features", source: "Geoscience Australia · 2026 snapshot" },
-    { value: "120", label: "Botanic Gardens", source: "GA register" },
-    { value: "62", label: "Arboretums", source: "GA register" },
+    {
+      "value": "182",
+      "label": "known registered facilities",
+      "source": "Geoscience Australia · 2026 snapshot"
+    },
+    {
+      "value": "120",
+      "label": "Botanic Gardens",
+      "source": "GA register"
+    },
+    {
+      "value": "62",
+      "label": "Arboreta",
+      "source": "GA register"
+    }
   ],
   jurisdictions: [
     "New South Wales",
@@ -27,136 +40,143 @@ export const pageStory = {
   ],
   sections: [
     {
-      id: "footprint",
-      index: "01",
-      navLabel: "A national footprint",
-      eyebrow: "MAP & REGISTER",
-      title: "A national footprint",
-      question: "Where do known gardens and arboreta cluster—and how do identifiable sites differ in registered area?",
-      intro:
-        "Three states contain 135 of the 182 known-register sites. The national 50 km Gaussian contours estimate smoothed location density: each contour line connects places with the same estimated site concentration. All 182 coordinates contribute; hollow circles mark the 31 facilities below the lowest contour at their recorded point. Contours describe site density, not land area or actual botanical coverage. Sydney and Melbourne profiles link S/M identifiers to original coordinates and registered hectares. A separate linear view compares 165 facilities below 100 ha.",
-      paragraphs: [
-        "The contour estimate changes with bandwidth and is clipped to land at a 15 km grid resolution, so coastal density may be understated. The regional profiles share a base-10 logarithmic scale: equal horizontal steps mean tenfold area changes. Labels use sensible precision; hover tooltips preserve source decimals. Registered hectares describe reported footprints, not planted area, access, collection size or conservation capacity. V04 retains the full range and extremes.",
+      "id": "footprint",
+      "index": "01",
+      "navLabel": "A national footprint",
+      "eyebrow": "MAP & REGISTER",
+      "title": "A national footprint",
+      "question": "Where are more known gardens and arboreta registered, and what changes after population adjustment?",
+      "intro": "Circle area compares raw jurisdiction totals; labels repeat the counts. Symbols sit at representative points, not individual gardens. These counts are not population-adjusted.",
+      "paragraphs": [
+        "One registered facility belongs to Other Territories and is on Norfolk Island; its marker is approximate. The register is a known-facility layer, not a complete census."
       ],
-      transition:
-        "The contours summarize known-site locations; V02 asks a different question by comparing jurisdiction counts relative to population. Neither measure describes public access. The next chapter moves from institutions to collection records.",
-      chartIds: ["V01", "V02", "V03", "V04"],
-      chartTransitions: [
-        {
-          afterChart: "V01",
-          emphasis: true,
-          text: "All 182 coordinates feed contours; hollow circles mark 31 below 0.1. A/B locate Sydney and Melbourne. S/M IDs link 32 sites to hectares on a shared log scale. 165 sites fall below 100 ha; V04 shows full range.",
-        },
-        {
-          afterChart: "V02",
-          text: "Population is the denominator, so smaller jurisdictions can rank higher despite fewer facilities. V03 puts both rank orders side by side.",
-        },
-        {
-          afterChart: "V03",
-          text: "ACT rises from sixth by count to first per million; NT moves from tied rank 7.5 to second. This is register density, not access. V04 compares reported area.",
-        },
-        {
-          afterChart: "V04",
-          text: "Arboretum footprints span about 0.5 to 3,739 hectares; the largest lies far beyond the usual range. Reported land is not planted area or collection size.",
-        },
+      "transition": "The register maps known places; the next chapter distinguishes the living, preserved and seed records that document botanical collections.",
+      "chartIds": [
+        "V01",
+        "V02",
+        "V03",
+        "V04"
       ],
+      "chartTransitions": [
+        {
+          "afterChart": "V01",
+          "emphasis": true,
+          "text": "The symbols show raw jurisdiction counts. V02 divides those totals by each jurisdiction’s March 2026 population."
+        },
+        {
+          "afterChart": "V02",
+          "text": "Rates reorder jurisdictions because population sizes differ. V03 compares each jurisdiction’s count rank with its rate rank."
+        },
+        {
+          "afterChart": "V03",
+          "text": "ACT rises from sixth by count to first per million, while NT moves from tied rank 7.5 to second. These are register rates, not access; V04 compares reported footprints."
+        },
+        {
+          "afterChart": "V04",
+          "text": "Median registered footprints are similar, while the largest arboretum reaches 3,739 ha. The next chapter turns to collection records."
+        }
+      ]
     },
     {
-      id: "records",
-      index: "02",
-      navLabel: "Inside the collections",
-      eyebrow: "COLLECTION RECORDS",
-      title: "Inside the collections",
-      question: "Which plants and dates appear in the public collection datasets?",
-      intro:
-        "Public records describe different parts of botanical collections. A seed-bank accession is a catalogued seed collection; a herbarium voucher is a preserved reference specimen; a living-specimen record describes a plant recorded as living when observed, not necessarily today.",
-      paragraphs: [
-        "Ten licensed ALA seed-bank archives publish different amounts of accession and taxon metadata. V05 compares their top-level event records with distinct taxon IDs.",
-        "A 2023 BGANZ/CHABG survey of 26 mixed respondent organisations recorded 45 of 49 Myrtle Rust National Action Plan priority species. This respondent baseline is not a national census or conservation-outcome measure.",
+      "id": "records",
+      "index": "02",
+      "navLabel": "Inside the collections",
+      "eyebrow": "COLLECTION RECORDS",
+      "title": "Inside the collections",
+      "question": "What do selected public records show about living plants, preserved specimens and seed accessions?",
+      "intro": "A seed-bank accession is a catalogued seed collection. PlantBank records use the basis LIVING_SPECIMEN; Kings Park records are PRESERVED_SPECIMEN herbarium vouchers. A plant family groups genera. These separate samples cannot be added into one total of holdings.",
+      "paragraphs": [
+        "Counts describe indexed records, not necessarily distinct species or plants alive today. The ten licensed ALA resources also differ in what metadata they publish."
       ],
-      transition:
-        "Some seed-bank accessions also record collection locations. The next chapter maps those generalized origins and shows where coordinates and dates are missing.",
-      chartIds: ["V05", "V06", "V07", "V08", "V09"],
-      chartTransitions: [
-        {
-          afterChart: "V05",
-          text: "Of 119,278 ALA event rows, 58,562 are top-level accessions; linked children are excluded. Taxon IDs are labels, not verified species counts or whole-bank holdings. V06 narrows to PlantBank.",
-        },
-        {
-          afterChart: "V06",
-          text: "PlantBank has 10,609 LIVING_SPECIMEN rows; 10,599 include family. A family groups genera, and “living” does not confirm current survival. V07 examines recorded years.",
-        },
-        {
-          afterChart: "V07",
-          text: "The 1980s peak is 4,321; 920 PlantBank rows lack usable years, and the 2010s end in 2015. Recorded years are not necessarily accession dates. V08 changes archive.",
-        },
-        {
-          afterChart: "V08",
-          text: "Kings Park contributes 20,647 PRESERVED_SPECIMEN vouchers; its files have no usable years and are not living holdings. V09 returns to PlantBank’s family-by-decade records.",
-        },
-        {
-          afterChart: "V09",
-          text: "The Myrtaceae–1980s peak describes dated records, not conservation effort. The next chapter maps only the geocoded seed-origin subset.",
-        },
+      "transition": "These sources document different slices of collections. The next chapter maps recorded wild origins and shows how much coordinate and date information is available.",
+      "chartIds": [
+        "V05",
+        "V06",
+        "V07",
+        "V08",
+        "V09"
       ],
+      "chartTransitions": [
+        {
+          "afterChart": "V05",
+          "text": "The ten resources contain 58,562 top-level accessions among 119,278 event rows; linked child rows are excluded. Taxon IDs are database labels, not verified species. V06 narrows to PlantBank."
+        },
+        {
+          "afterChart": "V06",
+          "text": "Among 10,599 family-identified records, Myrtaceae has 3,240 and Eucalyptus 1,897. Living describes the recorded basis, not current survival. V07 turns to recorded years."
+        },
+        {
+          "afterChart": "V07",
+          "text": "The 1980s peak at 4,321 dated rows. Another 920 PlantBank rows lack usable years, and the latest is 2015; these are not necessarily accession dates. V08 changes archive."
+        },
+        {
+          "afterChart": "V08",
+          "text": "Kings Park’s rows are preserved herbarium vouchers, not living specimens; its archive has no usable years. V09 returns to PlantBank."
+        },
+        {
+          "afterChart": "V09",
+          "text": "Among 9,683 rows with family and year, 1,843 Myrtaceae records are dated to the 1980s. This is a record pattern, not conservation effort. Next: wild origins."
+        }
+      ]
     },
     {
-      id: "origins",
-      index: "03",
-      navLabel: "Beyond the garden gate",
-      eyebrow: "WILD COLLECTION ORIGINS",
-      title: "Beyond the garden gate",
-      question: "Where were the geocoded seed-bank accessions collected?",
-      intro:
-        "Ten seed-bank archives include accessions with coordinates. V10 groups recorded wild collection origins into 100-kilometre equal-area cells; these are not garden sites or receiving banks.",
-      paragraphs: [
-        "These origin and year totals describe the licensed file snapshot, not all Australian seed collecting.",
+      "id": "origins",
+      "index": "03",
+      "navLabel": "Beyond the garden gate",
+      "eyebrow": "WILD COLLECTION ORIGINS",
+      "title": "Beyond the garden gate",
+      "question": "Where were geocoded seed accessions collected, and how much of each archive can be placed on a map?",
+      "intro": "Ten licensed ALA resources contain top-level seed accessions with recorded coordinates. V10 aggregates Australian collection origins into 100 km equal-area cells; it maps where seeds were collected, not garden locations or storage sites.",
+      "paragraphs": [
+        "Coordinates and usable years differ across archives. V12 and V13 show those gaps beside the origin and date views they qualify."
       ],
-      transition:
-        "The final chapter weighs these location, collection and origin records together, while keeping their coverage limits in view.",
-      chartIds: ["V10", "V11", "V12", "V13"],
-      chartTransitions: [
-        {
-          afterChart: "V10",
-          text: "Cells with fewer than five records are suppressed; the visible clusters are collection origins, not gardens or seed stores. V11 shifts to dates.",
-        },
-        {
-          afterChart: "V11",
-          text: "Available dates end at the 2025 snapshot and do not measure annual collecting effort. V12 checks geographic gaps.",
-        },
-        {
-          afterChart: "V12",
-          text: "Rates span 0% in Alice Springs to 100% in Darwin. 22.7% of the ALA Australian PlantBank archive’s top-level accessions lack map-ready coordinates; completeness is not geographic representativeness. V13 shows year spans.",
-        },
-        {
-          afterChart: "V13",
-          text: "Observed year spans are file endpoints, not continuous collecting; the conclusion brings these coverage limits beside facility locations and collection records.",
-        },
+      "transition": "The final chapter weighs these records together and separates documented work from outcomes the datasets cannot measure.",
+      "chartIds": [
+        "V10",
+        "V11",
+        "V12",
+        "V13"
       ],
+      "chartTransitions": [
+        {
+          "afterChart": "V10",
+          "text": "Of 38,773 map-ready records, published cells show 38,099; another 674 in cells under five are suppressed. These are collection origins, not gardens or banks. V11 turns to dates."
+        },
+        {
+          "afterChart": "V11",
+          "text": "The 2000s contain 10,949 of 33,765 dated accessions. Four archives have no usable years; the 2020s end in 2025. V12 checks coordinate coverage."
+        },
+        {
+          "afterChart": "V12",
+          "text": "Coordinate availability varies. Australian PlantBank lacks map-ready coordinates for 2,921 of 12,871 top-level accessions (22.7%). Completeness is not geographic representativeness. V13 checks dates."
+        },
+        {
+          "afterChart": "V13",
+          "text": "Four of ten archives have no usable collection year. The displayed endpoints describe files, not uninterrupted collecting; these gaps qualify both the map and histogram."
+        }
+      ]
     },
     {
-      id: "evidence",
-      index: "04",
-      navLabel: "What the evidence means",
-      eyebrow: "CONCLUSION & SOURCES",
-      title: "What the evidence means",
-      question: "What can these records tell us—and where does their evidence stop?",
-      intro:
-        "The register, public collection archives and generalized origin cells describe three different parts of botanical work. They document known sites, published records and some collection places—not the full scope of botanical conservation.",
-      paragraphs: [
-        "The register locates 182 known facilities and reports their registered areas. PlantBank and Kings Park publish different specimen records; ten ALA archives publish top-level seed accessions, some with generalized origins. Together they show what institutions record and make public.",
-        "These sources complement one another, but they are not a unified inventory. They do not measure every garden, current holdings, public access, species recovery or conservation impact.",
-        "Education is another documented role: the Australian National Botanic Gardens and Royal Botanic Gardens Victoria describe learning programs. These examples do not measure national participation or learning outcomes; see the linked official pages below.",
+      "id": "evidence",
+      "index": "04",
+      "navLabel": "What the evidence means",
+      "eyebrow": "CONCLUSION & SOURCES",
+      "title": "What the evidence means",
+      "question": "What do the published records establish about botanical work, and where does the evidence stop?",
+      "intro": "Known facilities, separate collection records and selected wild origins document parts of botanical work. They are not a complete national inventory or an outcome measure.",
+      "paragraphs": [
+        "Gardens and arboreta can maintain living collections; herbaria preserve reference specimens; seed banks store catalogued accessions; education programs share plant knowledge. These are distinct activities, and this project measures none of their national outcomes.",
+        "The 2023 BGANZ/CHABG survey reported 45 of 49 Myrtle Rust National Action Plan priority species in responding collections. Its 26 respondents were mixed organisations, so this is survey context, not national coverage or proof of conservation effectiveness. The Australian National Botanic Gardens and Royal Botanic Gardens Victoria describe school and learning programs; those pages do not measure participation or impact.",
+        "The register is not a complete census. GBIF records cover selected datasets, while ALA coordinates and dates are uneven. These sources cannot establish current plant survival, public access, species recovery, conservation success or education outcomes."
       ],
-      transition:
-        "Taken together, these records show known facilities, distinct published collections and some generalized wild origins. They document parts of botanical work, not total conservation success or national coverage.",
-      chartIds: [],
-    },
+      "transition": "Together, these records show where known facilities are registered, what selected archives document and which seed origins can be mapped. They reveal parts of botanical work, not its full reach or results.",
+      "chartIds": []
+    }
   ],
   takeaways: [
-    "The national register contains 182 known facilities, but it is not a complete census.",
-    "Living specimens, preserved herbarium vouchers and seed accessions are distinct record types, not interchangeable holdings.",
-    "The origin and date views cover only records with usable coordinates and years; they do not measure conservation outcomes.",
+    "The register locates 182 known facilities, not every Australian garden or arboretum.",
+    "Living specimens, preserved vouchers and seed accessions are different records.",
+    "Wild-origin maps and date summaries cover only records with usable coordinates and years."
   ],
   sources: [
     {

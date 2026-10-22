@@ -1,3 +1,6 @@
+export function shouldRenderV01SupportViews(chart) {
+  return Boolean(chart?.support_views && chart.support_views.default_visible !== false);
+}
 export function resolveChartSpecUrl(specPath, baseUrl) {
   return new URL(specPath, baseUrl);
 }

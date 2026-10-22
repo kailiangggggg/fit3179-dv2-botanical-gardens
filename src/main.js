@@ -5,7 +5,7 @@ import "@fontsource/source-sans-3/latin-600.css";
 import "./site.css";
 
 import { renderPage } from "./content-renderer.js";
-import { adaptChartSpec, localizeDataUrls, resolveChartSpecUrl } from "./chart-runtime.js";
+import { adaptChartSpec, localizeDataUrls, resolveChartSpecUrl, shouldRenderV01SupportViews } from "./chart-runtime.js";
 import { formatLegendActionName, isLegendActivationKey, toggleLegendSelection } from "./legend-accessibility.js";
 import { getActiveSectionId } from "./navigation-runtime.js";
 
@@ -175,7 +175,7 @@ async function renderChart(figure, chart, registerChartView) {
   const sourceSpec = localizeDataUrls(await fetchJson(specUrl, chart.id), specUrl);
   let facilityFeatures;
   let profileFeatures;
-  if (chart.support_views) {
+  if (shouldRenderV01SupportViews(chart)) {
     const pointsPath = chart.data_files.find((dataPath) => dataPath.endsWith("facility_points.geojson"));
     const collection = await fetchJson(new URL(pointsPath, siteBaseUrl), "V01 facility points");
     facilityFeatures = collection.features;
@@ -307,7 +307,7 @@ async function renderChart(figure, chart, registerChartView) {
   }
 
   await renderAtWidth(mount.clientWidth);
-  if (chart.support_views) {
+  if (shouldRenderV01SupportViews(chart)) {
     await renderV01SupportCharts(figure, chart, embed, facilityFeatures, profileFeatures);
   }
   if ("ResizeObserver" in window) {

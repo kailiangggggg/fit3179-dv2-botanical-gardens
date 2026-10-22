@@ -4,7 +4,12 @@
   "data": {
     "url": "../data/plantbank_family_decades.csv",
     "format": {
-      "type": "csv"
+      "type": "csv",
+      "parse": {
+        "family_order": "number",
+        "decade": "number",
+        "record_count": "number"
+      }
     }
   },
   "width": 700,
@@ -22,13 +27,22 @@
           "type": "quantitative",
           "title": "Records",
           "scale": {
-            "domain": [0, 2000],
+            "domain": [
+              0,
+              2000
+            ],
             "scheme": "greens"
           },
           "legend": {
             "orient": "bottom",
             "direction": "horizontal",
-            "values": [0, 500, 1000, 1500, 2000]
+            "values": [
+              0,
+              500,
+              1000,
+              1500,
+              2000
+            ]
           }
         }
       }
@@ -56,6 +70,28 @@
             "value": "#fffdf7"
           },
           "value": "#193b30"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.record_count === 0"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "fontSize": 10,
+        "fontWeight": 600
+      },
+      "encoding": {
+        "text": {
+          "field": "record_count",
+          "type": "quantitative",
+          "format": ",.0f"
+        },
+        "color": {
+          "value": "#516158"
         }
       }
     }

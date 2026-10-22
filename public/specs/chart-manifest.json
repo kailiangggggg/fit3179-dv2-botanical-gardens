@@ -6,11 +6,11 @@
 
   "audience": "General Malaysian reader",
 
-  "chart_count_rule": "V05a and V05b are paired panels and count as one rubric chart group; V01's regional and quantitative support views remain within V01.",
+  "chart_count_rule": "V05a and V05b are paired panels and count as one rubric chart group.",
 
   "rubric_chart_count": 13,
 
-  "visible_panels": 17,
+  "visible_panels": 14,
 
   "map_count": 3,
 
@@ -50,7 +50,7 @@
 
   "advanced_idiom_types": [
 
-    "Spatial density contour map",
+    "Proportional-symbol map",
 
     "Choropleth",
 
@@ -82,227 +82,160 @@
 
   "charts": [
 
-    {
-
-      "id": "V01",
-
-      "legacy_ids": [],
-
-      "title": "NSW, Victoria and Queensland hold 135 of 182 known sites",
-
-      "section": "01 · A national footprint",
-
-      "idiom": "Spatial density contour map",
-
-      "is_map": true,
-
-      "advanced": true,
-
-      "spec": "specs/V01-density-contour-map.json",
-
-      "data_files": [
-
-        "data/state_rates.geojson",
-
-        "data/facility_points.geojson",
-
-        "data/v01_density_contours.geojson",
-
-        "data/v01_density_summary.json",
-
-        "data/v01_density_unrepresented.geojson",
-
-        "data/v01_regional_profiles.geojson",
-
-        "data/facility_area_under100_beeswarm.json",
-
-        "data/v01_detail_locator_geometry.geojson"
-
-      ],
-
-      "support_views": {
-
-        "density": {
-
-          "title": "Known-site density · per 1,000 projected km² · 50 km bandwidth",
-
-          "contours": [
-
-            {"label": "0.1", "color": "#78ac89"},
-
-            {"label": "0.2", "color": "#5b996e"},
-
-            {"label": "0.4", "color": "#397851"},
-
-            {"label": "0.8", "color": "#154830"}
-
+                {
+          "id": "V01",
+          "legacy_ids": [],
+          "title": "NSW, Victoria and Queensland account for 135 of 182 known register facilities",
+          "section": "01 · A national footprint",
+          "idiom": "Proportional-symbol map",
+          "is_map": true,
+          "advanced": true,
+          "spec": "specs/V01-facility-symbol-map.json",
+          "data_files": [
+            "data/state_rates.geojson",
+            "data/v01_jurisdiction_counts.geojson"
           ],
-
-          "exception_mark": {
-
-            "label": "31 sites below 0.1 at their location"
-
+          "what": {
+            "source": [
+              "Geoscience Australia, Botanical Gardens and Arboretums register; snapshot 14 October 2026"
+            ],
+            "grain": "One jurisdiction aggregate of the 182 unique known-register facility features.",
+            "fields": [
+              "state/territory (categorical)",
+              "facility_count (quantitative count)",
+              "representative jurisdiction anchor (spatial)"
+            ],
+            "transformations": [
+              "Count each source facility once by ASGS state/territory code 1–9.",
+              "Use a representative anchor inside each of the eight standard jurisdiction polygons; use an approximate Norfolk Island locator for the Other Territories aggregate.",
+              "Do not use the anchors as individual facility locations; do not alter source coordinates or hectares."
+            ],
+            "measure": "Known register facilities by jurisdiction; raw counts, not population-standardized rates."
           },
-
-          "note": "Contours use all 182 locations. Hollow circles mark 31 below 0.1 at their point. Density is not land area or actual botanical coverage; coast edges are approximate."
-
-        },
-
-        "regional": {
-
-          "title": "Linked location and registered-area profiles",
-
-          "description": "A and B locate Sydney and Melbourne. S01–S14 and M01–M18 label original site points and match the complete facility lists. Both area profiles share a base-10 logarithmic scale from 0.5 to 1,000 ha: each equal horizontal step means a tenfold change (0.5→5→50→500→1,000 ha). Visible values are rounded for readability; tooltips retain the exact source decimal token.",
-
-          "area_scale": {
-
-            "type": "log",
-
-            "domain_ha": [0.5, 1000],
-
-            "axis_title": "Registered area (ha; log scale)"
-
+          "why": {
+            "question": "Which jurisdictions contain more known registered botanical gardens and arboreta?",
+            "reader_task": "Compare jurisdiction totals before population adjustment and distinguish count symbols from individual garden locations."
           },
-
-          "locator_data_file": "data/v01_detail_locator_geometry.geojson",
-
-          "profile_data_file": "data/v01_regional_profiles.geojson",
-
-          "maps": [
-
-            {
-
-              "id": "V01-SYD",
-
-              "name": "Sydney",
-
-              "title": "A — Sydney area · 14 sites",
-
-              "bounds": {"longitude": [150.6, 151.4], "latitude": [-34.2, -33.5]},
-
-              "locator": {
-                "id": "A",
-                "label": "A — Sydney",
-                "label_align": "left",
-                "label_anchor": {"longitude": 153, "latitude": -35.2}
+          "how": {
+            "marks": "State polygons, one circle per jurisdiction, direct labels and short leaders for small totals.",
+            "channels": "Geographic position identifies the jurisdiction; circle area encodes its facility count; text repeats the count. One symbol color carries no subtype meaning.",
+            "projection": "Australian Equal Earth projection, consistent with national map context.",
+            "color": "Single dark-green count symbols over pale jurisdiction polygons; subtype is not redundantly encoded.",
+            "scale": "Linear count domain 0–50 mapped to circle area; legend reference values are 10, 25 and 50. Circle radius is not linear in count.",
+            "ordering": "State totals are printed directly; larger counts use two-line labels inside symbols, smaller counts use external labels.",
+            "aggregation": "One count per state/territory code; nine jurisdiction counts reconcile to 182 GA records. Other Territories contains one register facility on Norfolk Island.",
+            "interaction": "All counts, area key, representative-anchor note and the Other Territories locator are visible without interaction; tooltips are supplemental.",
+            "annotation": "Circle area, not radius, encodes jurisdiction count. Anchors are representative places, not individual gardens; OT is shown near Norfolk Island."
+          },
+          "advanced_classification": "defensible-but-marker-dependent",
+          "advanced_rationale": "Week 8 teaches proportional-symbol maps as a geographic idiom: position identifies jurisdiction and circle area encodes quantitative count. This is a state-aggregate map, not a free-positioned bubble chart.",
+          "course_evidence": "FIT2179 Course Notes Proportional Symbol Maps, pp. 2 and 4; FIT3179 Week 8 Map Idioms; G-DV2-FINAL-source-substitution-decision.md.",
+          "effective_application": "Nine jurisdiction aggregates use a linear area scale with a visible size key and direct counts; V02 standardizes population and V10 maps a different record grain with equal-area hexagons.",
+          "classification_risk": "The rubric excludes bubble charts but does not enumerate all advanced idioms. A marker may classify proportional-symbol maps differently; the classification is reasoned, not certified.",
+          "support_views": {
+            "density": {
+              "title": "Known-site density · per 1,000 projected km² · 50 km bandwidth",
+              "spec": "specs/V01-density-contour-map.json",
+              "contours": [
+                {
+                  "label": "0.1",
+                  "color": "#78ac89"
+                },
+                {
+                  "label": "0.2",
+                  "color": "#5b996e"
+                },
+                {
+                  "label": "0.4",
+                  "color": "#397851"
+                },
+                {
+                  "label": "0.8",
+                  "color": "#154830"
+                }
+              ],
+              "exception_mark": {
+                "label": "31 sites below 0.1 at their location"
               },
-
-              "spec": "specs/V01-sydney-detail-map.json"
-
+              "note": "Contours use all 182 locations. Hollow circles mark 31 below 0.1 at their point. Density is not land area or actual botanical coverage; coast edges are approximate."
             },
-
-            {
-
-              "id": "V01-MELB",
-
-              "name": "Melbourne",
-
-              "title": "B — Melbourne area · 18 sites",
-
-              "bounds": {"longitude": [144.55, 145.4], "latitude": [-38.25, -37.55]},
-
-              "locator": {
-                "id": "B",
-                "label": "B — Melbourne",
-                "label_align": "right",
-                "label_anchor": {"longitude": 143.7, "latitude": -40.5}
+            "regional": {
+              "title": "Linked location and registered-area profiles",
+              "description": "A and B locate Sydney and Melbourne. S01–S14 and M01–M18 label original site points and match the complete facility lists. Both area profiles share a base-10 logarithmic scale from 0.5 to 1,000 ha: each equal horizontal step means a tenfold change (0.5→5→50→500→1,000 ha). Visible values are rounded for readability; tooltips retain the exact source decimal token.",
+              "area_scale": {
+                "type": "log",
+                "domain_ha": [
+                  0.5,
+                  1000
+                ],
+                "axis_title": "Registered area (ha; log scale)"
               },
-
-              "spec": "specs/V01-melbourne-detail-map.json"
-
-            }
-
-          ]
-
+              "locator_data_file": "data/v01_detail_locator_geometry.geojson",
+              "profile_data_file": "data/v01_regional_profiles.geojson",
+              "maps": [
+                {
+                  "id": "V01-SYD",
+                  "name": "Sydney",
+                  "title": "A — Sydney area · 14 sites",
+                  "bounds": {
+                    "longitude": [
+                      150.6,
+                      151.4
+                    ],
+                    "latitude": [
+                      -34.2,
+                      -33.5
+                    ]
+                  },
+                  "locator": {
+                    "id": "A",
+                    "label": "A — Sydney",
+                    "label_align": "left",
+                    "label_anchor": {
+                      "longitude": 153,
+                      "latitude": -35.2
+                    }
+                  },
+                  "spec": "specs/V01-sydney-detail-map.json"
+                },
+                {
+                  "id": "V01-MELB",
+                  "name": "Melbourne",
+                  "title": "B — Melbourne area · 18 sites",
+                  "bounds": {
+                    "longitude": [
+                      144.55,
+                      145.4
+                    ],
+                    "latitude": [
+                      -38.25,
+                      -37.55
+                    ]
+                  },
+                  "locator": {
+                    "id": "B",
+                    "label": "B — Melbourne",
+                    "label_align": "right",
+                    "label_anchor": {
+                      "longitude": 143.7,
+                      "latitude": -40.5
+                    }
+                  },
+                  "spec": "specs/V01-melbourne-detail-map.json"
+                }
+              ]
+            },
+            "quantitative": {
+              "id": "V01-AREA",
+              "title": "Compare smaller registered areas on a linear scale",
+              "description": "All 165 known-register facilities below 100 ha. Horizontal position is the reported hectares; vertical offsets only separate marks.",
+              "annotation": "This linear 0–100 ha view shows within-range differences. The regional profiles answer the facility-by-facility question; V04 retains the full distribution and extremes.",
+              "subset": "0 <= area_hectares < 100",
+              "spec": "specs/V01-under100-area-beeswarm.json"
+            },
+            "default_visible": false
+          }
         },
-
-        "quantitative": {
-
-          "id": "V01-AREA",
-
-          "title": "Compare smaller registered areas on a linear scale",
-
-          "description": "All 165 known-register facilities below 100 ha. Horizontal position is the reported hectares; vertical offsets only separate marks.",
-
-          "annotation": "This linear 0–100 ha view shows within-range differences. The regional profiles answer the facility-by-facility question; V04 retains the full distribution and extremes.",
-
-          "subset": "0 <= area_hectares < 100",
-
-          "spec": "specs/V01-under100-area-beeswarm.json"
-
-        }
-
-      },
-
-      "what": {
-
-        "source": [
-
-          "Geoscience Australia, Botanical Gardens and Arboretums register; snapshot 14 October 2026"
-
-        ],
-
-        "grain": "One known-register facility feature; all 182 source records contribute to the national density estimate, while 31 below-threshold locations receive individual map marks. Regional profiles repeat 14 Sydney and 18 Melbourne features; the area plot shows the 165 features below 100 ha.",
-
-        "fields": [
-
-          "feature_name (categorical)",
-
-          "feature_subtype (categorical)",
-
-          "state (categorical)",
-
-          "latitude/longitude (spatial)",
-
-          "area_hectares (quantitative)"
-
-        ],
-
-        "transformations": [
-
-          "Retain all 182 source records, original point coordinates and reported hectares; use every coordinate for density estimation and mark only locations falling below the lowest contour at their point.",
-
-          "Estimate an unweighted two-dimensional Gaussian KDE with 25, 50 and 100 km bandwidths in an Australia-centred spherical azimuthal-equidistant projection; display the selected 50 km surface as land-clipped contour lines.",
-
-          "Generate S01–S14 and M01–M18 by sorting stable globalid values within the manifest-defined windows; regional map coordinates remain unchanged and each ID has one matching area row.",
-
-          "Compare regional areas with a common 0.5–1,000 ha log scale and visible source-value labels; retain the 165-site linear 0–100 ha comparison and V04 full-range box plot."
-
-        ],
-
-        "measure": "National contours estimate smoothed density of known register locations per 1,000 projected km². Hectares remain registered facility footprints, not planted area, public access, collection size or conservation performance."
-
-      },
-
-      "why": {
-
-        "question": "Where are Australia's known botanical gardens and arboreta concentrated, and how do identifiable facilities differ in registered area?",
-
-        "reader_task": "Read the national location-density pattern, match regional facility IDs to their hectares, then compare the smaller national areas on a linear scale."
-
-      },
-
-      "how": {
-
-        "marks": "The national map overlays state polygons with 50 km Gaussian contour lines from a scalar field estimated using all 182 facility coordinates. Each line connects places with the same estimated site concentration, matching the contour-line idiom taught in FIT3179 Week 9. Hollow circles mark only the 31 locations below the lowest displayed contour at their own coordinate. Each regional profile pairs original-coordinate locations with a complete area row for every facility. A supporting strip plot compares all eligible facilities below 100 ha.",
-
-        "channels": "National position encodes geography; sequential green contour lines encode smoothed location density; hollow point marks identify only the 31 facilities below 0.1 at their original coordinate; A/B labels mark the Sydney and Melbourne windows. Region IDs and leaders connect unchanged point locations to facility rows; horizontal position encodes registered hectares on the same log scale in both regions, while concise labels show rounded values and tooltips retain source decimals. The national small-area comparison retains its exact linear 0–100 ha position and subtype rows.",
-
-        "projection": "A spherical azimuthal-equidistant projection centred at [133.7751, -25.2744] supplies metric coordinates for the KDE. Its radial distance is exact on the sphere; the maximum tangential scale factor is about 1.049 over the register locations. The resulting contours are inverted to longitude/latitude and drawn on the existing Equal Earth national map. Regional displays use local Mercator coordinates derived from the unchanged longitude/latitude.",
-
-        "color": "A pale-to-deep green contour palette represents increasing location density; hollow neutral circles distinguish the 31 below-threshold locations. Regional profiles retain deep blue (#003F5C) for Botanic Garden and burnt orange (#B85C00) for Arboretum.",
-
-        "ordering": "Draw state boundaries and density contours, then mark only the 31 source locations below the lowest contour at their point. Retain A/B window locators. Follow with linked Sydney and Melbourne location-area profiles, then the unchanged under-100-ha linear comparison.",
-
-        "aggregation": "The density surface is a two-dimensional Gaussian sum over all 182 source locations, not an area-weighted or subtype-weighted count. Regional views repeat 14 Sydney and 18 Melbourne source records; the national area subset includes each of the 165 eligible facilities once.",
-
-        "interaction": "Key findings, density units, bandwidth, the 31 below-threshold locations, log-scale meaning and location-to-area IDs are visible without interaction. Tooltips are supplemental and retain exact source area tokens and facility details.",
-
-        "annotation": "The 31 hollow circles mark locations below 0.1, not a facility type. Density contours are not land area or botanical coverage."
-
-      }
-
-    },
 
     {
 
@@ -310,7 +243,7 @@
 
       "legacy_ids": [],
 
-      "title": "ACT leads on known facilities per million residents",
+      "title": "The ACT records 12.25 known facilities per million residents",
 
       "section": "01 · A national footprint",
 
@@ -392,7 +325,7 @@
 
         "interaction": "The linked jurisdiction selector focuses the same state on V02 and V03; hover shows count, ERP and calculated rate.",
 
-        "annotation": "Rates divide facility counts by population, so smaller jurisdictions can rank higher. Other Territories combines Norfolk Island, Jervis Bay, Christmas Island and Cocos (Keeling) Islands; its grouped rate is not mapped."
+        "annotation": "Per-million rates divide GA counts by March 2026 ERP. The ACT leads; the measure describes register density, not public access. Other Territories stays neutral because its grouped denominator combines four areas."
 
       }
 
@@ -404,7 +337,7 @@
 
       "legacy_ids": [],
 
-      "title": "ACT rises from sixth to first after population adjustment",
+      "title": "ACT rises from sixth by count to first by rate",
 
       "section": "01 · A national footprint",
 
@@ -478,7 +411,7 @@
 
         "interaction": "Click legend items or focus a legend label and press Enter or Space to filter series; choose All jurisdictions to clear the filter. The linked jurisdiction selector highlights the same state on V02 and V03; hover reveals state, rank, raw count and rate.",
 
-        "annotation": "ACT moves from rank 6 to 1, NT from midrank 7.5 to 2, and WA from 4 to 3. Rates divide counts by population; they describe register density, not access."
+        "annotation": "ACT moves from rank 6 to 1; NT moves from tied rank 7.5 to 2. These ranks describe registered-facility density, not public access."
 
       }
 
@@ -490,7 +423,7 @@
 
       "legacy_ids": [],
 
-      "title": "A 3,739-hectare arboretum sits far outside the typical range",
+      "title": "Median footprints are similar, but one arboretum reaches 3,739 ha",
 
       "section": "01 · A national footprint",
 
@@ -562,7 +495,7 @@
 
         "interaction": "Tooltip identifies an outlier facility and its area.",
 
-        "annotation": "The line marks the median; the box covers the middle half of sites. Log spacing keeps small and very large areas visible together; dots name facilities beyond the usual range."
+        "annotation": "Medians are close: 12.96 ha for Botanic Gardens and 12.74 ha for Arboretums. The logarithmic axis keeps small and large sites visible; registered hectares are not planted area."
 
       }
 
@@ -580,7 +513,7 @@
 
       ],
 
-      "title": "Seed-bank archives differ sharply in published record coverage",
+      "title": "ALA archives vary in published accession and taxon-ID coverage",
 
       "section": "02 · Records describe different kinds of care",
 
@@ -658,7 +591,7 @@
 
         "interaction": "Tooltip shows the full resource name, root count, distinct IDs and excluded child rows.",
 
-        "annotation": "Each step on these axes is tenfold. Taxon IDs are database labels, not verified species counts; indexed records do not measure whole-bank holdings or quality."
+        "annotation": "Each log-axis step is tenfold. Top-level accessions exclude linked child rows; taxon IDs are database labels, not verified species counts or total bank holdings."
 
       }
 
@@ -670,7 +603,7 @@
 
       "legacy_ids": [],
 
-      "title": "1,897 PlantBank records in Myrtaceae are labelled Eucalyptus",
+      "title": "Eucalyptus is PlantBank’s leading recorded genus in Myrtaceae",
 
       "section": "02 · Records describe different kinds of care",
 
@@ -746,7 +679,7 @@
 
         "interaction": "Tooltip shows family, genus/group, record count and share of family-identified records.",
 
-        "annotation": "Of 3,240 PlantBank records labelled Myrtaceae, 1,897 are labelled Eucalyptus; pooled remainder tiles are groups, not taxa."
+        "annotation": "Among 10,599 family-identified LIVING_SPECIMEN records, Myrtaceae has 3,240 and 1,897 are labelled Eucalyptus. Areas encode row counts; pooled tiles are groups, not taxa or current holdings."
 
       }
 
@@ -830,7 +763,7 @@
 
         "interaction": "Tooltip gives exact count per decade.",
 
-        "annotation": "The 1980s peak is 4,321 records; 9,689 of 10,609 PlantBank rows have usable years and 920 do not. Recorded event years are not necessarily accession dates; the series ends in 2015."
+        "annotation": "The 1980s peak at 4,321 dated rows. Of 10,609 records, 9,689 have usable years and 920 do not; the latest is 2015. Recorded years are not necessarily accession dates."
 
       }
 
@@ -842,7 +775,7 @@
 
       "legacy_ids": [],
 
-      "title": "Myrtaceae is the largest named Kings Park family",
+      "title": "Myrtaceae is Kings Park’s largest named voucher family",
 
       "section": "02 · Records describe different kinds of care",
 
@@ -914,7 +847,7 @@
 
         "interaction": "Tooltip gives family, count and share of family-identified rows.",
 
-        "annotation": "Kings Park’s 20,647 rows are PRESERVED_SPECIMEN vouchers; Myrtaceae is its largest named family. Other families pools smaller groups; these are not living holdings."
+        "annotation": "Kings Park’s 20,647 rows are PRESERVED_SPECIMEN vouchers; 4,800 are Myrtaceae. These are herbarium records, not living collection holdings."
 
       }
 
@@ -926,7 +859,7 @@
 
       "legacy_ids": [],
 
-      "title": "1,843 dated Myrtaceae records fall in the 1980s",
+      "title": "PlantBank Myrtaceae records peak in the 1980s",
 
       "section": "02 · Records describe different kinds of care",
 
@@ -998,7 +931,7 @@
 
         "interaction": "Tooltip gives family, decade and record count.",
 
-        "annotation": "The 1980s contain 1,843 Myrtaceae records in this dated sample; this is not a trend in conservation effort."
+        "annotation": "Zero cells are observed family–decade combinations and are shown as 0; no cells are missing. The 1980s contain 1,843 of the 9,683 rows with family and year—record distribution, not conservation effort."
 
       }
 
@@ -1010,7 +943,7 @@
 
       "legacy_ids": [],
 
-      "title": "38,099 seed-origin records appear in generalized map cells",
+      "title": "38,099 wild seed-origin records appear in generalized map cells",
 
       "section": "03 · Beyond the garden gate",
 
@@ -1090,7 +1023,7 @@
 
         "interaction": "Tooltip gives the aggregate count; no origin point or event identifier is exposed.",
 
-        "annotation": "Of 38,773 coordinate-eligible accessions, 38,099 appear in cells; 674 in cells under five are suppressed. These are recorded origins, not gardens or seed stores."
+        "annotation": "Cells with fewer than five records are suppressed. The equal-area hexagons summarize recorded collection origins, not gardens or seed stores."
 
       }
 
@@ -1102,7 +1035,7 @@
 
       "legacy_ids": [],
 
-      "title": "The 2000s contain the largest dated ALA accession group",
+      "title": "The 2000s contain the most dated ALA accession records",
 
       "section": "03 · Beyond the garden gate",
 
@@ -1176,7 +1109,7 @@
 
         "interaction": "Tooltip gives the decade and exact count.",
 
-        "annotation": "33,765 of 58,562 top-level accessions have usable event years across six resources; four have none. The 2020s end in 2025; dates are not annual collecting effort."
+        "annotation": "The histogram includes 33,765 dated top-level accessions across six resources; four have no usable years and the 2020s end in 2025. These dates are not annual collecting activity."
 
       }
 
@@ -1188,7 +1121,7 @@
 
       "legacy_ids": [],
 
-      "title": "Map-ready coordinates range from zero to full coverage",
+      "title": "Map-ready coordinate coverage ranges from 0% to 100%",
 
       "section": "03 · Beyond the garden gate",
 
@@ -1258,7 +1191,7 @@
 
         "interaction": "Tooltip gives map-ready count, total roots and percentage.",
 
-        "annotation": "Map-ready coordinates range from 0% in Alice Springs to 100% in Darwin; in the ALA Australian PlantBank archive, 2,921 of 12,871 top-level accessions (22.7%) lack them. Completeness is metadata availability, not geographic representativeness."
+        "annotation": "In Australian PlantBank, 2,921 of 12,871 top-level accessions (22.7%) lack map-ready coordinates. Completeness is not geographic representativeness."
 
       }
 
@@ -1270,7 +1203,7 @@
 
       "legacy_ids": [],
 
-      "title": "Four of ten archives lack usable collection years",
+      "title": "Four of ten ALA archives lack usable collection years",
 
       "section": "03 · Beyond the garden gate",
 
@@ -1342,7 +1275,7 @@
 
         "interaction": "Tooltip gives date bounds, dated count and root-accession total.",
 
-        "annotation": "Four archives lack usable top-level years; ranges are observed file endpoints, not continuous collecting activity."
+        "annotation": "Interval endpoints are the earliest and latest observed file years, not continuous collecting. The separate 0–100% ALA date-coverage data identify resources without usable years."
 
       }
 

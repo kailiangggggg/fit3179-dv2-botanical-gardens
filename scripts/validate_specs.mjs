@@ -38,6 +38,7 @@ for (const chart of manifest.charts) {
   const supportSpecs = [
     ...(chart.support_views?.regional?.maps ?? []),
     ...(chart.support_views?.quantitative ? [chart.support_views.quantitative] : []),
+    ...(chart.support_views?.density?.spec ? [{ id: "V01-DENSITY", spec: chart.support_views.density.spec }] : []),
   ];
   const specs = [{ id: chart.id, path: chart.spec }, ...supportSpecs.map(({ id, spec }) => ({ id, path: spec }))];
 
