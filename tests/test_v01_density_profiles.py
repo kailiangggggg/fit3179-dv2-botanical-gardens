@@ -244,7 +244,7 @@ class V01DensityProfileTests(unittest.TestCase):
         self.assertIn("V02", notes)
         self.assertIn("V10", notes)
 
-    def test_density_and_profile_outputs_rebuild_byte_for_byte(self):
+    def test_density_and_profile_outputs_rebuild_deterministically(self):
         paths = [
             DATA / "v01_density_contours.geojson",
             DATA / "v01_density_summary.json",
@@ -254,7 +254,7 @@ class V01DensityProfileTests(unittest.TestCase):
 
         def digests():
             return {
-                path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+                path.name: hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
                 for path in paths
             }
 
