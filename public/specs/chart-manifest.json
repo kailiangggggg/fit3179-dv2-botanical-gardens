@@ -50,7 +50,7 @@
 
   "advanced_idiom_types": [
 
-    "Graduated-symbol map",
+    "Spatial density contour map",
 
     "Choropleth",
 
@@ -92,19 +92,27 @@
 
       "section": "01 · A national footprint",
 
-      "idiom": "Graduated-symbol map",
+      "idiom": "Spatial density contour map",
 
       "is_map": true,
 
       "advanced": true,
 
-      "spec": "specs/V01-facility-symbol-map.json",
+      "spec": "specs/V01-density-contour-map.json",
 
       "data_files": [
 
         "data/state_rates.geojson",
 
         "data/facility_points.geojson",
+
+        "data/v01_density_contours.geojson",
+
+        "data/v01_density_summary.json",
+
+        "data/v01_density_unrepresented.geojson",
+
+        "data/v01_regional_profiles.geojson",
 
         "data/facility_area_under100_beeswarm.json",
 
@@ -114,13 +122,51 @@
 
       "support_views": {
 
+        "density": {
+
+          "title": "Known-site density · per 1,000 projected km² · 50 km bandwidth",
+
+          "contours": [
+
+            {"label": "0.1", "color": "#78ac89"},
+
+            {"label": "0.2", "color": "#5b996e"},
+
+            {"label": "0.4", "color": "#397851"},
+
+            {"label": "0.8", "color": "#154830"}
+
+          ],
+
+          "exception_mark": {
+
+            "label": "31 sites below 0.1 at their location"
+
+          },
+
+          "note": "Contours use all 182 locations. Hollow circles mark 31 below 0.1 at their point. Density is not land area or actual botanical coverage; coast edges are approximate."
+
+        },
+
         "regional": {
 
-          "title": "Regional detail views",
+          "title": "Linked location and registered-area profiles",
 
-          "description": "A and B locate Sydney and Melbourne window centres. Insets enlarge those areas and repeat 32 sites already in the 182-site national total; markers show points, not full extents.",
+          "description": "A and B locate Sydney and Melbourne. S01–S14 and M01–M18 label original site points and match the complete facility lists. Both area profiles share a base-10 logarithmic scale from 0.5 to 1,000 ha: each equal horizontal step means a tenfold change (0.5→5→50→500→1,000 ha). Visible values are rounded for readability; tooltips retain the exact source decimal token.",
+
+          "area_scale": {
+
+            "type": "log",
+
+            "domain_ha": [0.5, 1000],
+
+            "axis_title": "Registered area (ha; log scale)"
+
+          },
 
           "locator_data_file": "data/v01_detail_locator_geometry.geojson",
+
+          "profile_data_file": "data/v01_regional_profiles.geojson",
 
           "maps": [
 
@@ -178,7 +224,7 @@
 
           "description": "All 165 known-register facilities below 100 ha. Horizontal position is the reported hectares; vertical offsets only separate marks.",
 
-          "annotation": "The map’s first two classes hide within-class variation. Subtype medians are similar (10.2 and 10.0 ha); V04 retains the full distribution and extremes.",
+          "annotation": "This linear 0–100 ha view shows within-range differences. The regional profiles answer the facility-by-facility question; V04 retains the full distribution and extremes.",
 
           "subset": "0 <= area_hectares < 100",
 
@@ -196,7 +242,7 @@
 
         ],
 
-        "grain": "One known-register facility feature; 182 national-map records. Regional maps repeat selected features; the area plot shows the 165 features below 100 ha.",
+        "grain": "One known-register facility feature; all 182 source records contribute to the national density estimate, while 31 below-threshold locations receive individual map marks. Regional profiles repeat 14 Sydney and 18 Melbourne features; the area plot shows the 165 features below 100 ha.",
 
         "fields": [
 
@@ -214,45 +260,45 @@
 
         "transformations": [
 
-          "Retain all 182 register features; publish point coordinates and reduced state outlines.",
+          "Retain all 182 source records, original point coordinates and reported hectares; use every coordinate for density estimation and mark only locations falling below the lowest contour at their point.",
 
-          "Classify registered hectares into four graduated size classes; retain each reported area in the tooltip.",
+          "Estimate an unweighted two-dimensional Gaussian KDE with 25, 50 and 100 km bandwidths in an Australia-centred spherical azimuthal-equidistant projection; display the selected 50 km surface as land-clipped contour lines.",
 
-          "Repeat the original coordinates for the 14-site Sydney and 18-site Melbourne windows; these insets do not add facilities.",
+          "Generate S01–S14 and M01–M18 by sorting stable globalid values within the manifest-defined windows; regional map coordinates remain unchanged and each ID has one matching area row.",
 
-          "Compare all 165 facilities below 100 ha by their exact reported hectares on a linear axis; deterministic vertical offsets only avoid point collisions."
+          "Compare regional areas with a common 0.5–1,000 ha log scale and visible source-value labels; retain the 165-site linear 0–100 ha comparison and V04 full-range box plot."
 
         ],
 
-        "measure": "Registered facility footprint in hectares; not planted area, public access, collection size or conservation performance."
+        "measure": "National contours estimate smoothed density of known register locations per 1,000 projected km². Hectares remain registered facility footprints, not planted area, public access, collection size or conservation performance."
 
       },
 
       "why": {
 
-        "question": "Where are Australia’s known botanical gardens and arboreta, and how do smaller registered areas vary within the map classes?",
+        "question": "Where are Australia's known botanical gardens and arboreta concentrated, and how do identifiable facilities differ in registered area?",
 
-        "reader_task": "Locate all known facilities, inspect crowded Sydney and Melbourne locations, then compare the 0–100 ha subset by position rather than circle size."
+        "reader_task": "Read the national location-density pattern, match regional facility IDs to their hectares, then compare the smaller national areas on a linear scale."
 
       },
 
       "how": {
 
-        "marks": "The national map uses state polygons and one graduated circle per register feature. Two regional maps repeat selected circles as fixed-size points, and a supporting strip plot shows individual areas below 100 ha.",
+        "marks": "The national map overlays state polygons with 50 km Gaussian contour lines from a scalar field estimated using all 182 facility coordinates. Each line connects places with the same estimated site concentration, matching the contour-line idiom taught in FIT3179 Week 9. Hollow circles mark only the 31 locations below the lowest displayed contour at their own coordinate. Each regional profile pairs original-coordinate locations with a complete area row for every facility. A supporting strip plot compares all eligible facilities below 100 ha.",
 
-        "channels": "The national map uses projected longitude/latitude for location, discrete circle area values 12/24/48/96 for the four registered-area classes, and categorical hue for register type. The legend gives hectare boundaries; graduated symbol values distinguish classes, not exact proportions. Regional maps use original longitude/latitude with constant-size points and type hue. The quantitative view uses exact registered hectares on a linear 0–100 ha horizontal axis, subtype rows and the existing type hue; deterministic vertical offsets are collision avoidance only.",
+        "channels": "National position encodes geography; sequential green contour lines encode smoothed location density; hollow point marks identify only the 31 facilities below 0.1 at their original coordinate; A/B labels mark the Sydney and Melbourne windows. Region IDs and leaders connect unchanged point locations to facility rows; horizontal position encodes registered hectares on the same log scale in both regions, while concise labels show rounded values and tooltips retain source decimals. The national small-area comparison retains its exact linear 0–100 ha position and subtype rows.",
 
-        "projection": "Equal Earth equal-area projection centred on Australia for the national map; local Mercator projections centred on the selected Sydney and Melbourne windows for regional separation.",
+        "projection": "A spherical azimuthal-equidistant projection centred at [133.7751, -25.2744] supplies metric coordinates for the KDE. Its radial distance is exact on the sphere; the maximum tangential scale factor is about 1.049 over the register locations. The resulting contours are inverted to longitude/latitude and drawn on the existing Equal Earth national map. Regional displays use local Mercator coordinates derived from the unchanged longitude/latitude.",
 
-        "color": "Deep blue (#003F5C) for Botanic Garden; burnt orange (#B85C00) for Arboretum.",
+        "color": "A pale-to-deep green contour palette represents increasing location density; hollow neutral circles distinguish the 31 below-threshold locations. Regional profiles retain deep blue (#003F5C) for Botanic Garden and burnt orange (#B85C00) for Arboretum.",
 
-        "ordering": "Draw state outlines before national symbols at 0.78 default opacity; keep all 182 locations. Follow with the two selected regional windows and the under-100-ha linear comparison. National-map overlap remains possible.",
+        "ordering": "Draw state boundaries and density contours, then mark only the 31 source locations below the lowest contour at their point. Retain A/B window locators. Follow with linked Sydney and Melbourne location-area profiles, then the unchanged under-100-ha linear comparison.",
 
-        "aggregation": "No aggregation. The national map has one mark per GA feature. Regional points are repeats of 14 Sydney and 18 Melbourne features; the quantitative subset contains each eligible feature once.",
+        "aggregation": "The density surface is a two-dimensional Gaussian sum over all 182 source locations, not an area-weighted or subtype-weighted count. Regional views repeat 14 Sydney and 18 Melbourne source records; the national area subset includes each of the 165 eligible facilities once.",
 
-        "interaction": "All regional and quantitative explanations are visible without interaction. Hover highlights national-map facility symbols; map and quantitative tooltips reveal facility, type, locality, jurisdiction and exact reported hectares.",
+        "interaction": "Key findings, density units, bandwidth, the 31 below-threshold locations, log-scale meaning and location-to-area IDs are visible without interaction. Tooltips are supplemental and retain exact source area tokens and facility details.",
 
-        "annotation": "182 known-register features: 120 Botanic Gardens and 62 Arboreta; Norfolk Island is included. The regional windows repeat existing sites. 165 facilities (91%) are below 100 ha; the linear view shows within-class variation and V04 retains the full range."
+        "annotation": "The 31 hollow circles mark locations below 0.1, not a facility type. Density contours are not land area or botanical coverage."
 
       }
 

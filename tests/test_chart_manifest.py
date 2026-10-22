@@ -25,8 +25,16 @@ class ChartManifestTests(unittest.TestCase):
         self.assertEqual(manifest["visible_panels"], 17)
 
         v01 = next(chart for chart in charts if chart["id"] == "V01")
+        self.assertEqual(v01["idiom"], "Spatial density contour map")
         self.assertEqual([view["id"] for view in v01["support_views"]["regional"]["maps"]], ["V01-SYD", "V01-MELB"])
         self.assertEqual(v01["support_views"]["quantitative"]["id"], "V01-AREA")
+        self.assertEqual(v01["support_views"]["regional"]["profile_data_file"], "data/v01_regional_profiles.geojson")
+        self.assertIn("data/v01_density_contours.geojson", v01["data_files"])
+        self.assertIn("data/v01_density_summary.json", v01["data_files"])
+        self.assertIn("data/v01_density_unrepresented.geojson", v01["data_files"])
+        self.assertIn("data/v01_regional_profiles.geojson", v01["data_files"])
+        self.assertEqual(v01["support_views"]["regional"]["area_scale"]["type"], "log")
+        self.assertEqual(v01["support_views"]["regional"]["area_scale"]["domain_ha"], [0.5, 1000])
 
         for chart in charts:
             self.assertTrue(chart["what"]["source"])
@@ -83,7 +91,17 @@ class ChartManifestTests(unittest.TestCase):
             [("A", "A — Sydney"), ("B", "B — Melbourne")],
         )
         self.assertEqual(support["regional"]["locator_data_file"], "data/v01_detail_locator_geometry.geojson")
+        self.assertEqual(support["regional"]["profile_data_file"], "data/v01_regional_profiles.geojson")
+        self.assertIn("50 km bandwidth", support["density"]["title"])
+        self.assertEqual(support["density"]["exception_mark"]["label"], "31 sites below 0.1 at their location")
+        self.assertIn("all 182 locations", support["density"]["note"])
+        self.assertIn("not land area or actual botanical coverage", support["density"]["note"])
+        self.assertEqual(
+            [item["label"] for item in support["density"]["contours"]],
+            ["0.1", "0.2", "0.4", "0.8"],
+        )
         self.assertIn("data/v01_detail_locator_geometry.geojson", v01["data_files"])
+        self.assertIn("tenfold change", support["regional"]["description"])
         self.assertEqual(support["quantitative"]["subset"], "0 <= area_hectares < 100")
         self.assertNotIn("V01-SYD", {chart["id"] for chart in manifest["charts"]})
         self.assertNotIn("V01-MELB", {chart["id"] for chart in manifest["charts"]})

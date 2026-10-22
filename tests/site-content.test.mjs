@@ -8,6 +8,21 @@ const manifest = JSON.parse(
   readFileSync(new URL("../public/specs/chart-manifest.json", import.meta.url), "utf8"),
 );
 
+test("pageStory keeps one unchanged jurisdiction list", () => {
+  const source = readFileSync(new URL("../src/site-content.js", import.meta.url), "utf8");
+  assert.equal((source.match(/^\s{2}jurisdictions\s*:/gm) ?? []).length, 1);
+  assert.deepEqual(pageStory.jurisdictions, [
+    "New South Wales",
+    "Victoria",
+    "Queensland",
+    "Western Australia",
+    "South Australia",
+    "Australian Capital Territory",
+    "Northern Territory",
+    "Tasmania",
+  ]);
+});
+
 test("the story has four navigable sections, including evidence and sources", () => {
   assert.deepEqual(
     pageStory.sections.map(({ id }) => id),
@@ -54,45 +69,53 @@ test("every manifest chart group appears once in the story", () => {
   assert.equal(manifest.visible_panels, 17);
 });
 
-test("V01 narrative distinguishes graduated size classes from reported hectares", () => {
+test("V01 narrative distinguishes smoothed site density from registered hectares", () => {
   const footprint = pageStory.sections.find(({ id }) => id === "footprint");
   const v01 = manifest.charts.find(({ id }) => id === "V01");
   assert.match(footprint.intro, /Three states contain 135 of the 182 known-register sites/i);
-  assert.match(footprint.intro, /Arboreta are gardens focused on trees and woody plants/i);
-  assert.match(footprint.intro, /graduated circles group registered areas, with exact hectares available on hover/i);
-  assert.doesNotMatch(footprint.intro, /circle area shows reported land footprint/i);
-  assert.equal(v01.idiom, "Graduated-symbol map");
-  assert.match(v01.how.channels, /circle area values 12\/24\/48\/96 for the four registered-area classes/i);
-  assert.match(v01.how.channels, /legend gives hectare boundaries/i);
+  assert.match(footprint.intro, /50 km Gaussian contours/i);
+  assert.match(footprint.intro, /Each contour line connects places with the same estimated site concentration/i);
+  assert.match(footprint.intro, /all 182 coordinates contribute/i);
+  assert.match(footprint.intro, /hollow circles mark the 31 facilities/i);
+  assert.match(footprint.intro, /not land area or actual botanical coverage/i);
+  assert.match(v01.how.channels, /hollow point marks identify only the 31 facilities/i);
+  assert.match(v01.how.channels, /registered hectares on the same log scale in both regions/i);
+  assert.match(v01.how.marks, /same estimated site concentration/i);
+  assert.equal(v01.idiom, "Spatial density contour map");
+  assert.match(v01.how.annotation, /31 hollow circles.*below 0\.1.*not a facility type/i);
+  assert.match(v01.how.annotation, /not land area or botanical coverage/i);
+  assert.ok(v01.how.annotation.length <= 160, "the visible V01 caption stays concise");
 });
-
-test("V01 visibly distinguishes repeated regional views, the 0–100 ha comparison, and V04's full range", () => {
+test("V01 links two regional profiles, the 165-site linear view, and V04 full range", () => {
   const footprint = pageStory.sections.find(({ id }) => id === "footprint");
   const v01 = manifest.charts.find(({ id }) => id === "V01");
   const transition = footprint.chartTransitions.find(({ afterChart }) => afterChart === "V01").text;
-  assert.match(footprint.intro, /Sydney and Melbourne detail views repeat/i);
-  assert.match(footprint.intro, /linear.*165.*(?:under|below) 100 ha/i);
-  assert.match(transition, /Sydney.*Melbourne.*repeat/i);
-  assert.match(transition, /linear.*165.*within-class/i);
-  assert.match(transition, /V04.*full range/i);
+  assert.match(footprint.intro, /Sydney and Melbourne profiles link S\/M identifiers/i);
+  assert.match(footprint.intro, /linear view compares 165 facilities below 100 ha/i);
+  assert.match(transition, /S\/M IDs link 32 sites to hectares on a shared log scale/i);
+  assert.match(transition, /All 182 coordinates feed contours/i);
+  assert.match(transition, /165 sites fall below 100 ha/i);
+  assert.match(transition, /V04 shows full range/i);
   assert.equal(v01.support_views.regional.maps.length, 2);
+  assert.equal(v01.support_views.regional.profile_data_file, "data/v01_regional_profiles.geojson");
+  assert.equal(v01.support_views.regional.density, undefined);
   assert.equal(v01.support_views.quantitative.subset, "0 <= area_hectares < 100");
   assert.equal(manifest.rubric_chart_count, 13);
   assert.equal(manifest.map_count, 3);
   assert.equal(manifest.visible_panels, 17);
 });
-
-test("V01 uses matching A/B labels to connect the national map with repeated detail views", () => {
+test("V01 keeps A/B geographic window references and matches S/M site IDs to area profiles", () => {
   const footprint = pageStory.sections.find(({ id }) => id === "footprint");
   const v01 = manifest.charts.find(({ id }) => id === "V01");
+  const transition = footprint.chartTransitions.find(({ afterChart }) => afterChart === "V01").text;
   assert.deepEqual(v01.support_views.regional.maps.map(({ title }) => title), [
     "A — Sydney area · 14 sites",
     "B — Melbourne area · 18 sites",
   ]);
-  assert.match(footprint.intro, /A — Sydney.*B — Melbourne/i);
-  assert.match(v01.support_views.regional.description, /A and B locate.*window centres.*Insets enlarge.*repeat 32 sites already in the 182-site national total.*markers show points, not full extents/i);
+  assert.match(transition, /A\/B locate Sydney and Melbourne/i);
+  assert.match(v01.support_views.regional.description, /S01–S14 and M01–M18.*match the complete facility lists/i);
+  assert.match(v01.support_views.regional.description, /base-10 logarithmic scale from 0\.5 to 1,000 ha.*tenfold change/i);
 });
-
 test("every chart has a concise visible finding or transition in reading order", () => {
   let transitionCount = 0;
   for (const section of pageStory.sections.filter(({ chartIds }) => chartIds.length > 1)) {

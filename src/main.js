@@ -29,6 +29,21 @@ function loadVegaEmbed() {
   return embedPromise;
 }
 
+function estimateSpecDimensions(spec) {
+  if (Array.isArray(spec.hconcat) || Array.isArray(spec.vconcat)) {
+    const children = spec.hconcat ?? spec.vconcat;
+    const sizes = children.map(estimateSpecDimensions);
+    const gap = Number(spec.spacing ?? 12) * Math.max(0, children.length - 1);
+    return spec.hconcat
+      ? { width: sizes.reduce((sum, size) => sum + size.width, 0) + gap, height: Math.max(...sizes.map((size) => size.height)) }
+      : { width: Math.max(...sizes.map((size) => size.width)), height: sizes.reduce((sum, size) => sum + size.height, 0) + gap };
+  }
+  return {
+    width: Number(spec.width ?? 320),
+    height: Number(spec.height ?? 220),
+  };
+}
+
 function setChartError(mount, chart) {
   const message = document.createElement("p");
   message.className = "chart-error-message";
@@ -59,11 +74,16 @@ function reserveV01SupportHeight(mount, supportView, availableWidth) {
     mount.style.minHeight = `${Math.ceil((chartHeight + 45) * scale)}px`;
     return;
   }
-  const mapHeight = Math.min(210, Math.max(160, Math.round(chartWidth * 0.62)));
-  mount.style.minHeight = `${Math.ceil((mapHeight + 4) * scale)}px`;
+  const regionCount = supportView.name === "Sydney" ? 14 : 18;
+  const narrow = width < 400;
+  const mapWidth = narrow ? Math.max(240, width - 8) : width < 760 ? 150 : 240;
+  const mapHeight = narrow ? Math.max(220, Math.min(265, Math.round(mapWidth * 0.86))) : 300;
+  const profileHeight = narrow ? regionCount * 16 + 42 : width < 760 ? 360 : 300;
+  const contentHeight = narrow ? mapHeight + profileHeight + 55 : Math.max(mapHeight, profileHeight) + 44;
+  mount.style.minHeight = `${Math.ceil(contentHeight * scale)}px`;
 }
 
-async function renderV01SupportCharts(figure, chart, embed, facilityFeatures) {
+async function renderV01SupportCharts(figure, chart, embed, facilityFeatures, profileFeatures) {
   const supportViews = [
     ...chart.support_views.regional.maps,
     chart.support_views.quantitative,
@@ -94,11 +114,15 @@ async function renderV01SupportCharts(figure, chart, embed, facilityFeatures) {
         mount.setAttribute("aria-busy", "true");
 
         try {
-          const spec = adaptChartSpec(sourceSpec, supportView.id, width, facilityFeatures);
-          const totalSpecWidth = supportView.id === "V01-AREA" ? spec.width + 118 : spec.width;
+          const viewForAdaptation = supportView.id === "V01-AREA"
+            ? supportView
+            : { ...supportView, area_scale: chart.support_views.regional.area_scale };
+          const spec = adaptChartSpec(sourceSpec, supportView.id, width, facilityFeatures, profileFeatures, viewForAdaptation);
+          const dimensions = estimateSpecDimensions(spec);
+          const totalSpecWidth = supportView.id === "V01-AREA" ? spec.width + 118 : dimensions.width + 4;
           const displayScale = Math.min(1, mount.clientWidth / totalSpecWidth);
-          const embedExtraHeight = supportView.id === "V01-AREA" ? 45 : 4;
-          mount.style.minHeight = `${Math.ceil((spec.height + embedExtraHeight) * displayScale)}px`;
+          const embedExtraHeight = supportView.id === "V01-AREA" ? 45 : 44;
+          mount.style.minHeight = `${Math.ceil((dimensions.height + embedExtraHeight) * displayScale)}px`;
           const result = await embed(mount, spec, {
             actions: false,
             renderer: "svg",
@@ -150,10 +174,14 @@ async function renderChart(figure, chart, registerChartView) {
   const specUrl = resolveChartSpecUrl(chart.spec, siteBaseUrl);
   const sourceSpec = localizeDataUrls(await fetchJson(specUrl, chart.id), specUrl);
   let facilityFeatures;
+  let profileFeatures;
   if (chart.support_views) {
     const pointsPath = chart.data_files.find((dataPath) => dataPath.endsWith("facility_points.geojson"));
     const collection = await fetchJson(new URL(pointsPath, siteBaseUrl), "V01 facility points");
     facilityFeatures = collection.features;
+    const profilePath = chart.support_views.regional.profile_data_file;
+    const profileCollection = await fetchJson(new URL(profilePath, siteBaseUrl), "V01 regional profile data");
+    profileFeatures = profileCollection.features;
   }
   const embed = await loadVegaEmbed();
   let activeView;
@@ -279,7 +307,9 @@ async function renderChart(figure, chart, registerChartView) {
   }
 
   await renderAtWidth(mount.clientWidth);
-  if (chart.support_views) await renderV01SupportCharts(figure, chart, embed, facilityFeatures);
+  if (chart.support_views) {
+    await renderV01SupportCharts(figure, chart, embed, facilityFeatures, profileFeatures);
+  }
   if ("ResizeObserver" in window) {
     const observer = new ResizeObserver(([entry]) => {
       renderAtWidth(entry.contentRect.width);

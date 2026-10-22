@@ -11,15 +11,21 @@ const facilitiesMap = JSON.parse(
 const rankChart = JSON.parse(
   readFileSync(new URL("../public/specs/V03-count-rate-slopegraph.json", import.meta.url), "utf8"),
 );
-const symbolMap = JSON.parse(
+const densityMap = JSON.parse(
+  readFileSync(new URL("../public/specs/V01-density-contour-map.json", import.meta.url), "utf8"),
+);
+const legacyDensityMap = JSON.parse(
   readFileSync(new URL("../public/specs/V01-facility-symbol-map.json", import.meta.url), "utf8"),
 );
-const nationalSymbolMap = symbolMap.vconcat?.[0] ?? symbolMap;
-const nationalFacilityLayer = nationalSymbolMap.layer.find(
-  (layer) => layer.data?.url === "../data/facility_points.geojson",
+const nationalDensityMap = densityMap.vconcat?.[0] ?? densityMap;
+const nationalExceptionLayer = nationalDensityMap.layer.find(
+  (layer) => layer.data?.url === "../data/v01_density_unrepresented.geojson",
 );
 const facilityPoints = JSON.parse(
   readFileSync(new URL("../public/data/facility_points.geojson", import.meta.url), "utf8"),
+);
+const belowContourPoints = JSON.parse(
+  readFileSync(new URL("../public/data/v01_density_unrepresented.geojson", import.meta.url), "utf8"),
 );
 const stateRankComparison = readFileSync(
   new URL("../public/data/state_rank_comparison.csv", import.meta.url),
@@ -167,14 +173,14 @@ test("V08 uses a readable thousand-record axis with the exact range", () => {
   assert.match(kingsPark.encoding.x.axis.labelExpr, /datum\.value/);
 });
 
-test("V02 and V03 share a state-focus signal and V01 highlights hovered facilities", () => {
+test("V02 and V03 share state focus while V01 keeps findings visible without hover", () => {
   assert.equal(facilitiesMap.params?.[0]?.name, "linkedState");
   assert.equal(rankChart.params?.[0]?.name, "linkedState");
   assert.match(facilitiesMap.layer[1].encoding.opacity.condition.test, /linkedState/);
   assert.match(rankLine.encoding.opacity.condition.test, /linkedState/);
   assert.match(rankEndpointLabels.encoding.opacity.condition.test, /linkedState/);
-  assert.equal(nationalFacilityLayer.params?.[0]?.select?.on, "pointerover");
-  assert.ok(nationalFacilityLayer.encoding.opacity.condition);
+  assert.equal(nationalExceptionLayer.params, undefined);
+  assert.equal(nationalExceptionLayer.encoding.opacity, undefined);
 });
 
 test("V02 projection keeps the choropleth inside a compact Australia-focused frame", () => {
@@ -183,108 +189,115 @@ test("V02 projection keeps the choropleth inside a compact Australia-focused fra
   assert.equal(facilitiesMap.projection.translate.signal, "[width / 2, 206]");
 });
 
-test("V01 classifies each site once and uses an ordered graduated-symbol legend", () => {
-  const size = nationalFacilityLayer.encoding.size;
-  const classExpression = nationalFacilityLayer.transform?.find(
-    (transform) => transform.as === "registered_area_class",
-  )?.calculate;
-  assert.ok(classExpression, "V01 must calculate explicit registered-area classes");
-  assert.equal(
-    classExpression,
-    "datum.properties.area_hectares < 10 ? '0–<10 ha' : datum.properties.area_hectares < 100 ? '10–<100 ha' : datum.properties.area_hectares < 1000 ? '100–<1,000 ha' : '≥1,000 ha'",
-  );
-  const classify = (areaHectares) => {
-    if (areaHectares < 10) return "0–<10 ha";
-    if (areaHectares < 100) return "10–<100 ha";
-    if (areaHectares < 1000) return "100–<1,000 ha";
-    return "≥1,000 ha";
-  };
-  const classLabels = ["0–<10 ha", "10–<100 ha", "100–<1,000 ha", "≥1,000 ha"];
-  const classCounts = new Map(classLabels.map((label) => [label, 0]));
+test("the legacy V01 specification URL remains an exact compatibility copy", () => {
+  assert.deepEqual(legacyDensityMap, densityMap);
+});
 
-  for (const feature of facilityPoints.features) {
-    const areaClass = classify(feature.properties.area_hectares);
-    assert.ok(classCounts.has(areaClass), `Unexpected class for ${feature.properties.feature_name}`);
-    classCounts.set(areaClass, classCounts.get(areaClass) + 1);
-  }
-
-  assert.deepEqual([...classCounts], [
-    ["0–<10 ha", 81],
-    ["10–<100 ha", 84],
-    ["100–<1,000 ha", 16],
-    ["≥1,000 ha", 1],
-  ]);
+test("V01 encodes density with fixed-stroke contours and only the 31 below-threshold locations", () => {
+  const pointLayer = nationalExceptionLayer;
+  const contourLayers = densityMap.layer.filter((layer) =>
+    layer.data?.url === "../data/v01_density_contours.geojson");
+  const contourLevels = contourLayers.map((layer) => {
+    const filter = layer.transform?.find((item) => item.filter)?.filter ?? "";
+    return Number(filter.match(/density_sites_per_1000_projected_km2 === ([0-9.]+)/)?.[1]);
+  });
   assert.equal(facilityPoints.features.length, 182);
   assert.equal(new Set(facilityPoints.features.map(({ properties }) => properties.globalid)).size, 182);
   assert.equal(new Set(facilityPoints.features.map(({ geometry }) => geometry.coordinates.join(","))).size, 182);
   assert.ok(facilityPoints.features.every(({ properties }) => Number.isFinite(properties.area_hectares)));
-  assert.deepEqual(
-    [9.999, 10, 99.999, 100, 999.999, 1000].map(classify),
-    ["0–<10 ha", "10–<100 ha", "10–<100 ha", "100–<1,000 ha", "100–<1,000 ha", "≥1,000 ha"],
-  );
-
-  assert.equal(nationalSymbolMap.layer.length, 6, "V01 layers should keep locators inside the existing map");
-  assert.match(siteStyles, /#chart-mount-V01\s+\.layer_0_marks\s*\{[^}]*pointer-events:\s*none/s);
-  assert.match(siteStyles, /#chart-mount-V01\s+\.background\s*\{[^}]*pointer-events:\s*none/s);
-  assert.match(siteStyles, /#chart-mount-V01\s+\.layer_1_marks\s*,\s*#chart-mount-V01\s+\.layer_3_marks\s*,\s*#chart-mount-V01\s+\.layer_4_marks\s*,\s*#chart-mount-V01\s+\.layer_5_marks\s*\{[^}]*pointer-events:\s*none/s);
-  assert.match(siteStyles, /#chart-mount-V01\s+\.layer_2_marks\s+path\s*\{[^}]*pointer-events:\s*all\s*!important/s);
-  assert.equal(nationalFacilityLayer.mark.type, "circle");
-  assert.equal(nationalFacilityLayer.encoding.shape, undefined, "facility type must not be duplicated by shape");
-  assert.equal(size.field, "registered_area_class");
-  assert.equal(size.type, "nominal");
-  assert.equal(size.title, "Registered area class");
-  assert.deepEqual(size.scale.domain, classLabels);
-  assert.deepEqual(size.scale.range, [12, 24, 48, 96]);
-  assert.equal(nationalFacilityLayer.mark.opacity, 1);
-  assert.equal(nationalFacilityLayer.encoding.opacity.value, 0.78);
-  assert.deepEqual(size.legend.values, classLabels);
-  assert.equal(size.legend.title, "Registered area class");
-
-  const areaTooltip = nationalFacilityLayer.encoding.tooltip.find(
-    (entry) => entry.field === "properties.area_hectares",
-  );
-  assert.equal(areaTooltip.format, ",.1f", "tooltip should preserve the reported hectares");
-  assert.match(symbolMap.description, /graduated|classes/i);
-  assert.doesNotMatch(symbolMap.description, /area is proportional/i);
-  assert.match(humanChartManifest, /\|\s*V01\s*\|[^\n]*\|\s*Graduated-symbol map\s*\|/);
-  assert.match(humanChartManifest, /four graduated circle sizes encode registered-area classes/i);
-  assert.doesNotMatch(humanChartManifest, /Proportional-symbol map/i);
-  assert.equal(facilitiesMap.layer[1].encoding.color.scale.scheme, "blues");
+  assert.equal(belowContourPoints.features.length, 31);
+  assert.equal(belowContourPoints.metadata.source_facility_count, 182);
+  assert.equal(belowContourPoints.metadata.selected_bandwidth_km, 50);
+  assert.ok(belowContourPoints.features.every((feature) => facilityPoints.features.some((source) =>
+    source.properties.globalid === feature.properties.globalid
+      && source.geometry.coordinates.join(",") === feature.geometry.coordinates.join(","))));
+  assert.equal(pointLayer.mark.type, "circle");
+  assert.equal(pointLayer.mark.size, 32);
+  assert.equal(pointLayer.mark.fill, "#fffdf7");
+  assert.equal(pointLayer.mark.stroke, "#263a31");
+  assert.equal(pointLayer.encoding.size, undefined, "registered hectares are not encoded by national dot size");
+  assert.equal(pointLayer.encoding.color, undefined, "national exception marks do not add a category colour channel");
+  assert.equal(pointLayer.encoding.shape, undefined);
+  assert.deepEqual(contourLevels, [0.1, 0.2, 0.4, 0.8]);
+  assert.ok(contourLayers.every((layer) => layer.mark.stroke && layer.encoding.shape.field === "geometry"));
+  assert.equal(densityMap.layer.filter((layer) => layer.data?.url === "../data/v01_detail_locator_geometry.geojson").length, 4);
+  assert.match(densityMap.description, /Gaussian|density contour/i);
+  assert.match(densityMap.description, /not hectares|not.*coverage/i);
+  assert.match(densityMap.description, /all 182.*31 locations/i);
+  assert.match(humanChartManifest, /\\|\\s*V01\\s*\\|[^\\n]*\\|\\s*Spatial density contour map\\s*\\|/);
+  assert.match(humanChartManifest, /50 km bandwidth/i);
 });
-
-test("V01 and V04 use the approved CVD-screened facility-type colours", () => {
-  const mapColors = nationalFacilityLayer.encoding.color.scale.range;
+test("V01 regional profiles and V04 use the approved CVD-screened facility-type colours", () => {
+  const regionalFacilityLayer = sydneyDetail.hconcat[0].layer.find((layer) => layer.mark?.type === "circle");
+  const mapColors = regionalFacilityLayer.encoding.color.scale.range;
   const boxplotColors = facilityBoxplot.encoding.color.scale.range;
+  const contourColors = v01Manifest.support_views.density.contours.map(({ color }) => color);
   assert.deepEqual(mapColors, ["#003F5C", "#B85C00"]);
   assert.deepEqual(boxplotColors, mapColors);
+  const contourLuminance = contourColors.map(relativeLuminance);
+  assert.ok(contourLuminance.every((value, index) => index === 0 || value < contourLuminance[index - 1]));
+  assert.ok(contrastRatio(contourColors[0], "#f1efe7") >= 2);
   assert.ok(minimumCvdSeparation(mapColors) >= 70);
   for (const color of mapColors) {
     assert.ok(contrastRatio(color, "#f1efe7") >= 3, `${color} lacks symbol contrast on the map land`);
   }
 });
 
-test("V01 regional details use bounded original coordinates and V01 area uses exact linear hectares", () => {
+test("V01 links each regional point to one exact source-area row on a common log scale", () => {
+  const profiles = JSON.parse(
+    readFileSync(new URL("../public/data/v01_regional_profiles.geojson", import.meta.url), "utf8"),
+  ).features.filter((feature) => feature.properties.kind === "facility");
   const viewByName = new Map(v01Manifest.support_views.regional.maps.map((view) => [view.name, view]));
   const cases = [
-    { name: "Sydney", spec: sydneyDetail, bounds: [150.6, 151.4, -34.2, -33.5], state: "NSW", count: 14 },
-    { name: "Melbourne", spec: melbourneDetail, bounds: [144.55, 145.4, -38.25, -37.55], state: "VIC", count: 18 },
+    { name: "Sydney", prefix: "S", bounds: [150.6, 151.4, -34.2, -33.5], count: 14 },
+    { name: "Melbourne", prefix: "M", bounds: [144.55, 145.4, -38.25, -37.55], count: 18 },
   ];
-  for (const { name, spec, bounds, state, count } of cases) {
-    const regionView = viewByName.get(name);
-    const stateLayer = spec.layer[0];
-    const pointLayer = spec.layer[1];
-    const points = facilityPoints.features.filter((feature) => {
-      const { longitude, latitude } = feature.properties;
-      return longitude >= bounds[0] && longitude <= bounds[1] && latitude >= bounds[2] && latitude <= bounds[3];
-    });
-    assert.equal(points.length, count);
-    assert.equal(regionView.bounds.longitude[0], bounds[0]);
-    assert.equal(regionView.bounds.longitude[1], bounds[1]);
-    assert.equal(stateLayer.transform[0].filter, `datum.properties.state_abbreviation === '${state}'`);
-    assert.equal(pointLayer.mark.type, "circle");
-    assert.equal(pointLayer.mark.size, 26);
-    assert.equal(pointLayer.encoding.longitude.field, "properties.longitude");
-    assert.equal(pointLayer.encoding.latitude.field, "properties.latitude");
+  for (const item of cases) {
+    const [west, east, south, north] = item.bounds;
+    const source = facilityPoints.features
+      .filter((feature) => {
+        const { longitude, latitude } = feature.properties;
+        return longitude >= west && longitude <= east && latitude >= south && latitude <= north;
+      })
+      .sort((first, second) => first.properties.globalid < second.properties.globalid ? -1 : 1);
+    const rows = profiles
+      .filter((feature) => feature.properties.region === item.name)
+      .sort((first, second) => first.properties.short_id.localeCompare(second.properties.short_id));
+    assert.equal(source.length, item.count);
+    assert.equal(rows.length, item.count);
+    assert.equal(viewByName.get(item.name).bounds.longitude[0], west);
+    assert.equal(viewByName.get(item.name).bounds.longitude[1], east);
+    for (let index = 0; index < item.count; index += 1) {
+      assert.equal(rows[index].properties.short_id, item.prefix + String(index + 1).padStart(2, "0"));
+      assert.equal(rows[index].properties.globalid, source[index].properties.globalid);
+      assert.deepEqual(rows[index].geometry.coordinates, source[index].geometry.coordinates);
+      assert.equal(rows[index].properties.area_hectares, source[index].properties.area_hectares);
+      assert.ok(rows[index].properties.display_label.includes(source[index].properties.feature_name));
+      assert.equal(
+        [rows[index].properties.display_label_line1, rows[index].properties.display_label_line2].filter(Boolean).join(" "),
+        rows[index].properties.display_label,
+        "full facility names stay visible across at most two readable lines",
+      );
+    }
+  }
+
+  for (const spec of [sydneyDetail, melbourneDetail]) {
+    const mapLayer = spec.hconcat[0].layer.find((layer) => layer.mark?.type === "circle");
+    assert.equal(mapLayer.mark.size, 30);
+    assert.equal(mapLayer.encoding.x.field, "properties.x_km");
+    assert.equal(mapLayer.encoding.y.field, "properties.y_km");
+    const areaView = spec.hconcat[1].hconcat[1];
+    assert.equal(areaView.encoding.x.field, "properties.area_hectares");
+    assert.equal(areaView.encoding.x.scale.type, "log");
+    assert.deepEqual(areaView.encoding.x.scale.domain, [0.5, 1000]);
+    assert.equal(areaView.encoding.y.field, "properties.display_order");
+    assert.deepEqual(areaView.encoding.tooltip.map(({ field }) => field), [
+      "properties.short_id",
+      "properties.feature_name",
+      "properties.area_text",
+    ]);
+    assert.match(spec.description, /0\.5–1,000 ha/i);
+    assert.doesNotMatch(spec.description, /0\.5–500 ha/i);
   }
 
   assert.equal(v01AreaSubset.encoding.x.field, "area");
@@ -293,14 +306,12 @@ test("V01 regional details use bounded original coordinates and V01 area uses ex
   assert.equal(v01AreaSubset.encoding.color.field, "type");
   assert.equal(v01AreaSubset.encoding.y.field, "displayY");
   assert.equal(v01Manifest.support_views.quantitative.subset, "0 <= area_hectares < 100");
-  assert.match(v01AreaSubset.description, /vertical offsets only reduce mark collisions/i);
-  assert.equal(v01Manifest.idiom, "Graduated-symbol map");
+  assert.equal(v01Manifest.idiom, "Spatial density contour map");
   assert.equal(manifest.visible_panels, 17);
   assert.equal(manifest.rubric_chart_count, 13);
   assert.equal(manifest.map_count, 3);
   assert.equal(manifest.advanced_idiom_types.length, 8);
 });
-
 test("V02 state labels switch polarity to preserve text contrast on dark rate fills", () => {
   const labels = facilitiesMap.layer[2];
   assert.equal(labels.mark.fontSize, 12);
@@ -403,9 +414,10 @@ test("V10 exposes sparse bins with a monotonic sequential range and matching leg
   assert.ok(contrastRatio(low, "#f1efe7") >= 3, `${low} is too close to the land background`);
 });
 
-test("the chart manifest explains hover and linked-jurisdiction interactions", () => {
+test("the chart manifest explains visible V01 evidence and linked-jurisdiction interaction", () => {
   const chartById = new Map(manifest.charts.map((chart) => [chart.id, chart]));
-  assert.match(chartById.get("V01").how.interaction, /hover highlights/i);
+  assert.match(chartById.get("V01").how.interaction, /visible without interaction/i);
+  assert.match(chartById.get("V01").how.interaction, /tooltips are supplemental/i);
   assert.match(chartById.get("V02").how.interaction, /linked.*V03/i);
   assert.match(chartById.get("V03").how.interaction, /linked.*V02/i);
   assert.match(chartById.get("V03").how.interaction, /click legend.*focus/i);

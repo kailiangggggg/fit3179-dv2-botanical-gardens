@@ -22,7 +22,7 @@ function localizeDataUrls(value, specUrl) {
 }
 
 async function mountPreview() {
-  const specUrl = new URL("./specs/V01-facility-symbol-map.json", document.baseURI);
+  const specUrl = new URL("./specs/V01-density-contour-map.json", document.baseURI);
   const response = await fetch(specUrl);
   if (!response.ok) throw new Error(`Chart specification returned ${response.status}`);
   const spec = await response.json();

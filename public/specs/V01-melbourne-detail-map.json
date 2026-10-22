@@ -1,45 +1,140 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Melbourne regional detail view. The map repeats facilities already present in V01's 182-site national register and uses their original coordinates.",
-  "width": 420,
-  "height": 220,
-  "projection": {
-    "type": "mercator",
-    "center": [144.975, -37.9],
-    "scale": {
-      "signal": "min((width - 28) / 0.014835298641951702, (height - 24) / 0.015483106403231028) * 0.92"
-    },
-    "translate": {"signal": "[width / 2, height / 2]"}
-  },
-  "layer": [
+  "description": "Linked Melbourne location and registered-area profile. M01–M18 are generated from stable source IDs in ascending globalid order. Map points retain the source longitude and latitude; labels are offset with leaders only when needed for legibility. The profile uses the shared base-10 logarithmic domain 0.5–1,000 ha, where equal horizontal steps mean tenfold area changes; concise labels are rounded for readability and tooltips retain the exact source decimal token.",
+  "spacing": 8,
+  "hconcat": [
     {
-      "data": {"url": "../data/state_rates.geojson", "format": {"type": "json", "property": "features"}},
-      "transform": [{"filter": "datum.properties.state_abbreviation === 'VIC'"}],
-      "mark": {"type": "geoshape", "fill": "#f1efe7", "stroke": "#b8c3bb", "strokeWidth": 0.65},
-      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
-    },
-    {
-      "data": {"url": "../data/facility_points.geojson", "format": {"type": "json", "property": "features"}},
-      "transform": [{"filter": "datum.properties.longitude >= 144.55 && datum.properties.longitude <= 145.4 && datum.properties.latitude >= -38.25 && datum.properties.latitude <= -37.55"}],
-      "mark": {"type": "circle", "filled": true, "size": 26, "opacity": 0.94, "stroke": "#fffdf7", "strokeWidth": 0.7},
-      "encoding": {
-        "longitude": {"field": "properties.longitude", "type": "quantitative", "axis": null},
-        "latitude": {"field": "properties.latitude", "type": "quantitative", "axis": null},
-        "color": {
-          "field": "properties.feature_subtype",
-          "type": "nominal",
-          "scale": {"domain": ["Botanic Garden", "Arboretum"], "range": ["#003F5C", "#B85C00"]},
-          "legend": null
+      "width": 240,
+      "height": 340,
+      "layer": [
+        {
+          "data": {
+            "url": "../data/v01_regional_profiles.geojson",
+            "format": {"type": "json", "property": "features"}
+          },
+          "transform": [{"filter": "datum.properties.kind === 'boundary-point' && datum.properties.region === 'Melbourne'"}],
+          "mark": {"type": "line", "stroke": "#aebbb2", "strokeWidth": 0.7},
+          "encoding": {
+            "x": {"field": "properties.x_km", "type": "quantitative", "scale": {"domain": [0, 1], "nice": false, "zero": false}, "axis": null},
+            "y": {"field": "properties.y_km", "type": "quantitative", "scale": {"domain": [0, 1], "nice": false, "zero": false}, "axis": null},
+            "detail": {"field": "properties.segment_id", "type": "nominal"},
+            "order": {"field": "properties.vertex_order", "type": "quantitative"}
+          }
         },
-        "tooltip": [
-          {"field": "properties.feature_name", "type": "nominal", "title": "Facility"},
-          {"field": "properties.feature_subtype", "type": "nominal", "title": "Register type"},
-          {"field": "properties.locality", "type": "nominal", "title": "Locality"},
-          {"field": "properties.state", "type": "nominal", "title": "State / territory"},
-          {"field": "properties.area_hectares", "type": "quantitative", "title": "Registered area (ha)", "format": ",.1f"}
-        ]
-      }
+        {
+          "data": {
+            "url": "../data/v01_regional_profiles.geojson",
+            "format": {"type": "json", "property": "features"}
+          },
+          "transform": [{"filter": "datum.properties.kind === 'leader-point' && datum.properties.region === 'Melbourne'"}],
+          "mark": {"type": "line", "stroke": "#59665e", "strokeWidth": 0.6, "opacity": 0.72},
+          "encoding": {
+            "x": {"field": "properties.x_km", "type": "quantitative", "scale": {"domain": [0, 1], "nice": false, "zero": false}, "axis": null},
+            "y": {"field": "properties.y_km", "type": "quantitative", "scale": {"domain": [0, 1], "nice": false, "zero": false}, "axis": null},
+            "detail": {"field": "properties.leader_id", "type": "nominal"},
+            "order": {"field": "properties.vertex_order", "type": "quantitative"}
+          }
+        },
+        {
+          "data": {
+            "url": "../data/v01_regional_profiles.geojson",
+            "format": {"type": "json", "property": "features"}
+          },
+          "transform": [{"filter": "datum.properties.kind === 'facility' && datum.properties.region === 'Melbourne'"}],
+          "mark": {"type": "circle", "size": 30, "stroke": "#fffdf7", "strokeWidth": 0.8},
+          "encoding": {
+            "x": {"field": "properties.x_km", "type": "quantitative", "scale": {"domain": [0, 1], "nice": false, "zero": false}, "axis": null},
+            "y": {"field": "properties.y_km", "type": "quantitative", "scale": {"domain": [0, 1], "nice": false, "zero": false}, "axis": null},
+            "color": {
+              "field": "properties.feature_subtype",
+              "type": "nominal",
+              "scale": {"domain": ["Botanic Garden", "Arboretum"], "range": ["#003F5C", "#B85C00"]},
+              "legend": null
+            }
+          }
+        },
+        {
+          "data": {
+            "url": "../data/v01_regional_profiles.geojson",
+            "format": {"type": "json", "property": "features"}
+          },
+          "transform": [{"filter": "datum.properties.kind === 'facility' && datum.properties.region === 'Melbourne'"}],
+          "mark": {"type": "text", "align": "center", "baseline": "middle", "font": "Source Sans 3", "fontSize": 9.5, "fontWeight": 700, "color": "#263a31"},
+          "encoding": {
+            "x": {"field": "properties.label_x_km", "type": "quantitative", "scale": {"domain": [0, 1], "nice": false, "zero": false}, "axis": null},
+            "y": {"field": "properties.label_y_km", "type": "quantitative", "scale": {"domain": [0, 1], "nice": false, "zero": false}, "axis": null},
+            "text": {"field": "properties.short_id", "type": "nominal"}
+          }
+        }
+      ],
+      "resolve": {"scale": {"x": "shared", "y": "shared"}}
+    },
+    {
+      "hconcat": [
+        {
+          "width": 240,
+          "height": 340,
+          "data": {
+            "url": "../data/v01_regional_profiles.geojson",
+            "format": {"type": "json", "property": "features"}
+          },
+          "transform": [{"filter": "datum.properties.kind === 'facility' && datum.properties.region === 'Melbourne'"}],
+          "mark": {"type": "text", "align": "left", "baseline": "middle", "font": "Source Sans 3", "fontSize": 8.8, "color": "#34443a"},
+          "encoding": {
+            "x": {"value": 2},
+            "y": {"field": "properties.display_order", "type": "ordinal", "sort": "ascending", "axis": null},
+            "text": {"field": "properties.display_label", "type": "nominal"}
+          }
+        },
+        {
+          "width": 320,
+          "height": 340,
+          "data": {
+            "url": "../data/v01_regional_profiles.geojson",
+            "format": {"type": "json", "property": "features"}
+          },
+          "transform": [{"filter": "datum.properties.kind === 'facility' && datum.properties.region === 'Melbourne'"}],
+          "mark": {"type": "circle", "size": 28, "stroke": "#fffdf7", "strokeWidth": 0.5},
+          "encoding": {
+            "x": {
+              "field": "properties.area_hectares",
+              "type": "quantitative",
+              "scale": {"type": "log", "base": 10, "domain": [0.5, 1000], "nice": false, "clamp": false},
+              "axis": {"title": "Registered area (ha; log scale)", "values": [0.5, 5, 50, 500, 1000], "grid": true, "labelFontSize": 8.5, "titleFontSize": 9.5}
+            },
+            "y": {"field": "properties.display_order", "type": "ordinal", "sort": "ascending", "axis": null},
+            "color": {
+              "field": "properties.feature_subtype",
+              "type": "nominal",
+              "scale": {"domain": ["Botanic Garden", "Arboretum"], "range": ["#003F5C", "#B85C00"]},
+              "legend": null
+            },
+            "tooltip": [
+              {"field": "properties.short_id", "type": "nominal", "title": "ID"},
+              {"field": "properties.feature_name", "type": "nominal", "title": "Facility"},
+              {"field": "properties.area_text", "type": "nominal", "title": "Registered area (source ha)"}
+            ]
+          }
+        },
+        {
+          "width": 86,
+          "height": 340,
+          "data": {
+            "url": "../data/v01_regional_profiles.geojson",
+            "format": {"type": "json", "property": "features"}
+          },
+          "transform": [{"filter": "datum.properties.kind === 'facility' && datum.properties.region === 'Melbourne'"}],
+          "mark": {"type": "text", "align": "right", "baseline": "middle", "font": "Source Sans 3", "fontSize": 8.6, "color": "#34443a"},
+          "encoding": {
+            "x": {"value": 84},
+            "y": {"field": "properties.display_order", "type": "ordinal", "sort": "ascending", "axis": null},
+            "text": {"field": "properties.area_label", "type": "nominal"}
+          }
+        }
+      ],
+      "resolve": {"scale": {"y": "shared"}}
     }
   ],
+  "resolve": {"scale": {"x": "independent", "y": "independent"}},
   "config": {"view": {"stroke": null}}
 }

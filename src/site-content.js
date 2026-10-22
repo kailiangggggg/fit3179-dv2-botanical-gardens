@@ -25,16 +25,6 @@ export const pageStory = {
     "Northern Territory",
     "Tasmania",
   ],
-  jurisdictions: [
-    "New South Wales",
-    "Victoria",
-    "Queensland",
-    "Western Australia",
-    "South Australia",
-    "Australian Capital Territory",
-    "Northern Territory",
-    "Tasmania",
-  ],
   sections: [
     {
       id: "footprint",
@@ -42,20 +32,20 @@ export const pageStory = {
       navLabel: "A national footprint",
       eyebrow: "MAP & REGISTER",
       title: "A national footprint",
-      question: "Where are the known gardens and arboreta—and how do their registered sites differ?",
+      question: "Where do known gardens and arboreta cluster—and how do identifiable sites differ in registered area?",
       intro:
-        "Three states contain 135 of the 182 known-register sites. Arboreta are gardens focused on trees and woody plants; graduated circles group registered areas, with exact hectares available on hover. Sydney and Melbourne detail views repeat existing sites; A — Sydney and B — Melbourne label their windows on the national map. A linear view compares 165 facilities below 100 ha.",
+        "Three states contain 135 of the 182 known-register sites. The national 50 km Gaussian contours estimate smoothed location density: each contour line connects places with the same estimated site concentration. All 182 coordinates contribute; hollow circles mark the 31 facilities below the lowest contour at their recorded point. Contours describe site density, not land area or actual botanical coverage. Sydney and Melbourne profiles link S/M identifiers to original coordinates and registered hectares. A separate linear view compares 165 facilities below 100 ha.",
       paragraphs: [
-        "A register entry is not a guarantee that every facility is represented. Reported hectares describe a registered footprint, not planted area, public access, the size of a collection or conservation capacity.",
+        "The contour estimate changes with bandwidth and is clipped to land at a 15 km grid resolution, so coastal density may be understated. The regional profiles share a base-10 logarithmic scale: equal horizontal steps mean tenfold area changes. Labels use sensible precision; hover tooltips preserve source decimals. Registered hectares describe reported footprints, not planted area, access, collection size or conservation capacity. V04 retains the full range and extremes.",
       ],
       transition:
-        "The register shows where known facilities sit; it cannot tell us which plants their collections document. The next chapter moves from institutions to public records.",
+        "The contours summarize known-site locations; V02 asks a different question by comparing jurisdiction counts relative to population. Neither measure describes public access. The next chapter moves from institutions to collection records.",
       chartIds: ["V01", "V02", "V03", "V04"],
       chartTransitions: [
         {
           afterChart: "V01",
           emphasis: true,
-          text: "A and B locate Sydney and Melbourne; insets repeat 32 of the 182 sites. The linear 0–100 ha plot compares 165 smaller facilities and shows within-class differences. V04 keeps the full range; V02 adjusts counts for population.",
+          text: "All 182 coordinates feed contours; hollow circles mark 31 below 0.1. A/B locate Sydney and Melbourne. S/M IDs link 32 sites to hectares on a shared log scale. 165 sites fall below 100 ha; V04 shows full range.",
         },
         {
           afterChart: "V02",

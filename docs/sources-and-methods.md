@@ -9,7 +9,15 @@
 
 **Licence:** CC BY 4.0 as recorded in the source recheck. Attribution is included in the site source notes. State boundaries in the map are from the ABS source below. The register is a known-facility layer, not proof that all facilities are represented, publicly accessible, or equally active in conservation.
 
-**Use:** V01 maps one point per register feature and scales circle area to reported hectares. V02/V03 count facilities by the GA state code and compare the resulting population-standardized rates. V04 compares registered areas by subtype. The public point file omits source polygon detail and retains only chart fields.
+**Use:** V01 estimates where the registered locations cluster, links Sydney and Melbourne points to their reported hectares, and compares the 165 facilities below 100 ha on a linear axis. V02/V03 compare GA counts by state with population-standardized rates. V04 compares registered areas by subtype. The public point file omits source polygon detail and retains only chart fields.
+
+**V01 density method:** All 182 source coordinates contribute equally to an unweighted two-dimensional Gaussian kernel density estimate. Coordinates are projected to a spherical azimuthal-equidistant plane centred at 133.7751° E, 25.2744° S. The selected 50 km bandwidth was compared with 25 km and 100 km alternatives; the field is sampled on a 15 km grid. Four land-clipped contour levels are shown: 0.1, 0.2, 0.4 and 0.8 known-register locations per 1,000 projected km². Each contour line connects places with the same estimated site concentration. This is a scalar-field contour map, matching the contour-line idiom taught in FIT3179 Week 9, not an elevation map. Its geometry differs from V02's per-capita choropleth and V10's equal-area hexagons, which aggregate seed-origin records.
+
+The 31 hollow circles identify source facilities whose pointwise estimate is below 0.1 at their recorded coordinate; they do not identify a facility type. The other 151 facilities remain part of the density estimate but have no separate national point mark. The coastline is rasterized at 15 km and the KDE has no coastal edge correction, so density near the coast can be understated. The register is not a complete census. Contours describe smoothed location density, not registered land area, planted area, botanical coverage or conservation effectiveness. Norfolk Island is plotted outside the state outline.
+
+The density summary's `land_area_above_level_km2` values are approximate areas of rasterized land-mask cells where the modeled density meets or exceeds each contour level. They are grid diagnostics, not registered facility land area or botanical coverage.
+
+Sydney's 14 and Melbourne's 18 regional points are repeats from the national 182, retained at original coordinates and linked by stable S01–S14 / M01–M18 identifiers sorted by `globalid`. Both area profiles share a 0.5–1,000 ha base-10 logarithmic scale; equal steps mean tenfold changes. Visible hectares are rounded (two decimals below 10 ha, one decimal at or above 10 ha), while tooltips retain the exact source decimal token. The separate national 165-site comparison keeps each original area on a linear 0–100 ha axis; V04 shows the full area distribution.
 
 ## Australian Bureau of Statistics
 

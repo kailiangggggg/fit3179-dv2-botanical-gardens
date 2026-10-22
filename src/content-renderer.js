@@ -119,9 +119,45 @@ function formatRegionalWindow(bounds) {
   return `Window ${west.toFixed(2)}–${east.toFixed(2)}° E · ${Math.abs(north).toFixed(2)}–${Math.abs(south).toFixed(2)}° S. Original coordinates are unchanged.`;
 }
 
+function renderV01DensityKey(density) {
+  const key = element("div", "v01-density-key");
+  key.setAttribute("aria-label", "National density map legend and method");
+  const title = element("p", "v01-density-key-title", density.title);
+  const items = element("div", "v01-density-key-items");
+
+  for (const contour of density.contours) {
+    const item = element("span", "v01-density-key-item");
+    const line = element("span", "v01-density-key-line");
+    line.style.borderColor = contour.color;
+    line.setAttribute("aria-hidden", "true");
+    item.append(line, element("span", "", contour.label));
+    items.append(item);
+  }
+
+  for (const type of density.site_types ?? []) {
+    const item = element("span", "v01-density-key-item");
+    const dot = element("span", "v01-density-key-dot");
+    dot.style.backgroundColor = type.color;
+    dot.setAttribute("aria-hidden", "true");
+    item.append(dot, element("span", "", type.label));
+    items.append(item);
+  }
+
+  if (density.exception_mark) {
+    const item = element("span", "v01-density-key-item");
+    const dot = element("span", "v01-density-key-dot is-hollow");
+    dot.setAttribute("aria-hidden", "true");
+    item.append(dot, element("span", "", density.exception_mark.label));
+    items.append(item);
+  }
+
+  key.append(title, items, element("p", "v01-density-key-note", density.note));
+  return key;
+}
+
 function renderV01SupportViews(supportViews) {
   const support = element("div", "v01-support");
-  support.setAttribute("aria-label", "V01 regional detail and smaller-area comparison");
+  support.setAttribute("aria-label", "V01 linked regional profiles and smaller-area comparison");
 
   const regionalSection = element("section", "v01-support-section");
   regionalSection.setAttribute("aria-labelledby", "v01-regional-title");
@@ -139,13 +175,13 @@ function renderV01SupportViews(supportViews) {
     heading.setAttribute("aria-label", view.title);
     const locatorBadge = element("span", "v01-locator-badge", view.locator.id);
     locatorBadge.setAttribute("aria-hidden", "true");
-    const locatorTitle = view.title.replace(/^[A-Z]\s+/, "");
+    const locatorTitle = view.title.replace(/^[A-Z]\s+—\s+/, "");
     heading.append(locatorBadge, element("span", "", locatorTitle));
     const meta = element("p", "v01-region-meta", formatRegionalWindow(view.bounds));
     panel.append(heading, meta, renderSupportMount(
       view.id,
-      `${view.name} detail map`,
-      `${view.locator.label} regional detail map; repeats existing national-map facilities. ${formatRegionalWindow(view.bounds)}`,
+      view.name + " linked location–area profile",
+      view.locator.label + " linked location and registered-area profile; repeats existing national-map facilities. Original coordinates are unchanged. " + formatRegionalWindow(view.bounds),
     ));
     grid.append(panel);
   }
@@ -199,6 +235,7 @@ function renderChartEntry(chart, baseUrl) {
   const caption = element("figcaption", "figure-caption");
   caption.append(element("span", "caption-mark", "↳"), element("span", "", chart.how.annotation));
   figure.append(topLine, mount);
+  if (chart.support_views?.density) figure.append(renderV01DensityKey(chart.support_views.density));
   if (chart.support_views) figure.append(renderV01SupportViews(chart.support_views));
   figure.append(caption);
 

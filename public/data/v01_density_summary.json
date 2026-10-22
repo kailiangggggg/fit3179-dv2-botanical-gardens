@@ -1,0 +1,236 @@
+{
+  "source_file": "facility_points.geojson",
+  "source_facility_count": 182,
+  "unique_globalid_count": 182,
+  "method": "Unweighted two-dimensional isotropic Gaussian kernel density estimate over the 182 recorded facility point coordinates.",
+  "projection": {
+    "name": "Spherical azimuthal equidistant",
+    "center_longitude_latitude": [
+      133.7751,
+      -25.2744
+    ],
+    "earth_radius_km": 6371.0088,
+    "purpose": "Metric distance coordinates for KDE; radial distance from the Australia-centred origin is exact on the sphere.",
+    "limitations": "Pairwise and tangential scale distortion increases away from the centre; density is per projected-plane area, not a survey-adjusted population rate. The maximum radial scale factor is calculated from the source sites.",
+    "maximum_site_distance_from_centre_km": 3394,
+    "maximum_radial_tangential_scale_factor": 1.0489
+  },
+  "units": "known-register facility locations per 1,000 projected square kilometres",
+  "bandwidths_km": [
+    25,
+    50,
+    100
+  ],
+  "selected_bandwidth_km": 50,
+  "grid_cell_km": 15,
+  "contour_levels_sites_per_1000_projected_km2": [
+    0.1,
+    0.2,
+    0.4,
+    0.8
+  ],
+  "coastal_clipping": "Contour segments are emitted only for raster cells whose centres fall inside the state land polygons; boundary placement is therefore approximate to one grid cell, and no coastal edge correction is applied to the KDE.",
+  "remote_site_note": "The density estimate uses all 182 source coordinates. At the selected 50 km bandwidth, 31 facilities fall below the lowest 0.1 contour level at their recorded location and are marked separately; the original 182-record source remains available. Norfolk Island is plotted outside the state outline. Contours are not facility boundaries or land-area estimates, and they do not show actual botanical coverage or a complete-census surface.",
+  "area_by_level_note": "The bandwidth_sensitivity[].land_area_above_level_km2 value is the approximate area of rasterized land cells where the modeled density meets or exceeds a contour threshold; it is a grid diagnostic, not registered facility land area or botanical coverage.",
+  "grid": {
+    "columns": 395,
+    "rows": 272,
+    "projected_extent_km": [
+      -2325,
+      -2340,
+      3585,
+      1725
+    ]
+  },
+  "bandwidth_sensitivity": [
+    {
+      "bandwidth_km": 25,
+      "peak_sites_per_1000_projected_km2": 2.589,
+      "peak_location": [
+        145.0659,
+        -37.8545
+      ],
+      "land_area_above_level_km2": {
+        "0.1": 415125,
+        "0.2": 232875,
+        "0.4": 83700,
+        "0.8": 23400
+      },
+      "connected_land_components_above_lowest_level": 34,
+      "facilities_below_lowest_contour_at_their_location": 0,
+      "facilities_below_lowest_contour_globalids": [],
+      "contour_segments_by_level": {
+        "0.1": 1030,
+        "0.2": 817,
+        "0.4": 325,
+        "0.8": 112
+      }
+    },
+    {
+      "bandwidth_km": 50,
+      "peak_sites_per_1000_projected_km2": 1.0915,
+      "peak_location": [
+        145.0659,
+        -37.8545
+      ],
+      "land_area_above_level_km2": {
+        "0.1": 409275,
+        "0.2": 186975,
+        "0.4": 47475,
+        "0.8": 9000
+      },
+      "connected_land_components_above_lowest_level": 13,
+      "facilities_below_lowest_contour_at_their_location": 31,
+      "facilities_below_lowest_contour_globalids": [
+        "{7704E32F-08FF-40C6-9E89-81C18847E63C}",
+        "{8ACD64E7-35C2-446B-9BEE-9E4DA285705E}",
+        "{309D2323-CF95-418B-910A-F90FBBEECA12}",
+        "{A7AC0299-7E27-42CB-B0D2-D7FF6FDF1EAE}",
+        "{44ECAFF7-63D7-44F9-AA37-0F2934D26A1B}",
+        "{C3906C08-5437-4730-9BED-CEB04DCDFA71}",
+        "{4CF8DA2A-5B59-4193-A38E-75125090C422}",
+        "{3AA98F1E-B62C-4DA3-B618-A2BEDB249E81}",
+        "{9C66B007-C0EE-4FAE-9EEB-0199319CE1FE}",
+        "{C1450EE8-9718-4DEC-A4A5-AA5926D8445E}",
+        "{3CE80799-4191-46F8-A31D-C2F08B744A26}",
+        "{2A2A73BE-F18D-4F6A-BE9F-D2604916481E}",
+        "{D9996D5A-F4A7-4EA8-8D3E-9D77F206158B}",
+        "{70AEED71-6E14-4A88-8A42-1D5E84CB9B28}",
+        "{7AA8C72E-EAAB-4192-B01C-7FD5FEC91051}",
+        "{7E329D04-EA3E-476E-B9CE-3C41A894EC4B}",
+        "{0380B524-A97B-43ED-A821-C95179916A06}",
+        "{818D960A-C9DE-46ED-A2AA-F4ED43037924}",
+        "{E1988DB2-FAF9-4742-A39B-BAFC37D9BD8A}",
+        "{5D81F78F-D943-4BA9-8AFC-17C2C3B77697}",
+        "{B8036F43-46F5-40BE-9644-E22AA3D960F9}",
+        "{C94EBD1C-32A0-4C41-8DF7-68E3B1781998}",
+        "{E85F3FF5-C525-420A-9227-2B828F8A977D}",
+        "{5168553B-375A-491B-8497-3CAA41FDD4D8}",
+        "{E06F7A04-2275-497E-8956-B283C3FE6C92}",
+        "{78D68D1C-ECA9-48F8-8C39-3E23DCF1790B}",
+        "{B7A79BA5-029F-46E1-A644-F10D0726232C}",
+        "{331CBB58-286C-41CB-A9DE-FF794353C439}",
+        "{E5C8073F-9786-4665-8078-BC1B042614EE}",
+        "{48EDA2AC-3E6C-4063-BA90-43787513BA54}",
+        "{656058C0-EC2B-445D-A9BB-AC41889F5A8B}"
+      ],
+      "contour_segments_by_level": {
+        "0.1": 494,
+        "0.2": 288,
+        "0.4": 95,
+        "0.8": 32
+      }
+    },
+    {
+      "bandwidth_km": 100,
+      "peak_sites_per_1000_projected_km2": 0.4374,
+      "peak_location": [
+        144.879,
+        -37.7339
+      ],
+      "land_area_above_level_km2": {
+        "0.1": 397350,
+        "0.2": 118800,
+        "0.4": 7425,
+        "0.8": 0
+      },
+      "connected_land_components_above_lowest_level": 5,
+      "facilities_below_lowest_contour_at_their_location": 52,
+      "facilities_below_lowest_contour_globalids": [
+        "{8D77525D-7B00-43DE-A1F4-270698756EA5}",
+        "{ECA0020B-B4BD-4186-AB07-AAFDC434C1FE}",
+        "{D4A2D064-0C33-4BF9-953D-412C61297C14}",
+        "{7704E32F-08FF-40C6-9E89-81C18847E63C}",
+        "{C966FFE6-28CB-4EC0-A78B-CA857CCDCC40}",
+        "{8ACD64E7-35C2-446B-9BEE-9E4DA285705E}",
+        "{309D2323-CF95-418B-910A-F90FBBEECA12}",
+        "{CF4C1678-0B29-4E77-8031-E9660BFB857E}",
+        "{A7AC0299-7E27-42CB-B0D2-D7FF6FDF1EAE}",
+        "{7CB8F47F-9DBF-4A72-B082-40668D8BC28D}",
+        "{44ECAFF7-63D7-44F9-AA37-0F2934D26A1B}",
+        "{8925BAA6-C62C-4B2C-9600-680DE35AC5A2}",
+        "{AB626211-A023-4F2C-A3C2-2C441B0DBA5B}",
+        "{4CF8DA2A-5B59-4193-A38E-75125090C422}",
+        "{3AA98F1E-B62C-4DA3-B618-A2BEDB249E81}",
+        "{565A891F-8CC2-49A8-9A95-58C02889D597}",
+        "{C1450EE8-9718-4DEC-A4A5-AA5926D8445E}",
+        "{3CE80799-4191-46F8-A31D-C2F08B744A26}",
+        "{E1405C5E-86C9-45F8-855C-53469D86E2BC}",
+        "{2A2A73BE-F18D-4F6A-BE9F-D2604916481E}",
+        "{1C1EE6EB-BB6C-480A-8385-C645DC4D0119}",
+        "{D9996D5A-F4A7-4EA8-8D3E-9D77F206158B}",
+        "{70AEED71-6E14-4A88-8A42-1D5E84CB9B28}",
+        "{E4189F9B-F746-4C27-9052-4D50CC61E11A}",
+        "{5B0174D3-2FA0-4391-BB94-552CB5C9E176}",
+        "{7AA8C72E-EAAB-4192-B01C-7FD5FEC91051}",
+        "{7CFD8C9E-DEA6-47B2-BF01-975596D206EC}",
+        "{3B858639-D8D3-4C7F-A532-0BEB4E505F06}",
+        "{7E329D04-EA3E-476E-B9CE-3C41A894EC4B}",
+        "{0380B524-A97B-43ED-A821-C95179916A06}",
+        "{2C26AEF2-10DE-4253-8CB5-D2CA8FF54DF3}",
+        "{818D960A-C9DE-46ED-A2AA-F4ED43037924}",
+        "{E1988DB2-FAF9-4742-A39B-BAFC37D9BD8A}",
+        "{5D81F78F-D943-4BA9-8AFC-17C2C3B77697}",
+        "{828A7FCB-2948-44D4-A19E-00BFB086E789}",
+        "{B8036F43-46F5-40BE-9644-E22AA3D960F9}",
+        "{12C80330-5E37-4D80-8761-7883646BC78C}",
+        "{C94EBD1C-32A0-4C41-8DF7-68E3B1781998}",
+        "{C30FEE4C-1B41-47ED-920A-46A32E205C94}",
+        "{9BDAF145-FEC5-4A2C-BC07-473723BDC5B7}",
+        "{CFBE9DE1-2D5E-4ED4-A197-0C6047CFBCAC}",
+        "{CD03511B-5682-45C9-9FA2-E646AB667BAA}",
+        "{E85F3FF5-C525-420A-9227-2B828F8A977D}",
+        "{5168553B-375A-491B-8497-3CAA41FDD4D8}",
+        "{E06F7A04-2275-497E-8956-B283C3FE6C92}",
+        "{78D68D1C-ECA9-48F8-8C39-3E23DCF1790B}",
+        "{B7A79BA5-029F-46E1-A644-F10D0726232C}",
+        "{331CBB58-286C-41CB-A9DE-FF794353C439}",
+        "{E5C8073F-9786-4665-8078-BC1B042614EE}",
+        "{48EDA2AC-3E6C-4063-BA90-43787513BA54}",
+        "{656058C0-EC2B-445D-A9BB-AC41889F5A8B}",
+        "{FCDC2649-1330-4346-863B-D679657CE1B9}"
+      ],
+      "contour_segments_by_level": {
+        "0.1": 276,
+        "0.2": 141,
+        "0.4": 24,
+        "0.8": 0
+      }
+    }
+  ],
+  "facilities_below_lowest_contour_at_selected_bandwidth": 31,
+  "facilities_below_lowest_contour_globalids": [
+    "{7704E32F-08FF-40C6-9E89-81C18847E63C}",
+    "{8ACD64E7-35C2-446B-9BEE-9E4DA285705E}",
+    "{309D2323-CF95-418B-910A-F90FBBEECA12}",
+    "{A7AC0299-7E27-42CB-B0D2-D7FF6FDF1EAE}",
+    "{44ECAFF7-63D7-44F9-AA37-0F2934D26A1B}",
+    "{C3906C08-5437-4730-9BED-CEB04DCDFA71}",
+    "{4CF8DA2A-5B59-4193-A38E-75125090C422}",
+    "{3AA98F1E-B62C-4DA3-B618-A2BEDB249E81}",
+    "{9C66B007-C0EE-4FAE-9EEB-0199319CE1FE}",
+    "{C1450EE8-9718-4DEC-A4A5-AA5926D8445E}",
+    "{3CE80799-4191-46F8-A31D-C2F08B744A26}",
+    "{2A2A73BE-F18D-4F6A-BE9F-D2604916481E}",
+    "{D9996D5A-F4A7-4EA8-8D3E-9D77F206158B}",
+    "{70AEED71-6E14-4A88-8A42-1D5E84CB9B28}",
+    "{7AA8C72E-EAAB-4192-B01C-7FD5FEC91051}",
+    "{7E329D04-EA3E-476E-B9CE-3C41A894EC4B}",
+    "{0380B524-A97B-43ED-A821-C95179916A06}",
+    "{818D960A-C9DE-46ED-A2AA-F4ED43037924}",
+    "{E1988DB2-FAF9-4742-A39B-BAFC37D9BD8A}",
+    "{5D81F78F-D943-4BA9-8AFC-17C2C3B77697}",
+    "{B8036F43-46F5-40BE-9644-E22AA3D960F9}",
+    "{C94EBD1C-32A0-4C41-8DF7-68E3B1781998}",
+    "{E85F3FF5-C525-420A-9227-2B828F8A977D}",
+    "{5168553B-375A-491B-8497-3CAA41FDD4D8}",
+    "{E06F7A04-2275-497E-8956-B283C3FE6C92}",
+    "{78D68D1C-ECA9-48F8-8C39-3E23DCF1790B}",
+    "{B7A79BA5-029F-46E1-A644-F10D0726232C}",
+    "{331CBB58-286C-41CB-A9DE-FF794353C439}",
+    "{E5C8073F-9786-4665-8078-BC1B042614EE}",
+    "{48EDA2AC-3E6C-4063-BA90-43787513BA54}",
+    "{656058C0-EC2B-445D-A9BB-AC41889F5A8B}"
+  ],
+  "output_contour_segments": 909
+}

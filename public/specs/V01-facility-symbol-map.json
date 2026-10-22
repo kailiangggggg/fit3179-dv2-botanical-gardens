@@ -1,224 +1,112 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Known Geoscience Australia botanical garden and arboretum features. Projected positions show location, four graduated circle sizes show registered-area classes, and hue distinguishes the two register types. A/B anchor markers locate the centres of the selected Sydney and Melbourne windows, with leaders to their labels. Tooltips retain each reported area in hectares.",
+  "description": "A spatial density contour map estimated from all 182 known Geoscience Australia botanical garden and arboretum locations. An unweighted Gaussian kernel is calculated in an Australia-centred azimuthal-equidistant projection with a 50 km bandwidth. Each contour line connects places with the same estimated site concentration. Hollow marks identify only the 31 locations whose pointwise estimate is below the lowest displayed contour; the full 182-record source remains intact. Contours represent smoothed location density, not hectares, facility boundaries, land area, botanical coverage or conservation outcomes. A/B labels locate the Sydney and Melbourne windows.",
   "width": 900,
-  "height": 430,
+  "height": 360,
   "projection": {
     "type": "equalEarth",
-    "center": [
-      132,
-      -25
-    ],
-    "scale": {
-      "signal": "min(615, width * 1.55)"
-    },
-    "translate": {
-      "signal": "[width / 2, 206]"
-    }
+    "center": [132, -25],
+    "scale": {"signal": "min(555, width * 1.42)"},
+    "translate": {"signal": "[width / 2, 180]"}
   },
+  "resolve": {"scale": {"color": "independent"}},
   "layer": [
     {
       "data": {
         "url": "../data/state_rates.geojson",
-        "format": {
-          "type": "json",
-          "property": "features"
-        }
+        "format": {"type": "json", "property": "features"}
       },
-      "transform": [
-        {
-          "filter": "datum.properties.state_code !== '9'"
-        }
-      ],
+      "transform": [{"filter": "datum.properties.state_code !== '9'"}],
       "mark": {
         "type": "geoshape",
         "fill": "#f1efe7",
         "stroke": "#b8c3bb",
         "strokeWidth": 0.65
       },
-      "encoding": {
-        "shape": {
-          "field": "geometry",
-          "type": "geojson"
-        }
-      }
+      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
     },
     {
       "data": {
-        "url": "../data/v01_detail_locator_geometry.geojson",
-        "format": {
-          "type": "json",
-          "property": "features"
-        }
+        "url": "../data/v01_density_contours.geojson",
+        "format": {"type": "json", "property": "features"}
       },
-      "transform": [
-        {
-          "filter": "datum.properties.kind === 'leader'"
-        }
-      ],
-      "mark": {
-        "type": "geoshape",
-        "stroke": "#34443a",
-        "strokeWidth": 1,
-        "opacity": 0.92
-      },
-      "encoding": {
-        "shape": {
-          "field": "geometry",
-          "type": "geojson"
-        }
-      }
+      "transform": [{"filter": "datum.properties.kind === 'density-contour' && datum.properties.density_sites_per_1000_projected_km2 === 0.1"}],
+      "mark": {"type": "geoshape", "fill": null, "stroke": "#78ac89", "strokeWidth": 1.6, "opacity": 0.92},
+      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
     },
     {
       "data": {
-        "url": "../data/facility_points.geojson",
-        "format": {
-          "type": "json",
-          "property": "features"
-        }
+        "url": "../data/v01_density_contours.geojson",
+        "format": {"type": "json", "property": "features"}
       },
-      "transform": [
-        {
-          "calculate": "datum.properties.area_hectares < 10 ? '0–<10 ha' : datum.properties.area_hectares < 100 ? '10–<100 ha' : datum.properties.area_hectares < 1000 ? '100–<1,000 ha' : '≥1,000 ha'",
-          "as": "registered_area_class"
-        }
-      ],
-      "params": [
-        {
-          "name": "facilityHover",
-          "select": {
-            "type": "point",
-            "fields": [
-              "properties.feature_name"
-            ],
-            "on": "pointerover",
-            "clear": "pointerout"
-          }
-        }
-      ],
+      "transform": [{"filter": "datum.properties.kind === 'density-contour' && datum.properties.density_sites_per_1000_projected_km2 === 0.2"}],
+      "mark": {"type": "geoshape", "fill": null, "stroke": "#5b996e", "strokeWidth": 1.7, "opacity": 0.95},
+      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
+    },
+    {
+      "data": {
+        "url": "../data/v01_density_contours.geojson",
+        "format": {"type": "json", "property": "features"}
+      },
+      "transform": [{"filter": "datum.properties.kind === 'density-contour' && datum.properties.density_sites_per_1000_projected_km2 === 0.4"}],
+      "mark": {"type": "geoshape", "fill": null, "stroke": "#397851", "strokeWidth": 1.8, "opacity": 0.98},
+      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
+    },
+    {
+      "data": {
+        "url": "../data/v01_density_contours.geojson",
+        "format": {"type": "json", "property": "features"}
+      },
+      "transform": [{"filter": "datum.properties.kind === 'density-contour' && datum.properties.density_sites_per_1000_projected_km2 === 0.8"}],
+      "mark": {"type": "geoshape", "fill": null, "stroke": "#154830", "strokeWidth": 2, "opacity": 1},
+      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
+    },
+    {
+      "data": {
+        "url": "../data/v01_density_unrepresented.geojson",
+        "format": {"type": "json", "property": "features"}
+      },
       "mark": {
         "type": "circle",
+        "size": 32,
         "filled": true,
+        "fill": "#fffdf7",
         "opacity": 1,
-        "stroke": "#fffdf7",
-        "strokeWidth": 0.7
+        "stroke": "#263a31",
+        "strokeWidth": 1.35
       },
       "encoding": {
-        "longitude": {
-          "field": "properties.longitude",
-          "type": "quantitative"
-        },
-        "latitude": {
-          "field": "properties.latitude",
-          "type": "quantitative"
-        },
-        "size": {
-          "field": "registered_area_class",
-          "type": "nominal",
-          "title": "Registered area class",
-          "sort": [
-            "0–<10 ha",
-            "10–<100 ha",
-            "100–<1,000 ha",
-            "≥1,000 ha"
-          ],
-          "scale": {
-            "type": "ordinal",
-            "domain": [
-              "0–<10 ha",
-              "10–<100 ha",
-              "100–<1,000 ha",
-              "≥1,000 ha"
-            ],
-            "range": [
-              12,
-              24,
-              48,
-              96
-            ]
-          },
-          "legend": {
-            "title": "Registered area class",
-            "orient": "bottom",
-            "direction": "horizontal",
-            "values": [
-              "0–<10 ha",
-              "10–<100 ha",
-              "100–<1,000 ha",
-              "≥1,000 ha"
-            ]
-          }
-        },
-        "opacity": {
-          "condition": {
-            "param": "facilityHover",
-            "empty": false,
-            "value": 0.98
-          },
-          "value": 0.78
-        },
-        "color": {
-          "field": "properties.feature_subtype",
-          "type": "nominal",
-          "title": "Register type",
-          "scale": {
-            "domain": [
-              "Botanic Garden",
-              "Arboretum"
-            ],
-            "range": [
-              "#003F5C",
-              "#B85C00"
-            ]
-          },
-          "legend": {
-            "orient": "bottom",
-            "direction": "horizontal"
-          }
-        },
+        "longitude": {"field": "properties.longitude", "type": "quantitative"},
+        "latitude": {"field": "properties.latitude", "type": "quantitative"},
         "tooltip": [
+          {"field": "properties.feature_name", "type": "nominal", "title": "Facility"},
+          {"field": "properties.feature_subtype", "type": "nominal", "title": "Register type"},
+          {"field": "properties.state", "type": "nominal", "title": "State / territory"},
           {
-            "field": "properties.feature_name",
+            "field": "properties.area_text",
             "type": "nominal",
-            "title": "Facility"
+            "title": "Registered area (source ha)"
           },
-          {
-            "field": "properties.feature_subtype",
-            "type": "nominal",
-            "title": "Register type"
-          },
-          {
-            "field": "properties.locality",
-            "type": "nominal",
-            "title": "Locality"
-          },
-          {
-            "field": "properties.state",
-            "type": "nominal",
-            "title": "State / territory"
-          },
-          {
-            "field": "properties.area_hectares",
-            "type": "quantitative",
-            "title": "Registered area (ha)",
-            "format": ",.1f"
-          }
+          {"field": "properties.longitude", "type": "quantitative", "title": "Longitude", "format": ".5f"},
+          {"field": "properties.latitude", "type": "quantitative", "title": "Latitude", "format": ".5f"}
         ]
       }
     },
     {
       "data": {
         "url": "../data/v01_detail_locator_geometry.geojson",
-        "format": {
-          "type": "json",
-          "property": "features"
-        }
+        "format": {"type": "json", "property": "features"}
       },
-      "transform": [
-        {
-          "filter": "datum.properties.kind === 'anchor'"
-        }
-      ],
+      "transform": [{"filter": "datum.properties.kind === 'leader'"}],
+      "mark": {"type": "geoshape", "stroke": "#34443a", "strokeWidth": 1, "opacity": 0.92},
+      "encoding": {"shape": {"field": "geometry", "type": "geojson"}}
+    },
+    {
+      "data": {
+        "url": "../data/v01_detail_locator_geometry.geojson",
+        "format": {"type": "json", "property": "features"}
+      },
+      "transform": [{"filter": "datum.properties.kind === 'anchor'"}],
       "mark": {
         "type": "point",
         "filled": true,
@@ -229,32 +117,17 @@
         "fillOpacity": 0
       },
       "encoding": {
-        "longitude": {
-          "field": "properties.longitude",
-          "type": "quantitative"
-        },
-        "latitude": {
-          "field": "properties.latitude",
-          "type": "quantitative"
-        },
-        "color": {
-          "value": "#fffdf7"
-        }
+        "longitude": {"field": "properties.longitude", "type": "quantitative"},
+        "latitude": {"field": "properties.latitude", "type": "quantitative"},
+        "color": {"value": "#fffdf7"}
       }
     },
     {
       "data": {
         "url": "../data/v01_detail_locator_geometry.geojson",
-        "format": {
-          "type": "json",
-          "property": "features"
-        }
+        "format": {"type": "json", "property": "features"}
       },
-      "transform": [
-        {
-          "filter": "datum.properties.kind === 'anchor'"
-        }
-      ],
+      "transform": [{"filter": "datum.properties.kind === 'anchor'"}],
       "mark": {
         "type": "text",
         "align": "center",
@@ -264,36 +137,18 @@
         "fontWeight": 700
       },
       "encoding": {
-        "longitude": {
-          "field": "properties.longitude",
-          "type": "quantitative"
-        },
-        "latitude": {
-          "field": "properties.latitude",
-          "type": "quantitative"
-        },
-        "text": {
-          "field": "properties.locator_id",
-          "type": "nominal"
-        },
-        "color": {
-          "value": "#34443a"
-        }
+        "longitude": {"field": "properties.longitude", "type": "quantitative"},
+        "latitude": {"field": "properties.latitude", "type": "quantitative"},
+        "text": {"field": "properties.locator_id", "type": "nominal"},
+        "color": {"value": "#34443a"}
       }
     },
     {
       "data": {
         "url": "../data/v01_detail_locator_geometry.geojson",
-        "format": {
-          "type": "json",
-          "property": "features"
-        }
+        "format": {"type": "json", "property": "features"}
       },
-      "transform": [
-        {
-          "filter": "datum.properties.kind === 'label'"
-        }
-      ],
+      "transform": [{"filter": "datum.properties.kind === 'label'"}],
       "mark": {
         "type": "text",
         "align": {"expr": "datum.properties.label_align"},
@@ -305,21 +160,10 @@
         "fontWeight": 700
       },
       "encoding": {
-        "longitude": {
-          "field": "properties.longitude",
-          "type": "quantitative"
-        },
-        "latitude": {
-          "field": "properties.latitude",
-          "type": "quantitative"
-        },
-        "text": {
-          "field": "properties.place_label",
-          "type": "nominal"
-        },
-        "color": {
-          "value": "#34443a"
-        }
+        "longitude": {"field": "properties.longitude", "type": "quantitative"},
+        "latitude": {"field": "properties.latitude", "type": "quantitative"},
+        "text": {"field": "properties.place_label", "type": "nominal"},
+        "color": {"value": "#34443a"}
       }
     }
   ]

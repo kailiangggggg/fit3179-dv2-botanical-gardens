@@ -8,10 +8,16 @@ import {
 } from "../src/chart-runtime.js";
 
 const v01Spec = JSON.parse(
-  readFileSync(new URL("../public/specs/V01-facility-symbol-map.json", import.meta.url), "utf8"),
+  readFileSync(new URL("../public/specs/V01-density-contour-map.json", import.meta.url), "utf8"),
 );
 const facilityPoints = JSON.parse(
   readFileSync(new URL("../public/data/facility_points.geojson", import.meta.url), "utf8"),
+).features;
+const regionalProfiles = JSON.parse(
+  readFileSync(new URL("../public/data/v01_regional_profiles.geojson", import.meta.url), "utf8"),
+).features;
+const belowContourPoints = JSON.parse(
+  readFileSync(new URL("../public/data/v01_density_unrepresented.geojson", import.meta.url), "utf8"),
 ).features;
 const manifest = JSON.parse(
   readFileSync(new URL("../public/specs/chart-manifest.json", import.meta.url), "utf8"),
@@ -99,43 +105,225 @@ test("compact layouts reduce V04 ticks and treemap labels without mutating sourc
   assert.match(treemap.layer[1].transform[0].filter, /> 210/);
 });
 
-test("V01 keeps its national map and declares three supporting views inside one chart group", () => {
-  const nationalFacilityLayer = v01Spec.layer.find((layer) => layer.data?.url === "../data/facility_points.geojson");
-  assert.equal(nationalFacilityLayer.mark.type, "circle");
-  assert.deepEqual(nationalFacilityLayer.encoding.size.scale.range, [12, 24, 48, 96]);
+test("V01 estimates density from all source points and marks only 31 locations below its lowest contour", () => {
+  const pointLayer = v01Spec.layer.find((layer) => layer.data?.url === "../data/v01_density_unrepresented.geojson");
+  const contourLayers = v01Spec.layer.filter((layer) =>
+    layer.data?.url === "../data/v01_density_contours.geojson");
+  assert.equal(pointLayer.mark.type, "circle");
+  assert.equal(belowContourPoints.length, 31);
+  assert.equal(new Set(belowContourPoints.map((feature) => feature.properties.globalid)).size, 31);
+  assert.ok(belowContourPoints.every((feature) =>
+    facilityPoints.some((source) => source.properties.globalid === feature.properties.globalid
+      && source.geometry.coordinates.join(",") === feature.geometry.coordinates.join(","))));
+  assert.equal(pointLayer.mark.size, 32);
+  assert.equal(pointLayer.mark.fill, "#fffdf7");
+  assert.equal(pointLayer.mark.stroke, "#263a31");
+  assert.equal(pointLayer.encoding.size, undefined);
+  assert.equal(pointLayer.encoding.color, undefined);
+  assert.equal(pointLayer.encoding.longitude.field, "properties.longitude");
+  assert.equal(pointLayer.encoding.latitude.field, "properties.latitude");
+  assert.equal(pointLayer.encoding.tooltip.find(({ title }) => title === "Registered area (source ha)").field, "properties.area_text");
+  assert.equal(contourLayers.length, 4);
+  assert.deepEqual(
+    contourLayers.map((layer) => layer.transform[0].filter.match(/=== ([0-9.]+)/)?.[1]),
+    ["0.1", "0.2", "0.4", "0.8"],
+  );
+  assert.ok(contourLayers.every((layer) => layer.mark.stroke && layer.encoding.shape.field === "geometry"));
   assert.deepEqual(v01.support_views.regional.maps.map(({ id }) => id), ["V01-SYD", "V01-MELB"]);
   assert.equal(v01.support_views.quantitative.id, "V01-AREA");
   assert.equal(manifest.charts.length, 13);
   assert.equal(manifest.rubric_chart_count, 13);
   assert.equal(manifest.map_count, 3);
   assert.equal(manifest.advanced_idiom_types.length, 8);
-  assert.equal(v01.data_files.includes("data/facility_points.geojson"), true);
+  assert.equal(v01.idiom, "Spatial density contour map");
+  assert.ok(v01.data_files.includes("data/facility_points.geojson"));
+  assert.ok(v01.data_files.includes("data/v01_density_unrepresented.geojson"));
+  assert.ok(v01.data_files.includes("data/v01_density_contours.geojson"));
+  assert.ok(v01.data_files.includes("data/v01_density_summary.json"));
+  assert.ok(v01.data_files.includes("data/v01_regional_profiles.geojson"));
 });
 
-test("V01 adapts the map panels and keeps every under-100-ha point collision-free", () => {
-  const expectedRegions = [
-    { spec: sydneySpec, id: "V01-SYD", bounds: [150.6, 151.4, -34.2, -33.5], expectedCount: 14 },
-    { spec: melbourneSpec, id: "V01-MELB", bounds: [144.55, 145.4, -38.25, -37.55], expectedCount: 18 },
+test("V01 keeps 14 and 18 regional source points with deterministic S/M IDs and exact values", () => {
+  const rawSource = readFileSync(new URL("../public/data/facility_points.geojson", import.meta.url), "utf8");
+  const sourceById = new Map(facilityPoints.map((feature) => [feature.properties.globalid, feature]));
+  const cases = [
+    { name: "Sydney", prefix: "S", count: 14, bounds: [150.6, 151.4, -34.2, -33.5] },
+    { name: "Melbourne", prefix: "M", count: 18, bounds: [144.55, 145.4, -38.25, -37.55] },
   ];
-  for (const { spec, bounds, expectedCount } of expectedRegions) {
-    const [west, east, south, north] = bounds;
-    const sites = facilityPoints.filter((feature) => {
-      const [lon, lat] = feature.geometry.coordinates;
-      return lon >= west && lon <= east && lat >= south && lat <= north;
-    });
-    assert.equal(sites.length, expectedCount);
-    const adaptedMap = adaptChartSpec(spec, "V01-REGION", 440);
-    assert.equal(adaptedMap.width, 440);
-    assert.equal(adaptedMap.projection.type, "mercator");
-    assert.ok(adaptedMap.height >= 160 && adaptedMap.height <= 230);
+  for (const item of cases) {
+    const [west, east, south, north] = item.bounds;
+    const sourceRegion = facilityPoints
+      .filter((feature) => {
+        const [longitude, latitude] = feature.geometry.coordinates;
+        return longitude >= west && longitude <= east && latitude >= south && latitude <= north;
+      })
+      .sort((first, second) => first.properties.globalid < second.properties.globalid ? -1 : 1);
+    const profileRegion = regionalProfiles
+      .filter((feature) => feature.properties.kind === "facility" && feature.properties.region === item.name)
+      .sort((first, second) => first.properties.short_id.localeCompare(second.properties.short_id));
+    assert.equal(sourceRegion.length, item.count);
+    assert.equal(profileRegion.length, item.count);
+    assert.equal(new Set(profileRegion.map((feature) => feature.properties.globalid)).size, item.count);
+    for (let index = 0; index < item.count; index += 1) {
+      const source = sourceRegion[index];
+      const row = profileRegion[index];
+      const properties = row.properties;
+      const expectedId = item.prefix + String(index + 1).padStart(2, "0");
+      assert.equal(properties.short_id, expectedId);
+      assert.equal(properties.globalid, source.properties.globalid);
+      assert.deepEqual(row.geometry.coordinates, source.geometry.coordinates);
+      assert.equal(properties.longitude, source.properties.longitude);
+      assert.equal(properties.latitude, source.properties.latitude);
+      assert.equal(properties.area_hectares, source.properties.area_hectares);
+      assert.ok(properties.display_label.startsWith(expectedId + " · " + source.properties.feature_name));
+      const marker = '"globalid":"' + source.properties.globalid + '"';
+      const start = rawSource.indexOf(marker);
+      const token = rawSource.slice(start, start + 1600).match(/"area_hectares"\s*:\s*(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/)?.[1];
+      assert.equal(properties.area_text, token);
+      const precision = Number(token) < 10 ? 2 : 1;
+      assert.equal(properties.area_label, Number(token).toFixed(precision) + " ha");
+      assert.ok(Number.isFinite(properties.x_km) && Number.isFinite(properties.y_km));
+    }
   }
+});
 
+test("V01 regional profile adapters preserve linked data and the common logarithmic scale", () => {
+  const cases = [
+    { spec: sydneySpec, id: "V01-SYD", name: "Sydney", count: 14 },
+    { spec: melbourneSpec, id: "V01-MELB", name: "Melbourne", count: 18 },
+  ];
+  for (const item of cases) {
+    const supportView = v01.support_views.regional.maps.find((view) => view.id === item.id);
+    for (const viewportWidth of [320, 442, 550, 899]) {
+      const adapted = adaptChartSpec(
+        item.spec,
+        item.id,
+        viewportWidth,
+        facilityPoints,
+        regionalProfiles,
+        supportView,
+      );
+      const mapView = adapted.hconcat?.[0] ?? adapted.vconcat?.[0];
+      const mapPointLayer = mapView.layer.find((layer) => layer.mark?.type === "circle");
+      const mapFacilities = mapPointLayer.data.values.filter((feature) => feature.properties.kind === "facility");
+      assert.equal(mapFacilities.length, item.count);
+      assert.equal(new Set(mapFacilities.map((feature) => feature.properties.globalid)).size, item.count);
+      assert.ok(mapFacilities.every((feature) =>
+        sourceById(feature.properties.globalid).geometry.coordinates.join(",") === feature.geometry.coordinates.join(",")));
+      assert.equal(mapPointLayer.encoding.x.field, "properties.x_km");
+      assert.equal(mapPointLayer.encoding.y.field, "properties.y_km");
+
+      let areaView;
+      let nameView;
+      if (viewportWidth < 400) {
+        nameView = adapted.vconcat[1].hconcat[0];
+        areaView = adapted.vconcat[1].hconcat[1];
+      } else if (viewportWidth < 760) {
+        nameView = adapted.hconcat[1].hconcat[0];
+        areaView = adapted.hconcat[1].hconcat[1];
+      } else {
+        nameView = adapted.hconcat[1].hconcat[0];
+        areaView = adapted.hconcat[1].hconcat[1];
+      }
+      const rows = areaView.data.values.filter((feature) => feature.properties.kind === "facility");
+      assert.equal(rows.length, item.count);
+      assert.deepEqual(
+        rows.map((feature) => feature.properties.globalid).sort(),
+        mapFacilities.map((feature) => feature.properties.globalid).sort(),
+      );
+      if (nameView) {
+        const labels = nameView.data.values.filter((feature) => feature.properties.kind === "facility");
+        assert.equal(labels.length, item.count);
+        assert.ok(labels.every((feature) => feature.properties.display_label.includes(feature.properties.short_id)));
+        assert.ok(labels.every((feature) => [
+          feature.properties.display_label_line1,
+          feature.properties.display_label_line2,
+        ].filter(Boolean).join(" ") === feature.properties.display_label));
+      }
+      const point = areaView.layer?.[0] ?? areaView;
+      assert.equal(point.encoding.x.field, "properties.area_hectares");
+      assert.equal(point.encoding.x.scale.type, "log");
+      assert.deepEqual(point.encoding.x.scale.domain, [0.5, 1000]);
+      assert.deepEqual(point.encoding.tooltip.map(({ field }) => field), [
+        "properties.short_id",
+        "properties.feature_name",
+        "properties.area_text",
+      ]);
+      assert.equal(point.encoding.y.field, "properties.display_order");
+      assert.ok(point.encoding.color);
+    }
+
+    const linearView = {
+      ...supportView,
+      area_scale: { type: "linear", domain_ha: [0, 500], axis_title: "Registered ha · linear" },
+    };
+    const linear = adaptChartSpec(item.spec, item.id, 442, facilityPoints, regionalProfiles, linearView);
+    const linearAreaView = linear.hconcat[1].hconcat[1];
+    assert.equal(linearAreaView.layer[0].encoding.x.scale.type, "linear");
+    assert.deepEqual(linearAreaView.layer[0].encoding.x.scale.domain, [0, 500]);
+    assert.ok(regionalProfiles
+      .filter((feature) => feature.properties.kind === "facility" && feature.properties.region === item.name)
+      .every((feature) => feature.properties.area_hectares <= 500));
+  }
+});
+
+test("V01 narrow regional profiles show full names and rounded hectares without axis truncation", () => {
+  const cases = [
+    { spec: sydneySpec, id: "V01-SYD", name: "Sydney", count: 14 },
+    { spec: melbourneSpec, id: "V01-MELB", name: "Melbourne", count: 18 },
+  ];
+  for (const item of cases) {
+    const supportView = v01.support_views.regional.maps.find(({ id }) => id === item.id);
+    for (const viewportWidth of [320, 390]) {
+      const adapted = adaptChartSpec(
+        item.spec,
+        item.id,
+        viewportWidth,
+        facilityPoints,
+        regionalProfiles,
+        supportView,
+      );
+      const profile = adapted.vconcat[1];
+      assert.ok(Array.isArray(profile.hconcat), "narrow profile needs separate full-name and area views");
+      const [nameView, areaView] = profile.hconcat;
+      const names = nameView.data.values.filter(({ properties }) => properties.kind === "facility");
+      const points = areaView.data.values.filter(({ properties }) => properties.kind === "facility");
+      assert.equal(names.length, item.count);
+      assert.equal(points.length, item.count);
+      for (const row of names) {
+        const properties = row.properties;
+        assert.equal(
+          [properties.mobile_name_line1, properties.mobile_name_line2].filter(Boolean).join(" "),
+          properties.feature_name,
+          properties.short_id + " name must remain complete",
+        );
+        assert.equal(
+          properties.mobile_value_label,
+          properties.short_id + " · " + properties.area_label,
+          properties.short_id + " must retain its visible rounded area",
+        );
+      }
+      const point = areaView.layer[0];
+      assert.equal(point.encoding.x.scale.type, "log");
+      assert.deepEqual(point.encoding.x.scale.domain, [0.5, 1000]);
+      assert.equal(point.encoding.y.field, "properties.display_order");
+      assert.deepEqual(
+        points.map(({ properties }) => properties.globalid).sort(),
+        names.map(({ properties }) => properties.globalid).sort(),
+      );
+    }
+  }
+});
+
+test("V01 keeps every under-100-ha source value on a collision-free linear axis", () => {
   const sourceById = new Map(facilityPoints.map((feature) => [feature.properties.globalid, feature.properties.area_hectares]));
   for (const viewportWidth of [266, 328, 674, 899, 1114]) {
     const quantitative = adaptChartSpec(quantitativeSpec, "V01-AREA", viewportWidth, facilityPoints);
     assert.equal(quantitative.data.values.length, 165);
     assert.ok(quantitative.data.values.every((point) => point.area >= 0 && point.area < 100));
     assert.equal(new Set(quantitative.data.values.map(({ id }) => id)).size, 165);
+    assert.equal(quantitative.encoding.x.scale.type, "linear");
+    assert.deepEqual(quantitative.encoding.x.scale.domain, [0, 100]);
     for (const point of quantitative.data.values) {
       assert.equal(point.area, sourceById.get(point.id), "x position must use the original hectares value");
     }
@@ -150,9 +338,13 @@ test("V01 adapts the map panels and keeps every under-100-ha point collision-fre
       for (let second = first + 1; second < plotted.length; second += 1) {
         assert.ok(
           Math.hypot(plotted[first].x - plotted[second].x, plotted[first].y - plotted[second].y) >= minimumDistance - 0.01,
-          `V01 points overlap at ${viewportWidth}px`,
+          "V01 points overlap at " + viewportWidth + "px",
         );
       }
     }
   }
 });
+
+function sourceById(globalId) {
+  return facilityPoints.find((feature) => feature.properties.globalid === globalId);
+}
