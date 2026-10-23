@@ -6,15 +6,12 @@
   "packageManager": "pnpm@11.25.0",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build:v01-area-data": "node scripts/build_v01_area_beeswarm.mjs",
-    "build:v01-locator-data": "node scripts/build_v01_locator_geometry.mjs",
-    "build:v01-density-data": "node scripts/build_v01_density_profiles.mjs",
     "build:v01-jurisdiction-count-data": "node scripts/build_v01_jurisdiction_counts.mjs",
-    "prebuild": "pnpm run build:v01-area-data && pnpm run build:v01-locator-data && pnpm run build:v01-density-data && pnpm run build:v01-jurisdiction-count-data",
+    "prebuild": "pnpm run build:v01-jurisdiction-count-data",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
     "validate:specs": "node scripts/validate_specs.mjs",
-    "test:site": "node --test tests/site-content.test.mjs tests/chart-runtime.test.mjs tests/navigation-runtime.test.mjs tests/chart-spec-contract.test.mjs tests/legend-accessibility.test.mjs tests/v01-locator-contract.test.mjs tests/v01-proportional-symbol-map.test.mjs tests/story-remediation-contract.test.mjs",
+    "test:site": "node --test tests/site-content.test.mjs tests/chart-runtime.test.mjs tests/navigation-runtime.test.mjs tests/chart-spec-contract.test.mjs tests/legend-accessibility.test.mjs tests/v01-proportional-symbol-map.test.mjs tests/story-remediation-contract.test.mjs",
     "test:data": "python -m unittest discover -s tests -v"
   },
   "dependencies": {

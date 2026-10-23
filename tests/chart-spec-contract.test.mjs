@@ -11,28 +11,9 @@ const facilitiesMap = JSON.parse(
 const rankChart = JSON.parse(
   readFileSync(new URL("../public/specs/V03-count-rate-slopegraph.json", import.meta.url), "utf8"),
 );
-const densityMap = JSON.parse(
-  readFileSync(new URL("../public/specs/V01-density-contour-map.json", import.meta.url), "utf8"),
-);
-const legacyDensityMap = JSON.parse(
-  readFileSync(new URL("../public/specs/V01-facility-symbol-map.json", import.meta.url), "utf8"),
-);
-const nationalDensityMap = densityMap.vconcat?.[0] ?? densityMap;
-const nationalExceptionLayer = nationalDensityMap.layer.find(
-  (layer) => layer.data?.url === "../data/v01_density_unrepresented.geojson",
-);
-const facilityPoints = JSON.parse(
-  readFileSync(new URL("../public/data/facility_points.geojson", import.meta.url), "utf8"),
-);
-const belowContourPoints = JSON.parse(
-  readFileSync(new URL("../public/data/v01_density_unrepresented.geojson", import.meta.url), "utf8"),
-);
 const stateRankComparison = readFileSync(
   new URL("../public/data/state_rank_comparison.csv", import.meta.url),
   "utf8",
-);
-const facilityBoxplot = JSON.parse(
-  readFileSync(new URL("../public/specs/V04-registered-footprint-boxplot.json", import.meta.url), "utf8"),
 );
 const plantbankHeatmap = JSON.parse(
   readFileSync(new URL("../public/specs/V09-plantbank-family-decade-heatmap.json", import.meta.url), "utf8"),
@@ -52,18 +33,7 @@ const originHexbin = JSON.parse(
 const manifest = JSON.parse(
   readFileSync(new URL("../public/specs/chart-manifest.json", import.meta.url), "utf8"),
 );
-const v01Manifest = manifest.charts.find(({ id }) => id === "V01");
-const sydneyDetail = JSON.parse(
-  readFileSync(new URL("../public/specs/V01-sydney-detail-map.json", import.meta.url), "utf8"),
-);
-const melbourneDetail = JSON.parse(
-  readFileSync(new URL("../public/specs/V01-melbourne-detail-map.json", import.meta.url), "utf8"),
-);
-const v01AreaSubset = JSON.parse(
-  readFileSync(new URL("../public/specs/V01-under100-area-beeswarm.json", import.meta.url), "utf8"),
-);
 const siteStyles = readFileSync(new URL("../src/site.css", import.meta.url), "utf8");
-const humanChartManifest = readFileSync(new URL("../CHART_MANIFEST.md", import.meta.url), "utf8");
 const rankLine = rankChart.layer.find((layer) => layer.mark?.type === "line");
 const rankEndpointLabels = rankChart.layer.find((layer) => layer.encoding?.text?.field === "state_abbreviation");
 
@@ -179,8 +149,8 @@ test("V02 and V03 share state focus while V01 keeps findings visible without hov
   assert.match(facilitiesMap.layer[1].encoding.opacity.condition.test, /linkedState/);
   assert.match(rankLine.encoding.opacity.condition.test, /linkedState/);
   assert.match(rankEndpointLabels.encoding.opacity.condition.test, /linkedState/);
-  assert.equal(nationalExceptionLayer.params, undefined);
-  assert.equal(nationalExceptionLayer.encoding.opacity, undefined);
+  assert.equal(manifest.charts.find(({ id }) => id === "V01").spec, "specs/V01-facility-symbol-map.json");
+  assert.equal(Object.hasOwn(manifest.charts.find(({ id }) => id === "V01"), "support_views"), false);
 });
 
 test("V02 projection keeps the choropleth inside a compact Australia-focused frame", () => {
@@ -189,131 +159,6 @@ test("V02 projection keeps the choropleth inside a compact Australia-focused fra
   assert.equal(facilitiesMap.projection.translate.signal, "[width / 2, 206]");
 });
 
-test("the prior V01 density specification is retained separately from the active count map", () => {
-  assert.equal(v01Manifest.spec, "specs/V01-facility-symbol-map.json");
-  assert.equal(v01Manifest.idiom, "Proportional-symbol map");
-  assert.equal(v01Manifest.support_views.default_visible, false);
-  assert.notDeepEqual(legacyDensityMap, densityMap);
-});
-test("retained V01 density evidence preserves all source points and the 31 below-threshold locations", () => {
-  const pointLayer = nationalExceptionLayer;
-  const contourLayers = densityMap.layer.filter((layer) =>
-    layer.data?.url === "../data/v01_density_contours.geojson");
-  const contourLevels = contourLayers.map((layer) => {
-    const filter = layer.transform?.find((item) => item.filter)?.filter ?? "";
-    return Number(filter.match(/density_sites_per_1000_projected_km2 === ([0-9.]+)/)?.[1]);
-  });
-  assert.equal(facilityPoints.features.length, 182);
-  assert.equal(new Set(facilityPoints.features.map(({ properties }) => properties.globalid)).size, 182);
-  assert.equal(new Set(facilityPoints.features.map(({ geometry }) => geometry.coordinates.join(","))).size, 182);
-  assert.ok(facilityPoints.features.every(({ properties }) => Number.isFinite(properties.area_hectares)));
-  assert.equal(belowContourPoints.features.length, 31);
-  assert.equal(belowContourPoints.metadata.source_facility_count, 182);
-  assert.equal(belowContourPoints.metadata.selected_bandwidth_km, 50);
-  assert.ok(belowContourPoints.features.every((feature) => facilityPoints.features.some((source) =>
-    source.properties.globalid === feature.properties.globalid
-      && source.geometry.coordinates.join(",") === feature.geometry.coordinates.join(","))));
-  assert.equal(pointLayer.mark.type, "circle");
-  assert.equal(pointLayer.mark.size, 32);
-  assert.equal(pointLayer.mark.fill, "#fffdf7");
-  assert.equal(pointLayer.mark.stroke, "#263a31");
-  assert.equal(pointLayer.encoding.size, undefined, "registered hectares are not encoded by national dot size");
-  assert.equal(pointLayer.encoding.color, undefined, "national exception marks do not add a category colour channel");
-  assert.equal(pointLayer.encoding.shape, undefined);
-  assert.deepEqual(contourLevels, [0.1, 0.2, 0.4, 0.8]);
-  assert.ok(contourLayers.every((layer) => layer.mark.stroke && layer.encoding.shape.field === "geometry"));
-  assert.equal(densityMap.layer.filter((layer) => layer.data?.url === "../data/v01_detail_locator_geometry.geojson").length, 4);
-  assert.match(densityMap.description, /Gaussian|density contour/i);
-  assert.match(densityMap.description, /not hectares|not.*coverage/i);
-  assert.match(densityMap.description, /all 182.*31 locations/i);
-  assert.match(humanChartManifest, /\\|\\s*V01\\s*\\|[^\\n]*\\|\\s*Proportional-symbol map\\s*\\|/);
-  assert.match(humanChartManifest, /50 km.*bandwidth/i);
-});
-test("V01 regional profiles and V04 use the approved CVD-screened facility-type colours", () => {
-  const regionalFacilityLayer = sydneyDetail.hconcat[0].layer.find((layer) => layer.mark?.type === "circle");
-  const mapColors = regionalFacilityLayer.encoding.color.scale.range;
-  const boxplotColors = facilityBoxplot.encoding.color.scale.range;
-  const contourColors = v01Manifest.support_views.density.contours.map(({ color }) => color);
-  assert.deepEqual(mapColors, ["#003F5C", "#B85C00"]);
-  assert.deepEqual(boxplotColors, mapColors);
-  const contourLuminance = contourColors.map(relativeLuminance);
-  assert.ok(contourLuminance.every((value, index) => index === 0 || value < contourLuminance[index - 1]));
-  assert.ok(contrastRatio(contourColors[0], "#f1efe7") >= 2);
-  assert.ok(minimumCvdSeparation(mapColors) >= 70);
-  for (const color of mapColors) {
-    assert.ok(contrastRatio(color, "#f1efe7") >= 3, `${color} lacks symbol contrast on the map land`);
-  }
-});
-
-test("V01 links each regional point to one exact source-area row on a common log scale", () => {
-  const profiles = JSON.parse(
-    readFileSync(new URL("../public/data/v01_regional_profiles.geojson", import.meta.url), "utf8"),
-  ).features.filter((feature) => feature.properties.kind === "facility");
-  const viewByName = new Map(v01Manifest.support_views.regional.maps.map((view) => [view.name, view]));
-  const cases = [
-    { name: "Sydney", prefix: "S", bounds: [150.6, 151.4, -34.2, -33.5], count: 14 },
-    { name: "Melbourne", prefix: "M", bounds: [144.55, 145.4, -38.25, -37.55], count: 18 },
-  ];
-  for (const item of cases) {
-    const [west, east, south, north] = item.bounds;
-    const source = facilityPoints.features
-      .filter((feature) => {
-        const { longitude, latitude } = feature.properties;
-        return longitude >= west && longitude <= east && latitude >= south && latitude <= north;
-      })
-      .sort((first, second) => first.properties.globalid < second.properties.globalid ? -1 : 1);
-    const rows = profiles
-      .filter((feature) => feature.properties.region === item.name)
-      .sort((first, second) => first.properties.short_id.localeCompare(second.properties.short_id));
-    assert.equal(source.length, item.count);
-    assert.equal(rows.length, item.count);
-    assert.equal(viewByName.get(item.name).bounds.longitude[0], west);
-    assert.equal(viewByName.get(item.name).bounds.longitude[1], east);
-    for (let index = 0; index < item.count; index += 1) {
-      assert.equal(rows[index].properties.short_id, item.prefix + String(index + 1).padStart(2, "0"));
-      assert.equal(rows[index].properties.globalid, source[index].properties.globalid);
-      assert.deepEqual(rows[index].geometry.coordinates, source[index].geometry.coordinates);
-      assert.equal(rows[index].properties.area_hectares, source[index].properties.area_hectares);
-      assert.ok(rows[index].properties.display_label.includes(source[index].properties.feature_name));
-      assert.equal(
-        [rows[index].properties.display_label_line1, rows[index].properties.display_label_line2].filter(Boolean).join(" "),
-        rows[index].properties.display_label,
-        "full facility names stay visible across at most two readable lines",
-      );
-    }
-  }
-
-  for (const spec of [sydneyDetail, melbourneDetail]) {
-    const mapLayer = spec.hconcat[0].layer.find((layer) => layer.mark?.type === "circle");
-    assert.equal(mapLayer.mark.size, 30);
-    assert.equal(mapLayer.encoding.x.field, "properties.x_km");
-    assert.equal(mapLayer.encoding.y.field, "properties.y_km");
-    const areaView = spec.hconcat[1].hconcat[1];
-    assert.equal(areaView.encoding.x.field, "properties.area_hectares");
-    assert.equal(areaView.encoding.x.scale.type, "log");
-    assert.deepEqual(areaView.encoding.x.scale.domain, [0.5, 1000]);
-    assert.equal(areaView.encoding.y.field, "properties.display_order");
-    assert.deepEqual(areaView.encoding.tooltip.map(({ field }) => field), [
-      "properties.short_id",
-      "properties.feature_name",
-      "properties.area_text",
-    ]);
-    assert.match(spec.description, /0\.5–1,000 ha/i);
-    assert.doesNotMatch(spec.description, /0\.5–500 ha/i);
-  }
-
-  assert.equal(v01AreaSubset.encoding.x.field, "area");
-  assert.equal(v01AreaSubset.encoding.x.scale.type, "linear");
-  assert.deepEqual(v01AreaSubset.encoding.x.scale.domain, [0, 100]);
-  assert.equal(v01AreaSubset.encoding.color.field, "type");
-  assert.equal(v01AreaSubset.encoding.y.field, "displayY");
-  assert.equal(v01Manifest.support_views.quantitative.subset, "0 <= area_hectares < 100");
-  assert.equal(v01Manifest.idiom, "Proportional-symbol map");
-  assert.equal(manifest.visible_panels, 14);
-  assert.equal(manifest.rubric_chart_count, 13);
-  assert.equal(manifest.map_count, 3);
-  assert.equal(manifest.advanced_idiom_types.length, 8);
-});
 test("V02 state labels switch polarity to preserve text contrast on dark rate fills", () => {
   const labels = facilitiesMap.layer[2];
   assert.equal(labels.mark.fontSize, 12);

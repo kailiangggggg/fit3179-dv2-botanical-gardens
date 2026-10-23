@@ -1,6 +1,6 @@
 # Chart manifest
 
-**Inventory:** 13 rubric-counted chart groups, 14 active visual panels, 3 map idioms, and 8 claimed advanced idiom types. V05a/V05b is one paired chart group. The legacy V01 density, regional-profile and under-100 ha evidence remains in public reference files but is hidden from the default story and is not counted as active panels. These counts describe the implementation and do not predict a marker-assessed grade.
+**Inventory:** 13 rubric-counted chart groups, 14 active visual panels, 3 map idioms, and 8 claimed advanced idiom types. V05a/V05b is one paired chart group. These counts describe the implementation and do not predict a marker-assessed grade.
 
 The complete machine-readable What / Why / How contracts, field types, transformations, mark/channel choices, interactions, caveats, spec paths and data paths are in [`public/specs/chart-manifest.json`](public/specs/chart-manifest.json). Each readable Vega-Lite v5 specification is in [`public/specs/`](public/specs/).
 
@@ -19,8 +19,6 @@ The complete machine-readable What / Why / How contracts, field types, transform
 | V11 | What years do the dated ALA accessions record? | Histogram | ALA top-level accessions with usable dates | [`V11`](public/specs/V11-avsb-accession-years.json) · decade counts | Advanced |
 | V12 | How much of each seed-bank resource can be mapped? | Horizontal bar / dot plot | ALA resource coordinate completeness | [`V12`](public/specs/V12-avsb-coordinate-coverage.json) · resource coverage | Basic |
 | V13 | Which accession archives provide usable year ranges? | Interval plot | ALA top-level accession year coverage by resource | [`V13`](public/specs/V13-avsb-date-coverage.json) · date ranges | Basic |
-
-V01 uses one active count map. The former V01 density map, regional profiles and linear under-100 ha comparison are retained as reference evidence, but are hidden from the default story and are not counted as active panels or chart groups. The archived density experiment used all 182 locations, a 50 km Gaussian-kernel bandwidth and a 15 km sampling grid; 31 facilities fell below its lowest selected contour at their source point. Its contour values represented estimated site-location density, not land area or botanical coverage. V04 remains the active chart for the complete area distribution.
 
 ## Analytical contracts
 
