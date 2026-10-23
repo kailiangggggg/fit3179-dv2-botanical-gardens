@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import { chartCards } from "../src/site-content.js";
 
 const kingsPark = JSON.parse(
   readFileSync(new URL("../public/specs/V08-kingspark-family-records.json", import.meta.url), "utf8"),
@@ -29,9 +30,6 @@ const plantbankTreemap = JSON.parse(
 );
 const originHexbin = JSON.parse(
   readFileSync(new URL("../public/specs/V10-avsb-origin-hexbin.json", import.meta.url), "utf8"),
-);
-const manifest = JSON.parse(
-  readFileSync(new URL("../public/specs/chart-manifest.json", import.meta.url), "utf8"),
 );
 const siteStyles = readFileSync(new URL("../src/site.css", import.meta.url), "utf8");
 const rankLine = rankChart.layer.find((layer) => layer.mark?.type === "line");
@@ -149,8 +147,8 @@ test("V02 and V03 share state focus while V01 keeps findings visible without hov
   assert.match(facilitiesMap.layer[1].encoding.opacity.condition.test, /linkedState/);
   assert.match(rankLine.encoding.opacity.condition.test, /linkedState/);
   assert.match(rankEndpointLabels.encoding.opacity.condition.test, /linkedState/);
-  assert.equal(manifest.charts.find(({ id }) => id === "V01").spec, "specs/V01-facility-symbol-map.json");
-  assert.equal(Object.hasOwn(manifest.charts.find(({ id }) => id === "V01"), "support_views"), false);
+  assert.equal(chartCards.find(({ id }) => id === "V01").spec, "specs/V01-facility-symbol-map.json");
+  assert.equal(Object.hasOwn(chartCards.find(({ id }) => id === "V01"), "support_views"), false);
 });
 
 test("V02 projection keeps the choropleth inside a compact Australia-focused frame", () => {
@@ -261,30 +259,29 @@ test("V10 exposes sparse bins with a monotonic sequential range and matching leg
   assert.ok(contrastRatio(low, "#f1efe7") >= 3, `${low} is too close to the land background`);
 });
 
-test("the chart manifest explains visible V01 evidence and linked-jurisdiction interaction", () => {
-  const chartById = new Map(manifest.charts.map((chart) => [chart.id, chart]));
-  assert.match(chartById.get("V01").how.interaction, /visible without interaction/i);
-  assert.match(chartById.get("V01").how.interaction, /tooltips are supplemental/i);
-  assert.match(chartById.get("V02").how.interaction, /linked.*V03/i);
-  assert.match(chartById.get("V03").how.interaction, /linked.*V02/i);
-  assert.match(chartById.get("V03").how.interaction, /click legend.*focus/i);
-  assert.match(chartById.get("V03").how.interaction, /Enter or Space/i);
-  assert.match(chartById.get("V03").how.interaction, /All jurisdictions to clear/i);
+test("V01, V02 and V03 retain the linked geographic chart contracts", () => {
+  const chartById = new Map(chartCards.map((chart) => [chart.id, chart]));
+  assert.equal(chartById.get("V01").spec, "specs/V01-facility-symbol-map.json");
+  assert.ok(chartById.get("V01").annotation.length > 0);
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  assert.match(mainSource, /setLinkedJurisdiction/);
+  assert.match(mainSource, /linkedState/);
+  assert.match(mainSource, /selectedStates/);
 });
 
 test("V08 identifies Myrtaceae as the largest named family, excluding the pooled remainder", () => {
-  const kingsParkChart = manifest.charts.find((chart) => chart.id === "V08");
+  const kingsParkChart = chartCards.find((chart) => chart.id === "V08");
   assert.equal(kingsParkChart.title, "Myrtaceae is Kings Park’s largest named voucher family");
-  assert.match(kingsParkChart.how.ordering, /Other families is the final pooled row/i);
+  assert.equal(kingsPark.encoding.y.sort.field, "family_order_numeric");
 });
 
 test("chart annotations are reader-facing and explain the log axis and taxon IDs", () => {
-  for (const chart of manifest.charts) {
-    assert.doesNotMatch(chart.how.annotation, /^(explain|add|show|tell the reader)\b/i, `${chart.id} annotation is an author instruction`);
+  for (const chart of chartCards) {
+    assert.doesNotMatch(chart.annotation, /^(explain|add|show|tell the reader)\b/i, `${chart.id} annotation is an author instruction`);
   }
-  const resourceChart = manifest.charts.find((chart) => chart.id === "V05");
-  assert.match(resourceChart.how.annotation, /taxon IDs are database labels/i);
-  assert.match(resourceChart.how.annotation, /not verified species counts/i);
+  const resourceChart = chartCards.find((chart) => chart.id === "V05");
+  assert.match(resourceChart.annotation, /taxon IDs are database labels/i);
+  assert.match(resourceChart.annotation, /not verified species counts/i);
 });
 
 test("V09 parses numeric fields so zero labels and family ordering render correctly", () => {

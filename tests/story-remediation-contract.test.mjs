@@ -1,9 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { pageStory } from "../src/site-content.js";
-import manifest from "../public/specs/chart-manifest.json" with { type: "json" };
+import { pageStory, chartCards } from "../src/site-content.js";
 
-const charts = new Map(manifest.charts.map((chart) => [chart.id, chart]));
+const charts = new Map(chartCards.map((chart) => [chart.id, chart]));
 const section = (id) => pageStory.sections.find((item) => item.id === id);
 const transition = (sectionId, chartId) => section(sectionId).chartTransitions
   .find((item) => item.afterChart === chartId)?.text ?? "";
@@ -24,7 +23,7 @@ test("the first chapter separates raw counts, population rates, ranks and footpr
   assert.match(transition("footprint", "V02"), /population/i);
   assert.match(transition("footprint", "V03"), /ACT.*sixth.*first/i);
   assert.match(charts.get("V04").title, /3,739(?:-hectare| ha)/i);
-  assert.match(charts.get("V04").how.annotation, /logarithmic axis/i);
+  assert.match(charts.get("V04").annotation, /logarithmic axis/i);
 });
 
 test("the collections chapter defines distinct record types and limits", () => {
@@ -36,7 +35,7 @@ test("the collections chapter defines distinct record types and limits", () => {
   assert.match(transition("records", "V06"), /3,240.*1,897.*surviv/i);
   assert.match(transition("records", "V07"), /4,321.*not.*accession date/i);
   assert.match(transition("records", "V08"), /preserved.*no usable years/i);
-  assert.match(charts.get("V08").how.annotation, /20,647.*PRESERVED_SPECIMEN.*4,800/i);
+  assert.match(charts.get("V08").annotation, /20,647.*PRESERVED_SPECIMEN.*4,800/i);
   assert.match(transition("records", "V09"), /1,843.*not.*conservation/i);
 });
 
@@ -63,13 +62,13 @@ test("the conclusion connects documented work to education and conservation with
 });
 
 test("all thirteen chart groups have concise evidence-led titles and visible caveats", () => {
-  assert.equal(manifest.charts.length, 13);
-  for (const chart of manifest.charts) {
+  assert.equal(chartCards.length, 13);
+  for (const chart of chartCards) {
     assert.ok(chart.title.trim().length > 0);
-    assert.ok(chart.how.annotation.trim().length > 0);
-    assert.ok(chart.how.annotation.length <= 240, chart.id + " annotation is too long");
+    assert.ok(chart.annotation.trim().length > 0);
+    assert.ok(chart.annotation.length <= 240, chart.id + " annotation is too long");
   }
-  assert.match(charts.get("V08").how.annotation, /4,800/);
+  assert.match(charts.get("V08").annotation, /4,800/);
   assert.match(charts.get("V10").title, /38,099/);
   assert.match(charts.get("V12").title, /0%.*100%/);
   assert.match(charts.get("V13").title, /Four of ten/i);

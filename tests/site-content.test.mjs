@@ -1,12 +1,8 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { pageStory } from "../src/site-content.js";
+import { pageStory, chartCards } from "../src/site-content.js";
 import viteConfig from "../vite.config.js";
-
-const manifest = JSON.parse(
-  readFileSync(new URL("../public/specs/chart-manifest.json", import.meta.url), "utf8"),
-);
 
 test("pageStory keeps one unchanged jurisdiction list", () => {
   const source = readFileSync(new URL("../src/site-content.js", import.meta.url), "utf8");
@@ -62,11 +58,12 @@ test("the linked state control uses the jurisdictions in V03", () => {
   assert.match(renderer, /All jurisdictions to clear the filter/);
 });
 
-test("every manifest chart group appears once in the story", () => {
+test("every chart group appears once in the story", () => {
   const storyChartIds = pageStory.sections.flatMap(({ chartIds }) => chartIds);
-  assert.deepEqual(storyChartIds, manifest.charts.map(({ id }) => id));
-  assert.equal(manifest.rubric_chart_count, 13);
-  assert.equal(manifest.visible_panels, 14);
+  assert.deepEqual(storyChartIds, chartCards.map(({ id }) => id));
+  assert.equal(chartCards.length, 13);
+  assert.equal(chartCards.filter(({ is_map }) => is_map).length, 3);
+  assert.equal(new Set(storyChartIds).size, 13);
 });
 
 test("every chart has a concise visible finding or transition in reading order", () => {

@@ -1,11 +1,10 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { test } from "node:test";
-import { pageStory } from "../src/site-content.js";
+import { pageStory, chartCards } from "../src/site-content.js";
 
 const publicUrl = new URL("../public/", import.meta.url);
-const manifest = JSON.parse(readFileSync(new URL("../public/specs/chart-manifest.json", import.meta.url), "utf8"));
-const v01 = manifest.charts.find(({ id }) => id === "V01");
+const v01 = chartCards.find(({ id }) => id === "V01");
 
 function readPublicJson(path) {
   return JSON.parse(readFileSync(new URL(path, publicUrl), "utf8"));
@@ -39,10 +38,8 @@ test("V01 uses one proportional-symbol map group for raw jurisdiction counts", (
     "data/state_rates.geojson",
     "data/v01_jurisdiction_counts.geojson",
   ]);
-  assert.equal(manifest.rubric_chart_count, 13);
-  assert.equal(manifest.visible_panels, 14);
-  assert.equal(manifest.map_count, 3);
-  assert.ok(manifest.advanced_idiom_types.includes("Proportional-symbol map"));
+  assert.equal(chartCards.length, 13);
+  assert.equal(chartCards.filter(({ is_map }) => is_map).length, 3);
 });
 
 test("V01 maps count with circle area and leaves subtype unencoded", () => {
@@ -105,7 +102,7 @@ test("V01 count symbols preserve all nine source jurisdiction totals and honest 
 
 test("V01 copy leads with counts and links raw totals to population-adjusted rates", () => {
   const footprint = pageStory.sections.find(({ id }) => id === "footprint");
-  const v01Chart = manifest.charts.find(({ id }) => id === "V01");
+  const v01Chart = chartCards.find(({ id }) => id === "V01");
   assert.match(footprint.question, /where are more known.*(facilities|gardens)/i);
   assert.match(v01Chart.title, /135 of 182/i);
   assert.match(footprint.intro, /circle area/i);

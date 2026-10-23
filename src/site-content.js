@@ -313,3 +313,262 @@ pageStory.navigation = pageStory.sections.map(({ id, index, navLabel }) => ({
   index,
   label: navLabel,
 }));
+
+// Visible chart content and asset references used by the single-page story.
+export const chartCards = [
+  {
+    "id": "V01",
+    "title": "NSW, Victoria and Queensland account for 135 of 182 known register facilities",
+    "idiom": "Proportional-symbol map",
+    "is_map": true,
+    "spec": "specs/V01-facility-symbol-map.json",
+    "data_files": [
+      "data/state_rates.geojson",
+      "data/v01_jurisdiction_counts.geojson"
+    ],
+    "source": [
+      "Geoscience Australia, Botanical Gardens and Arboretums register; snapshot 14 October 2026"
+    ],
+    "grain": "One jurisdiction aggregate of the 182 unique known-register facility features.",
+    "measure": "Known register facilities by jurisdiction; raw counts, not population-standardized rates.",
+    "readerTask": "Compare jurisdiction totals before population adjustment and distinguish count symbols from individual garden locations.",
+    "marks": "State polygons, one circle per jurisdiction, direct labels and short leaders for small totals.",
+    "channels": "Geographic position identifies the jurisdiction; circle area encodes its facility count; text repeats the count. One symbol color carries no subtype meaning.",
+    "annotation": "Circle area, not radius, encodes jurisdiction count. Anchors are representative places, not individual gardens; OT is shown near Norfolk Island."
+  },
+  {
+    "id": "V02",
+    "title": "The ACT records 12.25 known facilities per million residents",
+    "idiom": "Choropleth",
+    "is_map": true,
+    "spec": "specs/V02-facilities-per-million-choropleth.json",
+    "data_files": [
+      "data/state_rates.geojson",
+      "data/state_summary.csv"
+    ],
+    "source": [
+      "Geoscience Australia register",
+      "ABS ERP, March 2026",
+      "ABS ASGS Edition 4 State/Territory boundaries"
+    ],
+    "grain": "One standard Australian state or territory; eight comparison jurisdictions.",
+    "measure": "Known-register facilities per million residents at 31 March 2026; not access, travel distance or service quality.",
+    "readerTask": "Compare register density without treating raw counts as equivalent across differently sized populations.",
+    "marks": "State and territory polygons.",
+    "channels": "Geographic position; sequential luminance for facilities per million residents.",
+    "annotation": "Per-million rates divide GA counts by March 2026 ERP. The ACT leads; the measure describes register density, not public access. Other Territories stays neutral because its grouped denominator combines four areas."
+  },
+  {
+    "id": "V03",
+    "title": "ACT rises from sixth by count to first by rate",
+    "idiom": "Slopegraph",
+    "is_map": false,
+    "spec": "specs/V03-count-rate-slopegraph.json",
+    "data_files": [
+      "data/state_rank_comparison.csv"
+    ],
+    "source": [
+      "Geoscience Australia register",
+      "ABS ERP, March 2026"
+    ],
+    "grain": "Eight standard states and territories.",
+    "measure": "Ordinal rank (1 = highest); endpoint values remain available in the tooltip.",
+    "readerTask": "Follow each state between raw count rank and population-standardized rank.",
+    "marks": "One line per jurisdiction with distinct endpoint symbols for grayscale identification.",
+    "channels": "Horizontal position for comparison measure; vertical position for rank; color and endpoint shape redundantly identify jurisdiction.",
+    "annotation": "ACT moves from rank 6 to 1; NT moves from tied rank 7.5 to 2. These ranks describe registered-facility density, not public access."
+  },
+  {
+    "id": "V04",
+    "title": "Median footprints are similar, but one arboretum reaches 3,739 ha",
+    "idiom": "Box plot",
+    "is_map": false,
+    "spec": "specs/V04-registered-footprint-boxplot.json",
+    "data_files": [
+      "data/facility_areas.csv",
+      "data/facility_area_stats.json"
+    ],
+    "source": [
+      "Geoscience Australia register"
+    ],
+    "grain": "One registered facility; 182 area values.",
+    "measure": "Registered hectares on a logarithmic scale; the box spans the middle half of values.",
+    "readerTask": "Compare typical size and spread while noticing the very large facilities.",
+    "marks": "Horizontal box-and-whisker marks; the center line is the median, the box is the middle half, whiskers show the usual spread, and dots identify individual sites beyond them.",
+    "channels": "Subtype on the categorical axis; logarithmic x-position for hectares; hue repeats the map’s type colors.",
+    "annotation": "Medians are close: 12.96 ha for Botanic Gardens and 12.74 ha for Arboretums. The logarithmic axis keeps small and large sites visible; registered hectares are not planted area."
+  },
+  {
+    "id": "V05",
+    "title": "ALA archives vary in published accession and taxon-ID coverage",
+    "idiom": "Paired dot plot",
+    "is_map": false,
+    "spec": "specs/V05-seedbank-resource-profile.json",
+    "data_files": [
+      "data/ala_resource_profile.csv"
+    ],
+    "source": [
+      "Ten ALA / Australian Virtual Seed Bank resources with CC BY 3.0 AU metadata"
+    ],
+    "grain": "Top-level accession event and distinct GBIF taxon identifier, summarized separately by resource.",
+    "measure": "Indexed event and taxon-ID coverage by resource; neither measure is a total inventory or standardized species richness.",
+    "readerTask": "Understand data coverage and why the mapped sample varies between contributors.",
+    "marks": "Two vertically aligned horizontal dot panels, counted as one paired chart group.",
+    "channels": "Resource on y; count on logarithmic x; separate x scales for accessions and taxon identifiers.",
+    "annotation": "Each log-axis step is tenfold. Top-level accessions exclude linked child rows; taxon IDs are database labels, not verified species counts or total bank holdings."
+  },
+  {
+    "id": "V06",
+    "title": "Eucalyptus is PlantBank’s leading recorded genus in Myrtaceae",
+    "idiom": "Treemap",
+    "is_map": false,
+    "spec": "specs/V06-plantbank-family-treemap.json",
+    "data_files": [
+      "data/plantbank_family_treemap.csv"
+    ],
+    "source": [
+      "GBIF PlantBank Records dataset, CC BY 4.0"
+    ],
+    "grain": "One of 10,609 occurrence rows, all marked LIVING_SPECIMEN; 10,599 have a family value.",
+    "measure": "Rectangle areas partition 10,599 indexed family-identified living-specimen records; not living plants currently held.",
+    "readerTask": "Inspect genuine family-to-genus nesting and composition, not an arbitrary flat ranking.",
+    "marks": "Parent family rectangles frame nested genus rectangles, with quantitative area, labels and thin grouping outlines.",
+    "channels": "Nested area carries record count; a categorical family colour key distinguishes groups; names identify larger tiles.",
+    "annotation": "Among 10,599 family-identified LIVING_SPECIMEN records, Myrtaceae has 3,240 and 1,897 are labelled Eucalyptus. Areas encode row counts; pooled tiles are groups, not taxa or current holdings."
+  },
+  {
+    "id": "V07",
+    "title": "The 1980s contain the most dated PlantBank records",
+    "idiom": "Histogram by decade",
+    "is_map": false,
+    "spec": "specs/V07-plantbank-date-histogram.json",
+    "data_files": [
+      "data/plantbank_year_histogram.csv"
+    ],
+    "source": [
+      "GBIF PlantBank Records dataset, CC BY 4.0"
+    ],
+    "grain": "Individual LIVING_SPECIMEN occurrence row with a parseable year.",
+    "measure": "Records with a usable year; 9,689 rows dated 1960–2015, from 10,609 total.",
+    "readerTask": "See the documented span and concentration of dated records without treating them as annual additions.",
+    "marks": "Contiguous histogram bars spanning numeric ten-year intervals.",
+    "channels": "Quantitative decade start/end bound each bin horizontally; aligned bar height shows the count.",
+    "annotation": "The 1980s peak at 4,321 dated rows. Of 10,609 records, 9,689 have usable years and 920 do not; the latest is 2015. Recorded years are not necessarily accession dates."
+  },
+  {
+    "id": "V08",
+    "title": "Myrtaceae is Kings Park’s largest named voucher family",
+    "idiom": "Ranked dot plot",
+    "is_map": false,
+    "spec": "specs/V08-kingspark-family-records.json",
+    "data_files": [
+      "data/kingspark_family_records.csv"
+    ],
+    "source": [
+      "GBIF Kings Park Botanical Gardens dataset, CC BY 4.0"
+    ],
+    "grain": "One of 20,647 PRESERVED_SPECIMEN occurrence rows; 20,646 have a family value.",
+    "measure": "Indexed herbarium voucher records, not living garden holdings.",
+    "readerTask": "See a separate research-record layer without combining it with seed accessions or living specimens.",
+    "marks": "Horizontal points with direct count labels.",
+    "channels": "Count on x; family on y; Myrtaceae is highlighted.",
+    "annotation": "Kings Park’s 20,647 rows are PRESERVED_SPECIMEN vouchers; 4,800 are Myrtaceae. These are herbarium records, not living collection holdings."
+  },
+  {
+    "id": "V09",
+    "title": "PlantBank Myrtaceae records peak in the 1980s",
+    "idiom": "Quantitative matrix / heatmap",
+    "is_map": false,
+    "spec": "specs/V09-plantbank-family-decade-heatmap.json",
+    "data_files": [
+      "data/plantbank_family_decades.csv"
+    ],
+    "source": [
+      "GBIF PlantBank Records dataset, CC BY 4.0"
+    ],
+    "grain": "Plant family × decade among 9,683 living-specimen rows with both a usable year and family.",
+    "measure": "Living-specimen records with both fields; dates do not measure yearly additions.",
+    "readerTask": "Compare family composition across decades without mixing herbarium or seed-bank records.",
+    "marks": "Rectangular heatmap tiles with direct positive counts.",
+    "channels": "Family rows, chronological decade columns, sequential fill for count.",
+    "annotation": "Zero cells are observed family–decade combinations and are shown as 0; no cells are missing. The 1980s contain 1,843 of the 9,683 rows with family and year—record distribution, not conservation effort."
+  },
+  {
+    "id": "V10",
+    "title": "38,099 wild seed-origin records appear in generalized map cells",
+    "idiom": "Equal-area hexbin map",
+    "is_map": true,
+    "spec": "specs/V10-avsb-origin-hexbin.json",
+    "data_files": [
+      "data/state_rates.geojson",
+      "data/ala_origin_hexes.geojson"
+    ],
+    "source": [
+      "Ten ALA / Australian Virtual Seed Bank resources with CC BY 3.0 AU metadata"
+    ],
+    "grain": "One top-level accession event with an AU-coded usable coordinate; linked child events excluded.",
+    "measure": "Top-level accession-origin records per public hexagon; 38,773 coordinates passed the map filter before cell suppression, 38,099 are in published cells.",
+    "readerTask": "Recognize broad source landscapes while protecting precise collection locations.",
+    "marks": "Equal-area hexagon polygons and quiet state boundaries.",
+    "channels": "Projected position; sequential luminance for accession-origin count per cell.",
+    "annotation": "Cells with fewer than five records are suppressed. The equal-area hexagons summarize recorded collection origins, not gardens or seed stores."
+  },
+  {
+    "id": "V11",
+    "title": "The 2000s contain the most dated ALA accession records",
+    "idiom": "Histogram by decade",
+    "is_map": false,
+    "spec": "specs/V11-avsb-accession-years.json",
+    "data_files": [
+      "data/ala_year_histogram.csv",
+      "data/ala_date_coverage.csv"
+    ],
+    "source": [
+      "Ten ALA / Australian Virtual Seed Bank resources with CC BY 3.0 AU metadata"
+    ],
+    "grain": "Top-level accession event with a parseable year.",
+    "measure": "Dated accessions only; 33,765 of 58,562 top-level records currently have a usable year.",
+    "readerTask": "See the span of the dated sample without treating it as a time series of conservation activity.",
+    "marks": "Contiguous histogram bars spanning numeric ten-year intervals.",
+    "channels": "Quantitative decade start/end bound each bin horizontally; aligned bar height shows the count.",
+    "annotation": "The histogram includes 33,765 dated top-level accessions across six resources; four have no usable years and the 2020s end in 2025. These dates are not annual collecting activity."
+  },
+  {
+    "id": "V12",
+    "title": "Map-ready coordinate coverage ranges from 0% to 100%",
+    "idiom": "Horizontal bar / dot plot",
+    "is_map": false,
+    "spec": "specs/V12-avsb-coordinate-coverage.json",
+    "data_files": [
+      "data/ala_coordinate_coverage.csv"
+    ],
+    "source": [
+      "Ten licensed ALA event archives"
+    ],
+    "grain": "One data resource.",
+    "measure": "Percentage of top-level accession records ready for the origin map.",
+    "readerTask": "Judge how uneven coordinate availability may shape the visible pattern.",
+    "marks": "Horizontal bars with endpoint dots and printed percentages.",
+    "channels": "Resource on y; percentage with map-ready coordinates on x.",
+    "annotation": "In Australian PlantBank, 2,921 of 12,871 top-level accessions (22.7%) lack map-ready coordinates. Completeness is not geographic representativeness."
+  },
+  {
+    "id": "V13",
+    "title": "Four of ten ALA archives lack usable collection years",
+    "idiom": "Interval plot",
+    "is_map": false,
+    "spec": "specs/V13-avsb-date-coverage.json",
+    "data_files": [
+      "data/ala_date_coverage.csv"
+    ],
+    "source": [
+      "Ten licensed ALA event archives"
+    ],
+    "grain": "One resource summarized across top-level accessions with a usable year.",
+    "measure": "Documented year coverage within each archive; resources without parseable years are listed separately.",
+    "readerTask": "Understand the limits of the combined dated-record histogram.",
+    "marks": "Horizontal range rules with endpoint circles.",
+    "channels": "Year on x; resource on y; rule length encodes min-to-max year span.",
+    "annotation": "Interval endpoints are the earliest and latest observed file years, not continuous collecting. The separate 0–100% ALA date-coverage data identify resources without usable years."
+  }
+];

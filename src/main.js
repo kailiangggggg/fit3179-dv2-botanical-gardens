@@ -5,6 +5,7 @@ import "@fontsource/source-sans-3/latin-600.css";
 import "./site.css";
 
 import { renderPage } from "./content-renderer.js";
+import { chartCards } from "./site-content.js";
 import { adaptChartSpec, localizeDataUrls, resolveChartSpecUrl } from "./chart-runtime.js";
 import { formatLegendActionName, isLegendActivationKey, toggleLegendSelection } from "./legend-accessibility.js";
 import { getActiveSectionId } from "./navigation-runtime.js";
@@ -289,16 +290,14 @@ function observeCharts(figures, chartById) {
 
 async function startStory() {
   try {
-    const manifestUrl = new URL("specs/chart-manifest.json", siteBaseUrl);
-    const manifest = await fetchJson(manifestUrl, "Chart manifest");
-    const rendered = renderPage(storyRoot, navigation, manifest, siteBaseUrl);
+    const rendered = renderPage(storyRoot, navigation, chartCards, siteBaseUrl);
     storyRoot.querySelector(".hero").after(sectionRail);
     sectionRail.classList.add("is-ready");
-    if (rendered.figures.length !== manifest.charts.length) {
-      throw new Error("The rendered chart groups do not match the chart manifest.");
+    if (rendered.figures.length !== chartCards.length) {
+      throw new Error("The rendered chart groups do not match the site content.");
     }
 
-    const chartById = new Map(manifest.charts.map((chart) => [chart.id, chart]));
+    const chartById = new Map(chartCards.map((chart) => [chart.id, chart]));
     document.querySelector("#jurisdiction-focus")?.addEventListener("change", (event) => {
       setLinkedJurisdiction(event.currentTarget.value);
     });
@@ -310,7 +309,7 @@ async function startStory() {
     const message = document.createElement("p");
     message.className = "story-error";
     message.setAttribute("role", "alert");
-    message.textContent = "The story could not load. Please reload this page or open the public chart manifest and source files.";
+    message.textContent = "The story could not load. Please reload this page or open the published chart specifications and source files.";
     storyRoot.replaceChildren(message);
   }
 }

@@ -38,8 +38,7 @@ pnpm run test:data
 ## Public chart files
 
 - Readable Vega-Lite v5 JSON specifications: [`public/specs/`](public/specs/)
-- Machine-readable What / Why / How manifest: [`public/specs/chart-manifest.json`](public/specs/chart-manifest.json)
-- Human-readable chart inventory: [`CHART_MANIFEST.md`](CHART_MANIFEST.md)
+- Chart titles, annotations, source notes and specification references: [`src/site-content.js`](src/site-content.js)
 - Chart-ready data (about 1.2 MB in the 14 October 2026 snapshot): [`public/data/`](public/data/)
 - Source, licence, filters and limitations: [`docs/sources-and-methods.md`](docs/sources-and-methods.md)
 - A separate project-level execution status record is maintained in the parent DV2 workspace.

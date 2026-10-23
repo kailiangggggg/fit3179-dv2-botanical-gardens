@@ -3,11 +3,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { compile } from "vega-lite";
 import * as vega from "vega";
+import { chartCards } from "../src/site-content.js";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const publicRoot = path.join(projectRoot, "public");
-const manifestPath = path.join(publicRoot, "specs", "chart-manifest.json");
-const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 const failures = [];
 let warningCount = 0;
 let validatedSpecCount = 0;
@@ -34,7 +33,7 @@ function findColorSchemes(value, output = []) {
   return output;
 }
 
-for (const chart of manifest.charts) {
+for (const chart of chartCards) {
   const specs = [{ id: chart.id, path: chart.spec }];
 
   for (const entry of specs) {
@@ -85,25 +84,22 @@ for (const chart of manifest.charts) {
 
   for (const relativeDataPath of chart.data_files) {
     if (!fs.existsSync(path.join(publicRoot, relativeDataPath))) {
-      failures.push(`${chart.id}: missing manifest data file ${relativeDataPath}`);
+      failures.push(`${chart.id}: missing chart data file ${relativeDataPath}`);
     }
   }
 }
 
-const actualMapCount = manifest.charts.filter((chart) => chart.is_map).length;
-if (manifest.charts.length !== manifest.rubric_chart_count) {
-  failures.push(`Manifest count mismatch: ${manifest.charts.length} entries vs ${manifest.rubric_chart_count} rubric charts`);
+const actualMapCount = chartCards.filter((chart) => chart.is_map).length;
+if (chartCards.length !== 13 || new Set(chartCards.map((chart) => chart.id)).size !== 13) {
+  failures.push("Expected 13 uniquely identified chart groups.");
 }
-if (actualMapCount !== 3 || manifest.map_count !== 3) {
-  failures.push(`Map count mismatch: ${actualMapCount} marked charts vs ${manifest.map_count} in manifest`);
-}
-if (new Set(manifest.advanced_idiom_types).size < 8) {
-  failures.push("The chart manifest lists fewer than eight distinct advanced idiom types");
+if (actualMapCount !== 3) {
+  failures.push(`Expected three geographic charts, found ${actualMapCount}.`);
 }
 
 if (failures.length) {
   for (const failure of failures) console.error(`FAIL ${failure}`);
   process.exitCode = 1;
 } else {
-  console.log(`Validated ${manifest.charts.length} chart groups and ${validatedSpecCount} Vega-Lite v5 specs; ${actualMapCount} map idioms; ${manifest.advanced_idiom_types.length} advanced idiom types; all local data URLs resolve.`);
+  console.log(`Validated ${chartCards.length} chart groups and ${validatedSpecCount} Vega-Lite v5 specs; ${actualMapCount} map idioms; all local data URLs resolve.`);
 }

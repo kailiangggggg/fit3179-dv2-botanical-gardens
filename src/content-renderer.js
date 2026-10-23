@@ -86,11 +86,11 @@ function renderChartNotes(chart) {
 
   const list = element("dl", "chart-contract");
   const items = [
-    ["Source", chart.what.source.join("; ")],
-    ["Record grain", chart.what.grain],
-    ["Measure", chart.what.measure],
-    ["Reader task", chart.why.reader_task],
-    ["How to read", `${chart.how.marks} ${chart.how.channels} ${chart.how.annotation}`],
+    ["Source", chart.source.join("; ")],
+    ["Record grain", chart.grain],
+    ["Measure", chart.measure],
+    ["Reader task", chart.readerTask],
+    ["How to read", `${chart.marks} ${chart.channels} ${chart.annotation}`],
   ];
 
   for (const [label, value] of items) {
@@ -129,7 +129,7 @@ function renderChartEntry(chart, baseUrl) {
   mount.append(element("p", "chart-loading", `Loading ${chart.id}…`));
 
   const caption = element("figcaption", "figure-caption");
-  caption.append(element("span", "caption-mark", "↳"), element("span", "", chart.how.annotation));
+  caption.append(element("span", "caption-mark", "↳"), element("span", "", chart.annotation));
   figure.append(topLine, mount);
   figure.append(caption);
 
@@ -275,8 +275,8 @@ function renderSources(story) {
   return footer;
 }
 
-export function renderPage(root, navList, manifest, baseUrl) {
-  const chartsById = new Map(manifest.charts.map((chart) => [chart.id, chart]));
+export function renderPage(root, navList, chartCards, baseUrl) {
+  const chartsById = new Map(chartCards.map((chart) => [chart.id, chart]));
   const navLinks = renderNavigation(navList, pageStory.navigation);
   const children = [renderHero(pageStory)];
 
