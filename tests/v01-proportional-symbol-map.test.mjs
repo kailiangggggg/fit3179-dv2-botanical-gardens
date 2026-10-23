@@ -34,7 +34,7 @@ test("V01 uses one proportional-symbol map group for raw jurisdiction counts", (
   assert.equal(v01.idiom, "Proportional-symbol map");
   assert.equal(v01.is_map, true);
   assert.equal(v01.spec, "specs/V01-facility-symbol-map.json");
-  assert.equal(v01.support_views.default_visible, false);
+  assert.equal(Object.hasOwn(v01, "support_views"), false);
   assert.deepEqual(v01.data_files, [
     "data/state_rates.geojson",
     "data/v01_jurisdiction_counts.geojson",
