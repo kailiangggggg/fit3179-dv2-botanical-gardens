@@ -1,6 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Jurisdiction-level proportional-symbol map of the 182 Geoscience Australia register facilities. Circle area, not radius, represents each jurisdiction's known facility count. Symbol anchors are representative jurisdiction locations, not individual gardens.",
+  "description": "Jurisdiction-level proportional-symbol map of the 182 Geoscience Australia register facilities. Circle area, not radius, represents each jurisdiction's known facility count. All nine counts use the same external abbreviation label connected to its symbol by a light leader line. Symbol anchors are representative jurisdiction locations, not individual gardens.",
   "width": 900,
   "height": 440,
   "projection": {
@@ -21,13 +21,16 @@
         "url": "../data/v01_jurisdiction_counts.geojson",
         "format": {"type": "json", "property": "features"}
       },
-      "transform": [{"filter": "datum.properties.facility_count < 24"}],
+      "transform": [
+        {"calculate": "datum.properties.state_code === '1' ? 154.1 : datum.properties.state_code === '2' ? 138.8 : datum.properties.state_code === '3' ? 150.6 : datum.properties.state_code === '5' ? 125.3 : datum.properties.state_code === '6' ? 149.2 : datum.properties.label_longitude", "as": "label_longitude_adjusted"},
+        {"calculate": "datum.properties.state_code === '1' ? -29 : datum.properties.label_latitude", "as": "label_latitude_adjusted"}
+      ],
       "mark": {"type": "rule", "stroke": "#68796e", "strokeWidth": 0.9, "opacity": 0.85},
       "encoding": {
         "longitude": {"field": "properties.longitude", "type": "quantitative"},
         "latitude": {"field": "properties.latitude", "type": "quantitative"},
-        "longitude2": {"field": "properties.label_longitude", "type": "quantitative"},
-        "latitude2": {"field": "properties.label_latitude", "type": "quantitative"}
+        "longitude2": {"field": "label_longitude_adjusted", "type": "quantitative"},
+        "latitude2": {"field": "label_latitude_adjusted", "type": "quantitative"}
       }
     },
     {
@@ -67,37 +70,32 @@
         "url": "../data/v01_jurisdiction_counts.geojson",
         "format": {"type": "json", "property": "features"}
       },
-      "transform": [{"filter": "datum.properties.facility_count >= 24"}],
-      "mark": {"type": "text", "align": "center", "baseline": "middle", "dy": -5, "font": "Source Sans 3", "fontSize": 11, "fontWeight": 700, "color": "#fffdf7"},
-      "encoding": {
-        "longitude": {"field": "properties.longitude", "type": "quantitative"},
-        "latitude": {"field": "properties.latitude", "type": "quantitative"},
-        "text": {"field": "properties.abbreviation", "type": "nominal"}
-      }
-    },
-    {
-      "data": {
-        "url": "../data/v01_jurisdiction_counts.geojson",
-        "format": {"type": "json", "property": "features"}
-      },
-      "transform": [{"filter": "datum.properties.facility_count >= 24"}],
-      "mark": {"type": "text", "align": "center", "baseline": "middle", "dy": 8, "font": "Source Sans 3", "fontSize": 10, "fontWeight": 700, "color": "#fffdf7"},
-      "encoding": {
-        "longitude": {"field": "properties.longitude", "type": "quantitative"},
-        "latitude": {"field": "properties.latitude", "type": "quantitative"},
-        "text": {"field": "properties.facility_count", "type": "quantitative", "format": ",.0f"}
-      }
-    },
-    {
-      "data": {
-        "url": "../data/v01_jurisdiction_counts.geojson",
-        "format": {"type": "json", "property": "features"}
-      },
-      "transform": [{"filter": "datum.properties.facility_count < 24"}],
+      "transform": [
+        {"filter": "datum.properties.state_code !== '2' && datum.properties.state_code !== '4' && datum.properties.state_code !== '7' && datum.properties.state_code !== '9'"},
+        {"calculate": "datum.properties.state_code === '1' ? 154.1 : datum.properties.state_code === '3' ? 150.6 : datum.properties.state_code === '5' ? 125.3 : datum.properties.state_code === '6' ? 149.2 : datum.properties.label_longitude", "as": "label_longitude_adjusted"},
+        {"calculate": "datum.properties.state_code === '1' ? -29 : datum.properties.label_latitude", "as": "label_latitude_adjusted"}
+      ],
       "mark": {"type": "text", "align": "left", "baseline": "middle", "font": "Source Sans 3", "fontSize": 12, "fontWeight": 600, "color": "#202a27", "clip": false},
       "encoding": {
-        "longitude": {"field": "properties.label_longitude", "type": "quantitative"},
-        "latitude": {"field": "properties.label_latitude", "type": "quantitative"},
+        "longitude": {"field": "label_longitude_adjusted", "type": "quantitative"},
+        "latitude": {"field": "label_latitude_adjusted", "type": "quantitative"},
+        "text": {"field": "properties.label", "type": "nominal"}
+      }
+    },
+    {
+      "data": {
+        "url": "../data/v01_jurisdiction_counts.geojson",
+        "format": {"type": "json", "property": "features"}
+      },
+      "transform": [
+        {"filter": "datum.properties.state_code === '2' || datum.properties.state_code === '4' || datum.properties.state_code === '7' || datum.properties.state_code === '9'"},
+        {"calculate": "datum.properties.state_code === '2' ? 138.8 : datum.properties.label_longitude", "as": "label_longitude_adjusted"},
+        {"calculate": "datum.properties.label_latitude", "as": "label_latitude_adjusted"}
+      ],
+      "mark": {"type": "text", "align": "right", "baseline": "middle", "font": "Source Sans 3", "fontSize": 12, "fontWeight": 600, "color": "#202a27", "clip": false},
+      "encoding": {
+        "longitude": {"field": "label_longitude_adjusted", "type": "quantitative"},
+        "latitude": {"field": "label_latitude_adjusted", "type": "quantitative"},
         "text": {"field": "properties.label", "type": "nominal"}
       }
     }

@@ -61,19 +61,19 @@ export const pageStory = {
         {
           "afterChart": "V01",
           "emphasis": true,
-          "text": "The symbols show raw jurisdiction counts. V02 divides those totals by each jurisdiction’s March 2026 population."
+          "text": "NSW, Victoria and Queensland account for 135 of 182 registered facilities. Raw jurisdiction counts show where the register clusters; they don't tell us how easy those sites are to reach. V02 adds population context."
         },
         {
           "afterChart": "V02",
-          "text": "Rates reorder jurisdictions because population sizes differ. V03 compares each jurisdiction’s count rank with its rate rank."
+          "text": "ACT has the highest rate: 12.25 registered facilities per million residents. The population-adjusted rate changes comparisons, but tells us nothing about public access. V03 compares rank shifts."
         },
         {
           "afterChart": "V03",
-          "text": "ACT rises from sixth by count to first per million, while NT moves from tied rank 7.5 to second. These are register rates, not access; V04 compares reported footprints."
+          "text": "ACT rises from sixth by count to first by rate; NT climbs from a tied rank of 7.5 to second. The lines show rank order, not the size of the gaps. V04 compares footprints."
         },
         {
           "afterChart": "V04",
-          "text": "Median registered footprints are similar, while the largest arboretum reaches 3,739 ha. The next chapter turns to collection records."
+          "text": "The typical footprint is similar for gardens (12.96 ha) and arboreta (12.74 ha). One arboretum covers 3,739 ha; area alone does not show conservation value."
         }
       ]
     },
@@ -99,23 +99,23 @@ export const pageStory = {
       "chartTransitions": [
         {
           "afterChart": "V05",
-          "text": "The ten resources contain 58,562 top-level accessions among 119,278 event rows; linked child rows are excluded. Taxon IDs are database labels, not verified species. V06 narrows to PlantBank."
+          "text": "National Seed Bank has the most top-level accessions (16,323). Australian PlantBank has the most distinct taxon IDs (4,743). These are different record counts, not total holdings or verified species richness."
         },
         {
           "afterChart": "V06",
-          "text": "Among 10,599 family-identified records, Myrtaceae has 3,240 and Eucalyptus 1,897. Living describes the recorded basis, not current survival. V07 turns to recorded years."
+          "text": "In PlantBank, Myrtaceae accounts for 3,240 family-labelled records. Eucalyptus makes up 1,897 of them. Those records don't tell us how many plants survive today."
         },
         {
           "afterChart": "V07",
-          "text": "The 1980s peak at 4,321 dated rows. Another 920 PlantBank rows lack usable years, and the latest is 2015; these are not necessarily accession dates. V08 changes archive."
+          "text": "The 1980s have the most dated PlantBank rows: 4,321. Of 10,609 records, 920 have no usable year, and the recorded year may not be the accession date. This is not a tally of new holdings."
         },
         {
           "afterChart": "V08",
-          "text": "Kings Park’s rows are preserved herbarium vouchers, not living specimens; its archive has no usable years. V09 returns to PlantBank."
+          "text": "Kings Park's preserved-voucher archive has 20,647 rows; 4,800 are Myrtaceae, the largest named family. No usable years were recorded, and these specimens are not living plants."
         },
         {
           "afterChart": "V09",
-          "text": "Among 9,683 rows with family and year, 1,843 Myrtaceae records are dated to the 1980s. This is a record pattern, not conservation effort. Next: wild origins."
+          "text": "The 1980s hold 1,843 Myrtaceae records, out of 9,683 PlantBank rows with both family and year. That's a pattern in the archive, not evidence of more conservation work then."
         }
       ]
     },
@@ -140,19 +140,19 @@ export const pageStory = {
       "chartTransitions": [
         {
           "afterChart": "V10",
-          "text": "Of 38,773 map-ready records, published cells show 38,099; another 674 in cells under five are suppressed. These are collection origins, not gardens or banks. V11 turns to dates."
+          "text": "Top five 100 km cells lie in two areas: one near Perth, WA; four across southeastern Australia around Canberra, the Snowy Mountains, Blue Mountains and Illawarra. Together they hold 9,677 of 38,099 mapped records (25.4%)."
         },
         {
           "afterChart": "V11",
-          "text": "The 2000s contain 10,949 of 33,765 dated accessions. Four archives have no usable years; the 2020s end in 2025. V12 checks coordinate coverage."
+          "text": "The largest dated ALA decade is the 2000s, with 10,949 of 33,765 accessions. Four archives have no usable years; the histogram describes recorded dates, not year-by-year collecting."
         },
         {
           "afterChart": "V12",
-          "text": "Coordinate availability varies. Australian PlantBank lacks map-ready coordinates for 2,921 of 12,871 top-level accessions (22.7%). Completeness is not geographic representativeness. V13 checks dates."
+          "text": "PlantBank has no map-ready coordinates for 2,921 of 12,871 accessions (22.7%). Some origins are absent because their coordinates are missing; a blank patch is not proof of no collecting. This sample may not cover every region."
         },
         {
           "afterChart": "V13",
-          "text": "Four of ten archives have no usable collection year. The displayed endpoints describe files, not uninterrupted collecting; these gaps qualify both the map and histogram."
+          "text": "Four of ten ALA archives have no usable collection years. The intervals mark first and last dates on file; we can't see what happened between them, and they don't show every collecting event."
         }
       ]
     },
@@ -314,6 +314,30 @@ pageStory.navigation = pageStory.sections.map(({ id, index, navLabel }) => ({
   label: navLabel,
 }));
 
+// Reader-facing expansions of jurisdiction codes found in chart labels.
+export const regionAbbreviations = {
+  NSW: "New South Wales",
+  VIC: "Victoria",
+  QLD: "Queensland",
+  WA: "Western Australia",
+  SA: "South Australia",
+  TAS: "Tasmania",
+  ACT: "Australian Capital Territory",
+  NT: "Northern Territory",
+  OT: "Other Territories",
+};
+
+const standardJurisdictionCodes = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"];
+
+export const chartAbbreviationCodes = {
+  V01: [...standardJurisdictionCodes, "OT"],
+  V02: standardJurisdictionCodes,
+  V03: standardJurisdictionCodes,
+  V05: ["WA", "SA"],
+  V12: ["WA", "SA"],
+  V13: ["WA", "SA"],
+};
+
 // Visible chart content and asset references used by the single-page story.
 export const chartCards = [
   {
@@ -376,7 +400,7 @@ export const chartCards = [
     "readerTask": "Follow each state between raw count rank and population-standardized rank.",
     "marks": "One line per jurisdiction with distinct endpoint symbols for grayscale identification.",
     "channels": "Horizontal position for comparison measure; vertical position for rank; color and endpoint shape redundantly identify jurisdiction.",
-    "annotation": "ACT moves from rank 6 to 1; NT moves from tied rank 7.5 to 2. These ranks describe registered-facility density, not public access."
+    "annotation": "Left: rank by raw facility count; right: rank by facilities per million (1 = highest). Each line connects the same jurisdiction across the two measures."
   },
   {
     "id": "V04",
@@ -395,8 +419,8 @@ export const chartCards = [
     "measure": "Registered hectares on a logarithmic scale; the box spans the middle half of values.",
     "readerTask": "Compare typical size and spread while noticing the very large facilities.",
     "marks": "Horizontal box-and-whisker marks; the center line is the median, the box is the middle half, whiskers show the usual spread, and dots identify individual sites beyond them.",
-    "channels": "Subtype on the categorical axis; logarithmic x-position for hectares; hue repeats the map’s type colors.",
-    "annotation": "Medians are close: 12.96 ha for Botanic Gardens and 12.74 ha for Arboretums. The logarithmic axis keeps small and large sites visible; registered hectares are not planted area."
+    "channels": "Subtype on the categorical axis; logarithmic x-position for hectares; hue distinguishes Botanic Gardens from Arboreta.",
+    "annotation": "The center line marks the median; the box spans the middle half; whiskers show the usual range, and dots mark outliers. Registered hectares are not planted area; the logarithmic axis keeps small and large sites visible."
   },
   {
     "id": "V05",
@@ -415,7 +439,7 @@ export const chartCards = [
     "readerTask": "Understand data coverage and why the mapped sample varies between contributors.",
     "marks": "Two vertically aligned horizontal dot panels, counted as one paired chart group.",
     "channels": "Resource on y; count on logarithmic x; separate x scales for accessions and taxon identifiers.",
-    "annotation": "Each log-axis step is tenfold. Top-level accessions exclude linked child rows; taxon IDs are database labels, not verified species counts or total bank holdings."
+    "annotation": "Each log-axis step is tenfold. Across ten archives, 58,562 top-level accessions appear among 119,278 event rows; linked child rows are excluded. Taxon IDs are database labels, not verified species counts or total holdings."
   },
   {
     "id": "V06",
@@ -491,7 +515,7 @@ export const chartCards = [
     "readerTask": "Compare family composition across decades without mixing herbarium or seed-bank records.",
     "marks": "Rectangular heatmap tiles with direct positive counts.",
     "channels": "Family rows, chronological decade columns, sequential fill for count.",
-    "annotation": "Zero cells are observed family–decade combinations and are shown as 0; no cells are missing. The 1980s contain 1,843 of the 9,683 rows with family and year—record distribution, not conservation effort."
+    "annotation": "Zero means no indexed record for that family and decade, not missing data. In the 1980s, 4,320 records span all families; 1,843 are Myrtaceae. This is archive distribution, not conservation activity."
   },
   {
     "id": "V10",
@@ -511,7 +535,7 @@ export const chartCards = [
     "readerTask": "Recognize broad source landscapes while protecting precise collection locations.",
     "marks": "Equal-area hexagon polygons and quiet state boundaries.",
     "channels": "Projected position; sequential luminance for accession-origin count per cell.",
-    "annotation": "Cells with fewer than five records are suppressed. The equal-area hexagons summarize recorded collection origins, not gardens or seed stores."
+    "annotation": "Cells with fewer than five records are suppressed: 674 of 38,773 map-ready records. The logarithmic colour scale shows 5–2,629 records per 100 km cell. Hexagons map origins, not gardens or seed stores."
   },
   {
     "id": "V11",
@@ -565,10 +589,10 @@ export const chartCards = [
       "Ten licensed ALA event archives"
     ],
     "grain": "One resource summarized across top-level accessions with a usable year.",
-    "measure": "Documented year coverage within each archive; resources without parseable years are listed separately.",
+    "measure": "Year ranges are shown for the six ALA resources with usable dates; four undated resources are named in the caption.",
     "readerTask": "Understand the limits of the combined dated-record histogram.",
     "marks": "Horizontal range rules with endpoint circles.",
     "channels": "Year on x; resource on y; rule length encodes min-to-max year span.",
-    "annotation": "Interval endpoints are the earliest and latest observed file years, not continuous collecting. The separate 0–100% ALA date-coverage data identify resources without usable years."
+    "annotation": "Four ALA archives lack usable years: Australian PlantBank, WA Seed Centre (Kensington), Alice Springs Desert Park and Greening Australia. Australian PlantBank here is the ALA resource, not V07’s GBIF PlantBank Records dataset."
   }
 ];

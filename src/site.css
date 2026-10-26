@@ -249,7 +249,7 @@ h1 {
   margin: 20px 0 14px;
   color: var(--green-dark);
   font-family: var(--serif);
-  font-size: clamp(54px, 7.1vw, 92px);
+  font-size: clamp(54px, 7.1vw, 80px);
   font-weight: 600;
   line-height: 0.9;
   letter-spacing: -0.045em;
@@ -308,7 +308,8 @@ h1 em { color: var(--green); font-weight: 500; }
   max-width: 760px;
   margin: 0 0 18px;
   color: var(--ink-soft);
-  font-size: 14px;
+  font-size: 16px;
+  line-height: 1.55;
 }
 
 .section-copy p { margin-bottom: 12px; }
@@ -327,22 +328,28 @@ h1 em { color: var(--green); font-weight: 500; }
 }
 
 .chart-transition {
-  max-width: 760px;
-  margin: -10px 0 -10px 14px;
-  padding: 7px 0 0 12px;
+  max-width: 800px;
+  margin: 15px 0 4px 0;
+  padding: 10px 0 4px 16px;
   border-top: 1px solid var(--rule);
-  border-left: 1px solid var(--rule);
-  color: var(--ink-soft);
-  font-size: 13px;
-  line-height: 1.4;
+  border-left: 2px solid var(--ochre);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 .chart-transition--lead {
-  padding: 10px 0 0 14px;
-  border-left: 2px solid var(--ochre);
-  font-family: var(--serif);
-  font-size: 16px;
-  line-height: 1.38;
+  border-left-width: 3px;
+  font-size: 17px;
+}
+
+.chart-transition-label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--green-dark);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.035em;
 }
 
 .chart-stack {
@@ -362,8 +369,7 @@ h1 em { color: var(--green); font-weight: 500; }
 #chart-mount-V01 .layer_1_marks,
 #chart-mount-V01 .background,
 #chart-mount-V01 .layer_3_marks,
-#chart-mount-V01 .layer_4_marks,
-#chart-mount-V01 .layer_5_marks { pointer-events: none !important; }
+#chart-mount-V01 .layer_4_marks { pointer-events: none !important; }
 #chart-mount-V01 .layer_2_marks path { pointer-events: all !important; }
 
 .chart-loading {
@@ -587,6 +593,53 @@ h3 { margin: 0; color: var(--ink); font-family: var(--serif); font-size: 20px; f
 .chart-loading { display: grid; min-height: 320px; place-items: center; color: var(--quiet); font-size: 13px; }
 .chart-error-message { color: #8b392f; font-size: 13px; }
 
+.abbreviation-key {
+  margin-top: 6px;
+  padding: 8px 0 6px;
+  border-top: 1px solid #e7e8e0;
+}
+
+.abbreviation-key-title {
+  margin: 0 0 5px;
+  color: var(--green-dark);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.abbreviation-key-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 5px 14px;
+  margin: 0;
+}
+
+.abbreviation-key-pair {
+  display: flex;
+  flex: 0 1 auto;
+  gap: 5px;
+  align-items: baseline;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.abbreviation-key-pair dt {
+  flex: 0 0 auto;
+  color: var(--green-dark);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.abbreviation-key-pair dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.45;
+  overflow-wrap: break-word;
+}
+
 .figure-caption {
   display: flex;
   align-items: flex-start;
@@ -595,7 +648,14 @@ h3 { margin: 0; color: var(--ink); font-family: var(--serif); font-size: 20px; f
   padding-top: 12px;
   border-top: 1px solid #e7e8e0;
   color: var(--ink-soft);
-  font-size: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.abbreviation-key + .figure-caption {
+  margin-top: 3px;
+  padding-top: 4px;
+  border-top: 0;
 }
 
 .caption-mark { color: var(--ochre); font-size: 16px; line-height: 1; }

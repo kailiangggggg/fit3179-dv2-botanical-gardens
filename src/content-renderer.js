@@ -1,4 +1,4 @@
-import { pageStory } from "./site-content.js";
+import { chartAbbreviationCodes, pageStory, regionAbbreviations } from "./site-content.js";
 
 function element(tagName, className, text) {
   const node = document.createElement(tagName);
@@ -100,7 +100,25 @@ function renderChartNotes(chart) {
   return details;
 }
 
-function renderChartEntry(chart, baseUrl) {
+function renderAbbreviationKey(chart) {
+  const codes = chartAbbreviationCodes[chart.id];
+  if (!codes?.length) return null;
+
+  const key = element("div", "abbreviation-key");
+  key.setAttribute("role", "group");
+  key.setAttribute("aria-label", "State and territory abbreviations");
+  const heading = element("p", "abbreviation-key-title", "State and territory abbreviations");
+  const list = element("dl", "abbreviation-key-list");
+  for (const code of codes) {
+    const pair = element("div", "abbreviation-key-pair");
+    pair.append(element("dt", "", code), element("dd", "", regionAbbreviations[code]));
+    list.append(pair);
+  }
+  key.append(heading, list);
+  return key;
+}
+
+function renderChartEntry(chart, baseUrl, transition) {
   const article = element("article", "chart-entry");
   article.dataset.chartId = chart.id;
 
@@ -131,6 +149,8 @@ function renderChartEntry(chart, baseUrl) {
   const caption = element("figcaption", "figure-caption");
   caption.append(element("span", "caption-mark", "↳"), element("span", "", chart.annotation));
   figure.append(topLine, mount);
+  const abbreviationKey = renderAbbreviationKey(chart);
+  if (abbreviationKey) figure.append(abbreviationKey);
   figure.append(caption);
 
   const actions = element("div", "figure-actions");
@@ -142,7 +162,9 @@ function renderChartEntry(chart, baseUrl) {
     actions.append(localLink(dataUrl.href, `Download ${fileName}`, true));
   }
 
-  article.append(figure, renderChartNotes(chart), actions);
+  article.append(figure);
+  if (transition) article.append(renderChartTransition(transition));
+  article.append(renderChartNotes(chart), actions);
   return article;
 }
 
@@ -150,8 +172,12 @@ function renderChartTransition(transition) {
   const className = transition.emphasis
     ? "chart-transition chart-transition--lead"
     : "chart-transition";
-  const paragraph = element("p", className, transition.text);
+  const paragraph = element("p", className);
   paragraph.dataset.afterChart = transition.afterChart;
+  paragraph.append(
+    element("strong", "chart-transition-label", "What this tells us"),
+    element("span", "chart-transition-copy", transition.text),
+  );
   return paragraph;
 }
 
@@ -217,9 +243,8 @@ function renderSection(section, chartsById, baseUrl) {
     if (chartId === "V03") charts.append(renderJurisdictionControl());
     const chart = chartsById.get(chartId);
     if (chart) {
-      charts.append(renderChartEntry(chart, baseUrl));
       const transition = section.chartTransitions?.find(({ afterChart }) => afterChart === chartId);
-      if (transition) charts.append(renderChartTransition(transition));
+      charts.append(renderChartEntry(chart, baseUrl, transition));
     }
   }
 

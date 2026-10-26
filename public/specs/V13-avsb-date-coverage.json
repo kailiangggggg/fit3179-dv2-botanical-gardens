@@ -1,6 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "description": "Shows the earliest and latest usable top-level accession years in each ALA resource that supplies a parseable year. Resources with no usable year are named in the accompanying caption; ranges describe source coverage, not activity.",
+  "description": "Shows usable year ranges for the six ALA seed-accession archives with dated records. Four undated resources are named in the caption; the ALA Australian PlantBank resource is distinct from the GBIF PlantBank Records dataset in V07. Ranges describe file coverage, not continuous collecting.",
   "data": {"url": "../data/ala_date_coverage.csv", "format": {"type": "csv"}},
   "transform": [{"filter": "datum.dated_accessions > 0"}],
   "width": 700,

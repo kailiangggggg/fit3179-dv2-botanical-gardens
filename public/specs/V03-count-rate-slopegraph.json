@@ -16,7 +16,7 @@
           "field": "comparison",
           "type": "ordinal",
           "sort": ["Facility count", "Facilities per million"],
-          "axis": {"title": null, "labelAngle": 0, "labelFontSize": 12, "tickSize": 0, "domain": false}
+          "axis": {"title": null, "labelAngle": 0, "labelFontSize": 12, "labelPadding": 16, "tickSize": 0, "domain": false}
         },
         "y": {
           "field": "rank",
@@ -66,14 +66,12 @@
         "x": {
           "field": "comparison",
           "type": "ordinal",
-          "sort": ["Facility count", "Facilities per million"],
-          "axis": null
+          "sort": ["Facility count", "Facilities per million"]
         },
         "y": {
           "field": "rank",
           "type": "quantitative",
-          "scale": {"domain": [1, 8], "reverse": true},
-          "axis": null
+          "scale": {"domain": [1, 8], "reverse": true}
         },
         "text": {"field": "state_abbreviation", "type": "nominal"},
         "opacity": {

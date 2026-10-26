@@ -94,7 +94,8 @@ test("the story avoids conservation-impact claims and defines unfamiliar record 
   assert.match(pageStory.hero.limitation, /not every institution|current holdings|species recovery|education outcomes/i);
   assert.doesNotMatch(pageStory.subtitle, /protect plant diversity/i);
   const records = pageStory.sections.find(({ id }) => id === "records");
-  assert.match(records.chartTransitions.find(({ afterChart }) => afterChart === "V05").text, /taxon IDs are database labels, not verified species/i);
+  assert.match(chartCards.find(({ id }) => id === "V05").annotation, /taxon IDs are database labels, not verified species/i);
+  assert.match(records.chartTransitions.find(({ afterChart }) => afterChart === "V05").text, /not total holdings.*verified species richness/i);
   assert.match(records.intro, /A plant family groups genera|A seed-bank accession is a catalogued seed collection/i);
   assert.match(pageStory.sections.find(({ id }) => id === "evidence").transition, /known facilities.*seed origins.*not its full reach or results/i);
 });

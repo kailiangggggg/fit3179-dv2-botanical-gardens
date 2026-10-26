@@ -67,7 +67,7 @@
         "color": {
           "condition": [
             {"test": "linkedState !== null && datum.properties.state !== linkedState", "value": "#16372e"},
-            {"test": "datum.properties.facilities_per_million >= 10", "value": "#fffdf7"}
+            {"test": "datum.properties.state_abbreviation === 'NT'", "value": "#fffdf7"}
           ],
           "value": "#16372e"
         },

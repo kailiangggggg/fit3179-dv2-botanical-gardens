@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import { compile } from "vega-lite";
 import { chartCards } from "../src/site-content.js";
 
 const kingsPark = JSON.parse(
@@ -157,7 +158,7 @@ test("V02 projection keeps the choropleth inside a compact Australia-focused fra
   assert.equal(facilitiesMap.projection.translate.signal, "[width / 2, 206]");
 });
 
-test("V02 state labels switch polarity to preserve text contrast on dark rate fills", () => {
+test("V02 label colours account for NT's dark fill and ACT's pale label point", () => {
   const labels = facilitiesMap.layer[2];
   assert.equal(labels.mark.fontSize, 12);
   assert.equal(labels.mark.strokeWidth, undefined, "map text should not have a halo");
@@ -165,7 +166,7 @@ test("V02 state labels switch polarity to preserve text contrast on dark rate fi
   assert.equal(labels.encoding.opacity.value, 1, "de-emphasised regions must retain readable labels");
   assert.deepEqual(labels.encoding.color.condition.map(({ test, value }) => [test, value.toLowerCase()]), [
     ["linkedState !== null && datum.properties.state !== linkedState", "#16372e"],
-    ["datum.properties.facilities_per_million >= 10", "#fffdf7"],
+    ["datum.properties.state_abbreviation === 'NT'", "#fffdf7"],
   ]);
   assert.equal(labels.encoding.color.value.toLowerCase(), "#16372e");
 });
@@ -302,4 +303,25 @@ test("V09 parses numeric fields so zero labels and family ordering render correc
   assert.ok(zeroLabels, "every observed zero cell should display a zero label");
   assert.equal(zeroLabels.encoding.text.field, "record_count");
   assert.equal(zeroLabels.mark.fontSize, 10);
+});
+
+test("V03 compiled slopegraph displays both measures, rank ticks and fractional ties", () => {
+  const compiled = compile(rankChart).spec;
+  assert.ok(Array.isArray(compiled.axes), "compiled V03 must contain rendered axes");
+  const comparisonAxis = compiled.axes.find((axis) => axis.scale === "x" && axis.orient === "bottom");
+  const rankAxis = compiled.axes.find((axis) => axis.scale === "y" && axis.orient === "left" && axis.title);
+  assert.ok(comparisonAxis && comparisonAxis.labels !== false, "comparison headings must render on the horizontal axis");
+  assert.equal(comparisonAxis?.labelPadding, 16, "horizontal labels need separation from the lowest rank endpoint");
+  assert.deepEqual(rankLine.encoding.x.sort, ["Facility count", "Facilities per million"]);
+  assert.equal(rankAxis?.title, "Rank (1 = highest)");
+  assert.deepEqual(rankAxis?.values, [1, 2, 3, 4, 5, 6, 7, 8]);
+  const rankScale = compiled.scales.find((scale) => scale.name === "y");
+  assert.deepEqual(rankScale?.domain, [1, 8]);
+  assert.equal(rankScale?.reverse, true);
+  const [header, ...rows] = stateRankComparison.trim().split(/\r?\n/).map((line) => line.split(","));
+  const columns = Object.fromEntries(header.map((name, index) => [name, index]));
+  for (const state of ["Northern Territory", "Tasmania"]) {
+    const row = rows.find((item) => item[columns.state] === state);
+    assert.equal(Number(row[columns.facility_count_rank]), 7.5, "tied states retain their raw-count midrank");
+  }
 });
