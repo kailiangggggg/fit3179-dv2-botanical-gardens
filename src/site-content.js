@@ -8,7 +8,7 @@ export const pageStory = {
       "Beyond the",
       "Garden Gate"
     ],
-    "lede": "Plant collections can support research and conservation beyond the wild; some gardens also teach about biodiversity. This story follows selected records from registered gardens and arboreta to living and preserved specimens, then to wild seed origins.",
+    "lede": "Plant collections can support botanical research and conservation, while some gardens also educate people about biodiversity. This story moves from a register of Australian gardens and arboreta to separate living and preserved specimen records, then to recorded wild seed origins.",
     "limitation": "These records show documented work, not every institution, current holdings, public access, species recovery, conservation effectiveness or education outcomes."
   },
   metrics: [
@@ -103,7 +103,7 @@ export const pageStory = {
         },
         {
           "afterChart": "V06",
-          "text": "Myrtle rust affects Myrtaceae. The Myrtle Rust survey reported 45 of 49 priority species in respondents’ off-site collections. Its 26 organisations included New Zealand and UK institutions; this is not a PlantBank outcome measure."
+          "text": "In PlantBank, Myrtaceae has 3,240 family-labelled records, including 1,897 Eucalyptus records. Myrtle rust threatens plants in this family. A separate survey found 45 of 49 priority species in respondents’ off-site collections across 26 organisations, including some in New Zealand and the UK; it does not measure PlantBank outcomes."
         },
         {
           "afterChart": "V07",

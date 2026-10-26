@@ -11,7 +11,7 @@ const transition = (sectionId, chartId) => section(sectionId).chartTransitions
 test("the hero introduces the botanical network and states what the evidence cannot measure", () => {
   assert.match(pageStory.hero.lede, /gardens and arboreta/i);
   assert.match(pageStory.hero.lede, /living.*preserved.*seed/i);
-  assert.match(pageStory.hero.lede, /research.*conservation.*learning|conservation.*research.*learning|research.*conservation.*teach/i);
+  assert.equal(pageStory.hero.lede, "Plant collections can support botanical research and conservation, while some gardens also educate people about biodiversity. This story moves from a register of Australian gardens and arboreta to separate living and preserved specimen records, then to recorded wild seed origins.");
   assert.match(pageStory.hero.limitation, /complete|not every/i);
   assert.match(pageStory.hero.limitation, /conservation|education|access/i);
 });
@@ -34,9 +34,10 @@ test("the collections chapter defines distinct record types and limits", () => {
   assert.match(section("records").intro, /PRESERVED_SPECIMEN/i);
   assert.match(section("records").intro, /not.*total|cannot be added/i);
   assert.match(charts.get("V05").annotation, /58,562.*119,278.*child rows are excluded/i);
-  assert.match(charts.get("V06").annotation, /3,240.*1,897.*Eucalyptus/i);
-  assert.match(transition("records", "V06"), /Myrtle rust.*Myrtaceae.*45 of 49.*off-site.*26.*New Zealand.*UK/i);
-  assert.match(transition("records", "V06"), /not a PlantBank outcome measure/i);
+  assert.match(charts.get("V06").annotation, /10,599.*Myrtaceae.*3,240.*1,897.*Eucalyptus/i);
+  const v06 = transition("records", "V06");
+  assert.equal(v06, "In PlantBank, Myrtaceae has 3,240 family-labelled records, including 1,897 Eucalyptus records. Myrtle rust threatens plants in this family. A separate survey found 45 of 49 priority species in respondents’ off-site collections across 26 organisations, including some in New Zealand and the UK; it does not measure PlantBank outcomes.");
+  assert.match(v06, /3,240.*1,897.*Myrtle rust threatens.*separate survey.*45 of 49.*off-site.*26 organisations.*New Zealand and the UK.*does not measure PlantBank outcomes/);
   assert.match(transition("records", "V07"), /4,321.*not.*accession date/i);
   assert.match(transition("records", "V08"), /Herbarium vouchers aid plant identification and research.*Australian National Botanic Gardens.*Botany program.*herbarium specimens.*separate from Kings Park’s dataset.*no learning-outcome data/i);
   assert.match(charts.get("V08").annotation, /20,647.*PRESERVED_SPECIMEN.*4,800.*none has a usable collection year/i);
