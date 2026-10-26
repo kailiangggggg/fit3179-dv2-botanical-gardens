@@ -11,7 +11,7 @@
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
     "validate:specs": "node scripts/validate_specs.mjs",
-    "test:site": "node --test tests/site-content.test.mjs tests/chart-runtime.test.mjs tests/navigation-runtime.test.mjs tests/chart-spec-contract.test.mjs tests/legend-accessibility.test.mjs tests/v01-proportional-symbol-map.test.mjs tests/story-remediation-contract.test.mjs",
+    "test:site": "node --test tests/site-content.test.mjs tests/chart-runtime.test.mjs tests/navigation-runtime.test.mjs tests/chart-spec-contract.test.mjs tests/legend-accessibility.test.mjs tests/v01-proportional-symbol-map.test.mjs tests/story-remediation-contract.test.mjs tests/hero-typography.test.mjs tests/storytelling-hierarchy.test.mjs tests/jurisdiction-abbreviation-key.test.mjs",
     "test:data": "python -m unittest discover -s tests -v"
   },
   "dependencies": {

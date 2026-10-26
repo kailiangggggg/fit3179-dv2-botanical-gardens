@@ -167,7 +167,9 @@ async function renderChart(figure, chart, registerChartView) {
         }
         setLinkedJurisdiction(null, {
           preserveLegend: true,
-          statusText: "The ranking chart is filtered by its legend; the rate map shows all jurisdictions.",
+          statusText: activeLegendLabels.size
+            ? "The ranking chart is filtered by its legend; the rate map shows all jurisdictions."
+            : "The ranking chart legend filter is cleared; all jurisdictions are shown.",
         });
         updateLegendAccessibility();
       } else if (!onMark) {
