@@ -8,7 +8,7 @@ export const pageStory = {
       "Beyond the",
       "Garden Gate"
     ],
-    "lede": "Australia’s gardens and arboreta are known places; public records also describe living specimens, preserved vouchers and seeds collected in the wild.",
+    "lede": "Plant collections can support research and conservation beyond the wild; some gardens also teach about biodiversity. This story follows selected records from registered gardens and arboreta to living and preserved specimens, then to wild seed origins.",
     "limitation": "These records show documented work, not every institution, current holdings, public access, species recovery, conservation effectiveness or education outcomes."
   },
   metrics: [
@@ -103,7 +103,7 @@ export const pageStory = {
         },
         {
           "afterChart": "V06",
-          "text": "In PlantBank, Myrtaceae accounts for 3,240 family-labelled records. Eucalyptus makes up 1,897 of them. Those records don't tell us how many plants survive today."
+          "text": "Myrtle rust affects Myrtaceae. The Myrtle Rust survey reported 45 of 49 priority species in respondents’ off-site collections. Its 26 organisations included New Zealand and UK institutions; this is not a PlantBank outcome measure."
         },
         {
           "afterChart": "V07",
@@ -111,7 +111,7 @@ export const pageStory = {
         },
         {
           "afterChart": "V08",
-          "text": "Kings Park's preserved-voucher archive has 20,647 rows; 4,800 are Myrtaceae, the largest named family. No usable years were recorded, and these specimens are not living plants."
+          "text": "Herbarium vouchers aid plant identification and research. The Australian National Botanic Gardens’ Botany program uses herbarium specimens in lessons; this is separate from Kings Park’s dataset, which has no learning-outcome data."
         },
         {
           "afterChart": "V09",
@@ -126,7 +126,7 @@ export const pageStory = {
       "eyebrow": "WILD COLLECTION ORIGINS",
       "title": "Beyond the garden gate",
       "question": "Where were geocoded seed accessions collected, and how much of each archive can be placed on a map?",
-      "intro": "Ten licensed ALA resources contain top-level seed accessions with recorded coordinates. V10 aggregates Australian collection origins into 100 km equal-area cells; it maps where seeds were collected, not garden locations or storage sites.",
+      "intro": "Ten licensed ALA resources include top-level accessions with coordinates. Wild origins can inform research when combined with verified species identification and seed-viability data. V10 maps Australian origins in 100 km cells, not garden or storage sites.",
       "paragraphs": [
         "Coordinates and usable years differ across archives. V12 and V13 show those gaps beside the origin and date views they qualify."
       ],
@@ -165,9 +165,8 @@ export const pageStory = {
       "question": "What do the published records establish about botanical work, and where does the evidence stop?",
       "intro": "Known facilities, separate collection records and selected wild origins document parts of botanical work. They are not a complete national inventory or an outcome measure.",
       "paragraphs": [
-        "Gardens and arboreta can maintain living collections; herbaria preserve reference specimens; seed banks store catalogued accessions; education programs share plant knowledge. These are distinct activities, and this project measures none of their national outcomes.",
-        "The 2023 BGANZ/CHABG survey reported 45 of 49 Myrtle Rust National Action Plan priority species in responding collections. Its 26 respondents were mixed organisations, so this is survey context, not national coverage or proof of conservation effectiveness. The Australian National Botanic Gardens and Royal Botanic Gardens Victoria describe school and learning programs; those pages do not measure participation or impact.",
-        "The register is not a complete census. GBIF records cover selected datasets, while ALA coordinates and dates are uneven. These sources cannot establish current plant survival, public access, species recovery, conservation success or education outcomes."
+        "PlantBank living-specimen rows, Kings Park herbarium vouchers and ALA seed accessions describe different parts of botanical collections. V10 locates a selected set of wild origins. These records can inform conservation research when paired with verified species identification and seed-viability tests; they do not show which seeds are viable, whether plants survive or whether species recover.",
+        "The Australian National Botanic Gardens’ National Seed Bank describes seed testing and research. The Gardens and Royal Botanic Gardens Victoria also run school learning programs. These activities sit outside the chart data: this project has no visitor, attendance or learning-outcome measures, and the Myrtle Rust survey does not rate the archives shown."
       ],
       "transition": "Together, these records show where known facilities are registered, what selected archives document and which seed origins can be mapped. They reveal parts of botanical work, not its full reach or results.",
       "chartIds": []
@@ -287,7 +286,7 @@ export const pageStory = {
     {
       category: "BGANZ",
       label: "Myrtle Rust survey of Australian ex situ collections · 2023 report",
-      publisher: "BGANZ / CHABG",
+      publisher: "Council of Heads of Australian Botanic Gardens (CHABG) · Botanic Gardens Australia & New Zealand (BGANZ)",
       url: "https://www.bganz.org.au/wp-content/uploads/2025/04/Myrtle-Rust-Survey-Supplemental-Final-Report-Dec-2023-Public-release.pdf",
       license: "Workbook reuse licence not established; published report cited for aggregate context only",
     },
@@ -300,10 +299,24 @@ export const pageStory = {
     },
     {
       category: "EDUCATION",
+      label: "Botany · student plant-identification program",
+      publisher: "Australian National Botanic Gardens · Parks Australia",
+      url: "https://visit.anbg.gov.au/schools/ranger-guided-programs/botany/",
+      license: "Official program description; cited for education context, not Kings Park data",
+    },
+    {
+      category: "EDUCATION",
       label: "Learning with Royal Botanic Gardens Victoria",
       publisher: "Royal Botanic Gardens Victoria",
       url: "https://www.rbg.vic.gov.au/learn",
       license: "Official institutional description; cited for educational programs, not chart data",
+    },
+    {
+      category: "CONSERVATION",
+      label: "National Seed Bank: conservation and research",
+      publisher: "Australian National Botanic Gardens · Parks Australia",
+      url: "https://visit.anbg.gov.au/about/what-we-do/national-seed-bank/",
+      license: "Official institutional description; cited for seed testing and research context, not as ALA chart data",
     }
   ],
 };
@@ -496,7 +509,7 @@ export const chartCards = [
     "readerTask": "See a separate research-record layer without combining it with seed accessions or living specimens.",
     "marks": "Horizontal points with direct count labels.",
     "channels": "Count on x; family on y; Myrtaceae is highlighted.",
-    "annotation": "Kings Park’s 20,647 rows are PRESERVED_SPECIMEN vouchers; 4,800 are Myrtaceae. These are herbarium records, not living collection holdings."
+    "annotation": "Kings Park’s 20,647 rows are PRESERVED_SPECIMEN vouchers; 4,800 are Myrtaceae, the largest named family. These are herbarium references, not living holdings; none has a usable collection year."
   },
   {
     "id": "V09",

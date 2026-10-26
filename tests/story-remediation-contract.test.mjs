@@ -11,6 +11,7 @@ const transition = (sectionId, chartId) => section(sectionId).chartTransitions
 test("the hero introduces the botanical network and states what the evidence cannot measure", () => {
   assert.match(pageStory.hero.lede, /gardens and arboreta/i);
   assert.match(pageStory.hero.lede, /living.*preserved.*seed/i);
+  assert.match(pageStory.hero.lede, /research.*conservation.*learning|conservation.*research.*learning|research.*conservation.*teach/i);
   assert.match(pageStory.hero.limitation, /complete|not every/i);
   assert.match(pageStory.hero.limitation, /conservation|education|access/i);
 });
@@ -33,16 +34,19 @@ test("the collections chapter defines distinct record types and limits", () => {
   assert.match(section("records").intro, /PRESERVED_SPECIMEN/i);
   assert.match(section("records").intro, /not.*total|cannot be added/i);
   assert.match(charts.get("V05").annotation, /58,562.*119,278.*child rows are excluded/i);
-  assert.match(transition("records", "V06"), /3,240.*1,897.*surviv/i);
+  assert.match(charts.get("V06").annotation, /3,240.*1,897.*Eucalyptus/i);
+  assert.match(transition("records", "V06"), /Myrtle rust.*Myrtaceae.*45 of 49.*off-site.*26.*New Zealand.*UK/i);
+  assert.match(transition("records", "V06"), /not a PlantBank outcome measure/i);
   assert.match(transition("records", "V07"), /4,321.*not.*accession date/i);
-  assert.match(transition("records", "V08"), /preserved.*no usable years/i);
-  assert.match(charts.get("V08").annotation, /20,647.*PRESERVED_SPECIMEN.*4,800/i);
+  assert.match(transition("records", "V08"), /Herbarium vouchers aid plant identification and research.*Australian National Botanic Gardens.*Botany program.*herbarium specimens.*separate from Kings Park’s dataset.*no learning-outcome data/i);
+  assert.match(charts.get("V08").annotation, /20,647.*PRESERVED_SPECIMEN.*4,800.*none has a usable collection year/i);
   assert.match(transition("records", "V09"), /1,843.*not.*conservation/i);
 });
 
 test("the origins chapter links maps to coordinate and date coverage", () => {
   assert.match(section("origins").intro, /origins|collected/i);
   assert.match(section("origins").intro, /not.*garden|not.*storage/i);
+  assert.match(section("origins").intro, /research.*species.*seed-viability data/i);
   assert.match(transition("origins", "V10"), /Perth.*southeastern Australia.*Canberra.*Snowy Mountains.*Blue Mountains.*Illawarra/i);
   assert.doesNotMatch(transition("origins", "V10"), /eastern NSW/i);
   assert.match(transition("origins", "V10"), /9,677.*38,099.*25\.4%/);
@@ -53,16 +57,36 @@ test("the origins chapter links maps to coordinate and date coverage", () => {
   assert.match(transition("origins", "V13"), /four.*no usable.*don't show every collecting event/i);
 });
 
-test("the conclusion connects documented work to education and conservation without claiming outcomes", () => {
+test("the conclusion separates measured archive records from institutional examples and unmeasured outcomes", () => {
   const evidence = section("evidence");
   const text = [evidence.intro, ...evidence.paragraphs, evidence.transition].join(" ");
-  assert.match(text, /living collections/i);
+  assert.match(text, /PlantBank living-specimen rows/i);
   assert.match(text, /herbari|preserved specimens/i);
   assert.match(text, /seed/i);
-  assert.match(text, /education|learning programs/i);
-  assert.match(text, /45 of 49/i);
+  assert.match(text, /verified species identification and seed-viability tests/i);
+  assert.match(text, /Australian National Botanic Gardens.*Royal Botanic Gardens Victoria.*school learning programs/i);
+  assert.match(text, /visitor, attendance or learning-outcome measures/i);
+  assert.match(text, /Myrtle Rust survey does not rate the archives/i);
   assert.match(text, /not.*national|not.*outcome|do not measure/i);
+  assert.doesNotMatch(text, /45 of 49/i);
   assert.doesNotMatch(text, /proves? (?:conservation|education|recovery)/i);
+});
+
+test("the conservation context citation is official and separate from the ALA chart data", () => {
+  const seedBank = pageStory.sources.find(({ label }) => label === "National Seed Bank: conservation and research");
+  assert.ok(seedBank, "the institutional context source should be listed");
+  assert.equal(seedBank.publisher, "Australian National Botanic Gardens · Parks Australia");
+  assert.equal(seedBank.url, "https://visit.anbg.gov.au/about/what-we-do/national-seed-bank/");
+  assert.match(seedBank.license, /context, not as ALA chart data/i);
+  const myrtleRust = pageStory.sources.find(({ label }) => /Myrtle Rust survey/i.test(label));
+  assert.ok(myrtleRust);
+  assert.match(myrtleRust.publisher, /Council of Heads of Australian Botanic Gardens.*CHABG.*Botanic Gardens Australia.*BGANZ/i);
+  const educationSources = pageStory.sources.filter(({ category }) => category === "EDUCATION");
+  assert.ok(educationSources.some(({ publisher }) => /Australian National Botanic Gardens/.test(publisher)));
+  assert.ok(educationSources.some(({ publisher }) => /Royal Botanic Gardens Victoria/.test(publisher)));
+  const botanyProgram = pageStory.sources.find(({ label }) => label === "Botany · student plant-identification program");
+  assert.equal(botanyProgram.url, "https://visit.anbg.gov.au/schools/ranger-guided-programs/botany/");
+  assert.match(botanyProgram.license, /education context, not Kings Park data/i);
 });
 
 test("all thirteen chart groups have concise evidence-led titles and visible caveats", () => {
