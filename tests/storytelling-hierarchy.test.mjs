@@ -38,9 +38,10 @@ test("all thirteen chart transitions state an evidence-led message, not just poi
   assert.match(byId.V04, /3,739/);
   assert.match(byId.V05, /National Seed Bank.*16,323.*Australian PlantBank.*4,743/i);
   assert.match(byId.V05, /not total holdings.*verified species richness/i);
-  assert.match(byId.V06, /3,240.*1,897.*surviv/i);
+  assert.match(byId.V06, /Myrtle rust.*Myrtaceae.*45 of 49.*off-site.*26.*New Zealand.*UK/i);
+  assert.match(byId.V06, /not a PlantBank outcome measure/i);
   assert.match(byId.V07, /4,321.*not.*accession date/i);
-  assert.match(byId.V08, /preserved.*no usable years/i);
+  assert.match(byId.V08, /Herbarium vouchers.*plant identification and research.*Australian National Botanic Gardens.*Botany program.*herbarium specimens.*separate from Kings Park’s dataset.*learning-outcome data/i);
   assert.match(byId.V09, /1,843.*not.*conservation/i);
   assert.match(byId.V10, /Perth.*Canberra.*Snowy Mountains.*Blue Mountains.*Illawarra/i);
   assert.match(byId.V10, /9,677.*38,099.*25\.4%/);
